@@ -13,9 +13,13 @@ const router = Router();
 
 
 
-// list all tickets (for demo)
+// list tickets (for demo), optionally filtered by ?createdByUserId=
 router.get("/", (req, res) => {
-  res.json(tickets);
+  const { createdByUserId } = req.query as { createdByUserId?: string };
+  const rows = createdByUserId
+    ? tickets.filter((t) => t.createdByUserId === createdByUserId)
+    : tickets;
+  res.json(rows);
 });
 
 // create a ticket with AI suggestion + caching + credit usage
@@ -36,6 +40,11 @@ router.post("/", async (req, res) => {
     }
     if (!user) {
       return res.status(400).json({ error: "Invalid createdByUserId" });
+    }
+    if (user.role !== "IE") {
+      return res.status(403).json({
+        error: "Only your factory's Industrial Engineer (IE) can raise issues.",
+      });
     }
 
     const cacheKey = buildCacheKey(issueType, description);

@@ -1,12 +1,20 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// Vite config so the dev server is visible on iPhone hotspot
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: "0.0.0.0",  // listen on all interfaces
     port: 5173,
-    strictPort: true,
+    proxy: {
+      "/dashboard": "http://localhost:4000",
+      "/tickets": "http://localhost:4000",
+      "/machines": "http://localhost:4000",
+      "/ai": "http://localhost:4000",
+      "/auth": "http://localhost:4000",
+      "/users": "http://localhost:4000",
+      "/purchases": "http://localhost:4000",
+      "/needles": "http://localhost:4000",
+      "/public": "http://localhost:4000",
+    },
   },
 });

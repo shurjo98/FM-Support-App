@@ -1,69 +1,62 @@
-import { useNavigate } from "react-router-dom";
+import { useState, type FormEvent } from "react";
+import { login } from "../api";
 
-export default function LoginPage() {
-  const navigate = useNavigate();
+export default function LoginPage({
+  onLogin,
+}: {
+  onLogin: (token: string, name: string) => void;
+}) {
+  const [accountId, setAccountId] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleLogin = () => {
-    navigate("/dashboard");
-  };
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setSubmitting(true);
+    try {
+      const result = await login(accountId, password);
+      onLogin(result.token, result.name);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#0f172a",
-        color: "white",
-        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
-      }}
-    >
-      <div
-        style={{
-          background: "#020617",
-          padding: "24px",
-          borderRadius: "12px",
-          boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-          width: "320px",
-          textAlign: "center",
-          border: "1px solid #1f2937",
-        }}
-      >
-        <h1 style={{ fontSize: "1.5rem", marginBottom: "16px" }}>
-          FM Support Portal
-        </h1>
+    <div className="login-page">
+      <form className="login-card" onSubmit={handleSubmit}>
+        <h1>Internal Team Login</h1>
+        <p className="subtitle">Sign in to view the internal support dashboard</p>
 
-        <input
-          type="text"
-          placeholder="Enter your name"
-          style={{
-            width: "100%",
-            padding: "8px 10px",
-            borderRadius: "8px",
-            border: "1px solid #374151",
-            background: "#020617",
-            color: "white",
-            marginBottom: "16px",
-          }}
-        />
+        <label>
+          Account ID
+          <input
+            value={accountId}
+            onChange={(e) => setAccountId(e.target.value)}
+            autoComplete="username"
+            autoFocus
+          />
+        </label>
 
-        <button
-          onClick={handleLogin}
-          style={{
-            width: "100%",
-            padding: "8px 12px",
-            borderRadius: "999px",
-            border: "none",
-            background: "#3b82f6",
-            color: "white",
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          Login
+        <label>
+          Password
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+          />
+        </label>
+
+        {error && <div className="login-error">{error}</div>}
+
+        <button type="submit" disabled={submitting}>
+          {submitting ? "Signing in..." : "Sign in"}
         </button>
-      </div>
+      </form>
     </div>
   );
 }

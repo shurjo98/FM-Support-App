@@ -1,13 +1,15 @@
 // src/routes/machines.ts
 import { Router } from "express";
 import { machines, machineInstances } from "../store";
+import type { ProductLine } from "../types";
 
 const router = Router();
 
-// GET /machines → list machine models for this org
+// GET /machines -> list machine models, optionally filtered by ?productLine=
 router.get("/", (req, res) => {
-  // later you can filter by org from auth; for now return all
-  res.json(machines);
+  const { productLine } = req.query as { productLine?: ProductLine };
+  const rows = productLine ? machines.filter((m) => m.productLine === productLine) : machines;
+  res.json(rows);
 });
 
 // GET /machines/:machineId/instances → list serials for one machine

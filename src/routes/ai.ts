@@ -1,52 +1,75 @@
-// backend/src/routes/ai.ts
-import express, { Request, Response } from "express";
+// src/routes/ai.ts
+import express from "express";
+import { diagnoseText, textToSpeechBangla, transcribeBanglaAudio } from "../services/openai";
 
 const router = express.Router();
 
-router.post(
-  "/diagnose",
-  async (req: Request, res: Response) => {
-    const { question, machineModel, errorCode } = req.body as {
-      question: string;
-      machineModel?: string;
-      errorCode?: string;
-    };
-
-    if (!question || question.trim().length === 0) {
+router.post("/diagnose", async (req, res) => {
+  try {
+    const { question, machineModel, serialNumber } = req.body || {};
+    if (!question?.trim()) {
       return res.status(400).json({ error: "Question is required." });
     }
 
-    const modelPart = machineModel ? ` for your ${machineModel}` : "";
-    const errorPart = errorCode ? ` (error code: ${errorCode})` : "";
+    const diagnosis = await diagnoseText({ question, machineModel, serialNumber });
 
-    const answer = [
-      `I’ve read your issue${modelPart}${errorPart}. Here is a first quick diagnosis:`,
-      "",
-      "1) Check basic conditions:",
-      "   • Power supply stable? Any voltage drops or loose plug?",
-      "   • Air supply and oil level (if applicable) normal?",
-      "",
-      "2) Inspect the thread path:",
-      "   • Re-thread completely from cone to needle.",
-      "   • Check for burrs or sharp edges on the needle plate and hooks.",
-      "",
-      "3) Machine setting:",
-      "   • Confirm the fabric and thread match the needle size.",
-      "   • Reset to default tension and test on scrap fabric.",
-      "",
-      "If these do not solve it, please open a service ticket so a technician can review more details.",
-    ].join("\n");
-
-    const suggestedChecks = [
-      "Take a short video of the problem (10–15s) and attach when creating a ticket.",
-      "Note the exact fabric type and thread count you are using.",
-      "Check if the issue happens on all speeds or only at high speed.",
-    ];
-
-    res.json({
-      answer,
-      suggestedChecks,
+    return res.json({
+      diagnosis,
+      source: "openai",
+      model: process.env.OPENAI_DIAGNOSE_MODEL || "gpt-4o-mini",
+      generatedAt: new Date().toISOString(),
     });
+  } catch (err: any) {
+    console.error(err);
+    return res.status(500).json({ error: "AI failed", detail: err?.message || String(err) });
+  }
+});
+
+router.post("/speak", async (req, res) => {
+  try {
+    const { text } = req.body || {};
+    if (!text?.trim()) return res.status(400).json({ error: "Missing text" });
+
+    const audio = await textToSpeechBangla(text);
+
+    res.setHeader("Content-Type", "audio/mpeg");
+    return res.send(audio);
+  } catch (err: any) {
+    console.error(err);
+    return res.status(500).json({ error: "Voice generation failed", detail: err?.message || String(err) });
+  }
+});
+
+/**
+ * ✅ iPhone voice input: POST raw audio bytes -> { text }
+ * Frontend calls: POST /api/ai/transcribe (via Vite proxy)
+ */
+router.post(
+  "/transcribe",
+  express.raw({
+    type: [
+      "audio/webm",
+      "audio/wav",
+      "audio/mpeg",
+      "audio/mp3",
+      "audio/mp4",
+      "application/octet-stream",
+    ],
+    limit: "25mb",
+  }),
+  async (req, res) => {
+    try {
+      const mimeType = (req.headers["content-type"]?.toString() || "application/octet-stream").trim();
+      const buf = Buffer.isBuffer(req.body) ? req.body : Buffer.from(req.body || "");
+
+      if (!buf.length) return res.status(400).json({ error: "Missing audio bytes" });
+
+      const text = await transcribeBanglaAudio(buf, mimeType);
+      return res.json({ text });
+    } catch (err: any) {
+      console.error(err);
+      return res.status(500).json({ error: "Transcribe failed", detail: err?.message || String(err) });
+    }
   }
 );
 

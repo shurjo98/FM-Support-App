@@ -1,5 +1,29 @@
 // src/store.ts
-import type { Machine, Ticket, User, CachedAnswer, MachineInstance } from "./types";
+import type {
+  Machine,
+  Ticket,
+  User,
+  CachedAnswer,
+  MachineInstance,
+  Organization,
+  InternalAccount,
+  Purchase,
+  NeedleProduct,
+} from "./types";
+
+// Internal staff who can log into the internal dashboard and be assigned
+// tickets. Demo-only plaintext credentials.
+export const internalAccounts: InternalAccount[] = [
+  { id: "tech1", accountId: "rashed.tech", password: "fm12345", name: "Rashed (Technician)" },
+  { id: "tech2", accountId: "nila.tech", password: "fm12345", name: "Nila (Technician)" },
+  { id: "admin1", accountId: "admin", password: "admin123", name: "Admin Team" },
+];
+
+export const organizations: Organization[] = [
+  { id: "org1", name: "Dhaka Apparel Factory", location: "Dhaka" },
+  { id: "org2", name: "Chittagong Garments Ltd", location: "Chittagong" },
+  { id: "org3", name: "Gazipur Stitching Co", location: "Gazipur" },
+];
 
 export const machines: Machine[] = [
   {
@@ -7,12 +31,74 @@ export const machines: Machine[] = [
     name: "Jack A4C",
     model: "A4C",
     organizationId: "org1",
+    productLine: "SEWING",
+    category: "lockstitch",
+    imageUrl: "/public/machines/lockstitch/A10_plus.png",
   },
   {
     id: "m2",
     name: "Template Machine M9-A",
     model: "M9-A",
     organizationId: "org1",
+    productLine: "AUTOMATED",
+    category: "template",
+    imageUrl: "/public/machines/template/j5.png",
+  },
+  {
+    id: "m3",
+    name: "Jack C5 Overlock",
+    model: "C5",
+    organizationId: "org2",
+    productLine: "SEWING",
+    category: "overlock",
+    imageUrl: "/public/machines/overlock/C5.png",
+  },
+  {
+    id: "m4",
+    name: "Interlock K10 Automated",
+    model: "K10",
+    organizationId: "org1",
+    productLine: "AUTOMATED",
+    category: "interlock",
+    imageUrl: "/public/machines/Interlock/K10.png",
+  },
+];
+
+// Groz-Beckert needle systems we supply to Bangladesh garment factories.
+// Needles are a product line, not serialized machines, so they live in
+// their own catalog rather than the `machines` list.
+export const needleProducts: NeedleProduct[] = [
+  {
+    id: "n1",
+    name: "DBx1 Round Point",
+    system: "DBx1 (System 16x231)",
+    brand: "Groz-Beckert",
+    imageUrl: "/public/needles/packing_image_1.png",
+    description: "Standard lockstitch needle for general apparel sewing.",
+  },
+  {
+    id: "n2",
+    name: "DCx27 Light Ball Point",
+    system: "DCx27",
+    brand: "Groz-Beckert",
+    imageUrl: "/public/needles/packing_image_1.png",
+    description: "Overlock/safety-stitch needle for knit fabrics.",
+  },
+  {
+    id: "n3",
+    name: "UY128GAS Curved Point",
+    system: "UY128GAS",
+    brand: "Groz-Beckert",
+    imageUrl: "/public/needles/packing_image_1.png",
+    description: "Coverstitch/interlock needle for automated machines.",
+  },
+  {
+    id: "n4",
+    name: "TQx7 Heavy Duty",
+    system: "TQx7",
+    brand: "Groz-Beckert",
+    imageUrl: "/public/needles/packing_image_1.png",
+    description: "Heavy-duty needle for template and pattern machines.",
   },
 ];
 
@@ -52,17 +138,252 @@ export const machineInstances: MachineInstance[] = [
     organizationId: "org1",
     location: "Sample Room",
   },
+  {
+    id: "mi6",
+    serialNumber: "C5-100-2025",
+    machineId: "m3",
+    organizationId: "org2",
+    location: "Finishing Line",
+  },
+  {
+    id: "mi7",
+    serialNumber: "K10-500-2025",
+    machineId: "m4",
+    organizationId: "org1",
+    location: "Automation Bay",
+  },
 ];
 
+// Operators run machines on the floor but cannot raise tickets — only the
+// factory's IE (Industrial Engineer) is authorized to report issues.
 export const users: User[] = [
   {
     id: "u1",
     name: "Operator Rahim",
     organizationId: "org1",
+    role: "OPERATOR",
+    aiCredits: 100,
+  },
+  {
+    id: "u2",
+    name: "Operator Karim",
+    organizationId: "org1",
+    role: "OPERATOR",
+    aiCredits: 100,
+  },
+  {
+    id: "u3",
+    name: "Operator Salma",
+    organizationId: "org2",
+    role: "OPERATOR",
+    aiCredits: 100,
+  },
+  {
+    id: "u4",
+    name: "Operator Jashim",
+    organizationId: "org2",
+    role: "OPERATOR",
+    aiCredits: 100,
+  },
+  {
+    id: "u5",
+    name: "Operator Nasrin",
+    organizationId: "org3",
+    role: "OPERATOR",
+    aiCredits: 100,
+  },
+  {
+    id: "u6",
+    name: "IE Hossain",
+    organizationId: "org1",
+    role: "IE",
+    aiCredits: 100,
+  },
+  {
+    id: "u7",
+    name: "IE Tania",
+    organizationId: "org2",
+    role: "IE",
+    aiCredits: 100,
+  },
+  {
+    id: "u8",
+    name: "IE Mahin",
+    organizationId: "org3",
+    role: "IE",
     aiCredits: 100,
   },
 ];
 
-export const tickets: Ticket[] = [];
+// Raised by each factory's IE (Industrial Engineer) — operators are not
+// permitted to create tickets, see POST /tickets in routes/tickets.ts.
+export const tickets: Ticket[] = [
+  {
+    id: "t-seed-1",
+    machineId: "m1",
+    createdByUserId: "u6",
+    issueType: "THREAD_BREAKING",
+    description: "Thread keeps snapping on the upper needle.",
+    status: "OPEN",
+    technicianNotes: [],
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(),
+  },
+  {
+    id: "t-seed-2",
+    machineId: "m2",
+    createdByUserId: "u6",
+    issueType: "STITCH_SKIPPING",
+    description: "Skipping stitches on heavier denim fabric.",
+    status: "IN_PROGRESS",
+    technicianId: "tech1",
+    technicianNotes: ["Checked needle size, swapping for heavier gauge."],
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+  },
+  {
+    id: "t-seed-3",
+    machineId: "m1",
+    createdByUserId: "u7",
+    issueType: "FABRIC_NOT_FEEDING",
+    description: "Feed dog not pulling fabric through evenly.",
+    status: "OPEN",
+    technicianNotes: [],
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+  },
+  {
+    id: "t-seed-4",
+    machineId: "m2",
+    createdByUserId: "u7",
+    issueType: "THREAD_BREAKING",
+    description: "Lower thread tension causing frequent breaks.",
+    status: "COMPLETED",
+    technicianId: "tech2",
+    technicianNotes: ["Re-threaded and adjusted tension. Resolved."],
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+  },
+  {
+    id: "t-seed-5",
+    machineId: "m1",
+    createdByUserId: "u8",
+    issueType: "STITCH_SKIPPING",
+    description: "Intermittent skipped stitches since this morning.",
+    status: "OPEN",
+    technicianNotes: [],
+    createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+  },
+];
+
+export const purchases: Purchase[] = [
+  {
+    id: "p1",
+    organizationId: "org1",
+    itemType: "MACHINE",
+    itemName: "Jack A4C",
+    machineId: "m1",
+    serialNumber: "A6-001-2025",
+    quantity: 1,
+    unitPrice: 250000,
+    purchaseDate: "2024-01-10",
+  },
+  {
+    id: "p2",
+    organizationId: "org1",
+    itemType: "MACHINE",
+    itemName: "Jack A4C",
+    machineId: "m1",
+    serialNumber: "A6-002-2025",
+    quantity: 1,
+    unitPrice: 250000,
+    purchaseDate: "2024-01-10",
+  },
+  {
+    id: "p3",
+    organizationId: "org1",
+    itemType: "MACHINE",
+    itemName: "Template Machine M9-A",
+    machineId: "m2",
+    serialNumber: "M9A-010-2025",
+    quantity: 1,
+    unitPrice: 180000,
+    purchaseDate: "2024-03-05",
+  },
+  {
+    id: "p4",
+    organizationId: "org1",
+    itemType: "NEEDLE",
+    itemName: "DBx1 Round Point (Groz-Beckert)",
+    needleProductId: "n1",
+    machineId: "m1",
+    serialNumber: "A6-001-2025",
+    quantity: 100,
+    unitPrice: 15,
+    purchaseDate: "2025-06-01",
+  },
+  {
+    id: "p5",
+    organizationId: "org1",
+    itemType: "SPARE_PART",
+    itemName: "Bobbin Case",
+    machineId: "m1",
+    serialNumber: "A6-002-2025",
+    quantity: 5,
+    unitPrice: 300,
+    purchaseDate: "2025-08-12",
+  },
+  {
+    id: "p6",
+    organizationId: "org2",
+    itemType: "MACHINE",
+    itemName: "Jack C5 Overlock",
+    machineId: "m3",
+    serialNumber: "C5-100-2025",
+    quantity: 1,
+    unitPrice: 220000,
+    purchaseDate: "2024-05-20",
+  },
+  {
+    id: "p7",
+    organizationId: "org2",
+    itemType: "SPARE_PART",
+    itemName: "Presser Foot",
+    machineId: "m3",
+    serialNumber: "C5-100-2025",
+    quantity: 3,
+    unitPrice: 500,
+    purchaseDate: "2025-09-02",
+  },
+  {
+    id: "p8",
+    organizationId: "org3",
+    itemType: "NEEDLE",
+    itemName: "DCx27 Light Ball Point (Groz-Beckert)",
+    needleProductId: "n2",
+    quantity: 200,
+    unitPrice: 18,
+    purchaseDate: "2025-11-15",
+  },
+  {
+    id: "p9",
+    organizationId: "org1",
+    itemType: "MACHINE",
+    itemName: "Interlock K10 Automated",
+    machineId: "m4",
+    serialNumber: "K10-500-2025",
+    quantity: 1,
+    unitPrice: 300000,
+    purchaseDate: "2025-02-14",
+  },
+  {
+    id: "p10",
+    organizationId: "org1",
+    itemType: "NEEDLE",
+    itemName: "TQx7 Heavy Duty (Groz-Beckert)",
+    needleProductId: "n4",
+    machineId: "m4",
+    serialNumber: "K10-500-2025",
+    quantity: 50,
+    unitPrice: 22,
+    purchaseDate: "2025-09-20",
+  },
+];
 
 export const cache: CachedAnswer[] = [];

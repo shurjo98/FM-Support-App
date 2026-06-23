@@ -9,6 +9,10 @@ node_modules
 # build outputs
 dist
 build
+*.tsbuildinfo
+
+# local tool config
+.claude/
 
 # macOS
 .DS_Store
