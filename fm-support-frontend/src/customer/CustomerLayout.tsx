@@ -1,22 +1,33 @@
 import type { ReactNode } from "react";
-import type { UserRole } from "../types";
+import { useLang, type TranslationKey } from "./i18n";
+import PortalSearchBar from "./PortalSearchBar";
 
-export type CustomerSection = "overview" | "sewing" | "automated" | "needles" | "tickets" | "purchases" | "settings";
+export type CustomerSection =
+  | "overview"
+  | "sewing"
+  | "automated"
+  | "needles"
+  | "spareparts"
+  | "garments"
+  | "tickets"
+  | "purchases"
+  | "settings";
 
-const NAV_ITEMS: { key: CustomerSection; label: string; icon: string }[] = [
-  { key: "overview", label: "Overview", icon: "🏠" },
-  { key: "sewing", label: "Sewing Machines", icon: "🧵" },
-  { key: "automated", label: "Automated Machines", icon: "⚙️" },
-  { key: "needles", label: "Needles", icon: "📍" },
-  { key: "tickets", label: "Ticket History", icon: "📜" },
-  { key: "purchases", label: "Purchase History", icon: "🧾" },
+const NAV_ITEMS: { key: CustomerSection; labelKey: TranslationKey; icon: string }[] = [
+  { key: "overview", labelKey: "nav.overview", icon: "🏠" },
+  { key: "sewing", labelKey: "nav.sewing", icon: "🧵" },
+  { key: "automated", labelKey: "nav.automated", icon: "⚙️" },
+  { key: "needles", labelKey: "nav.needles", icon: "📍" },
+  { key: "spareparts", labelKey: "nav.spareparts", icon: "🔧" },
+  { key: "garments", labelKey: "nav.garments", icon: "👕" },
+  { key: "tickets", labelKey: "nav.tickets", icon: "📜" },
+  { key: "purchases", labelKey: "nav.purchases", icon: "🧾" },
 ];
 
 export default function CustomerLayout({
   active,
   onNavigate,
   userName,
-  userRole,
   organizationName,
   onLogout,
   children,
@@ -24,16 +35,19 @@ export default function CustomerLayout({
   active: CustomerSection;
   onNavigate: (section: CustomerSection) => void;
   userName: string;
-  userRole: UserRole;
   organizationName: string;
   onLogout: () => void;
   children: ReactNode;
 }) {
+  const { lang, setLang, t } = useLang();
+
   return (
     <div className="cust-shell">
       <aside className="cust-sidebar">
         <div className="cust-logo">
-          <div className="cust-logo-badge">FM</div>
+          <div className="cust-logo-badge">
+            <img src="/public/logo/No_BG.png" alt="FM" />
+          </div>
           <div>
             <div className="cust-logo-text">FM Factory Support</div>
             <div className="cust-logo-sub">Customer Portal</div>
@@ -48,22 +62,30 @@ export default function CustomerLayout({
               onClick={() => onNavigate(item.key)}
             >
               <span className="cust-nav-icon">{item.icon}</span>
-              {item.label}
+              {t(item.labelKey)}
             </button>
           ))}
         </nav>
 
         <div className="cust-sidebar-footer">
+          <div className="cust-lang-toggle">
+            <button className={lang === "en" ? "active" : ""} onClick={() => setLang("en")}>
+              EN
+            </button>
+            <button className={lang === "bn" ? "active" : ""} onClick={() => setLang("bn")}>
+              বাংলা
+            </button>
+          </div>
           <button
             className={`cust-nav-item ${active === "settings" ? "active" : ""}`}
             onClick={() => onNavigate("settings")}
           >
             <span className="cust-nav-icon">⚙️</span>
-            Settings
+            {t("nav.settings")}
           </button>
           <button className="cust-nav-item" onClick={onLogout}>
             <span className="cust-nav-icon">🚪</span>
-            Log out
+            {t("nav.logout")}
           </button>
         </div>
       </aside>
@@ -71,16 +93,18 @@ export default function CustomerLayout({
       <div className="cust-main">
         <header className="cust-topbar">
           <div>
-            <h1>{NAV_ITEMS.find((n) => n.key === active)?.label ?? "Settings"}</h1>
-            <div className="cust-topbar-sub">FM Factory Support — Customer Portal</div>
+            <h1>{t(NAV_ITEMS.find((n) => n.key === active)?.labelKey ?? "nav.settings")}</h1>
+            <div className="cust-topbar-sub">{t("topbar.subtitle")}</div>
           </div>
           <div className="cust-profile">
-            <div className="cust-profile-name">
-              {userName} <span className="cust-role-badge">{userRole}</span>
-            </div>
+            <div className="cust-profile-name">{userName}</div>
             <div className="cust-profile-org">{organizationName}</div>
           </div>
         </header>
+
+        <div className="cust-search-row">
+          <PortalSearchBar onNavigate={onNavigate} />
+        </div>
 
         <div className="cust-content">{children}</div>
       </div>

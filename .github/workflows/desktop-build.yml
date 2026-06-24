@@ -1,0 +1,48 @@
+name: Build desktop installers
+
+# Builds the FM Support native installers on real Windows and Mac runners
+# (electron-builder needs Wine to cross-build Windows from macOS, so this
+# uses an actual windows-latest runner instead). Triggered by pushing a tag
+# like "desktop-v1.0.0", or manually from the Actions tab.
+on:
+  push:
+    tags:
+      - "desktop-v*"
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            distScript: dist:win
+            artifact: windows-installer
+            glob: fm-support-desktop/dist/*.exe
+          - os: macos-latest
+            distScript: dist:mac
+            artifact: mac-installer
+            glob: |
+              fm-support-desktop/dist/*.dmg
+              fm-support-desktop/dist/*.zip
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: fm-support-desktop
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build installer
+        run: npm run ${{ matrix.distScript }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.glob }}

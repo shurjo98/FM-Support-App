@@ -1,6 +1,7 @@
 export default function LandingPage() {
   return (
     <div className="landing-page">
+      <img src="/public/logo/No_BG.png" alt="FM" className="landing-logo" />
       <h1>FM Support</h1>
       <p className="subtitle">Choose where you'd like to go</p>
       <div className="landing-links">

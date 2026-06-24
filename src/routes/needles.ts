@@ -1,12 +1,12 @@
 // src/routes/needles.ts
 import { Router } from "express";
-import { needleProducts } from "../store";
+import { prisma } from "../db";
 
 const router = Router();
 
 // GET /needles -> Groz-Beckert needle catalog we supply to garment factories
-router.get("/", (req, res) => {
-  res.json(needleProducts);
+router.get("/", async (req, res) => {
+  res.json(await prisma.needleProduct.findMany());
 });
 
 export default router;

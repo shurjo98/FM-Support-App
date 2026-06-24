@@ -1,7 +1,10 @@
 // src/routes/dashboard.ts
 import { Router } from "express";
-import { organizations, users, tickets, machines, internalAccounts } from "../store";
+import { prisma } from "../db";
+import type { ReorderStatus, TaskColumn, TaskPriority } from "../types";
 import { requireInternalAuth } from "../middleware/requireInternalAuth";
+import { notify } from "../services/notificationService";
+import type { Prisma } from "@prisma/client";
 
 const router = Router();
 
@@ -10,51 +13,79 @@ const router = Router();
 const REQUIRE_LOGIN = false;
 if (REQUIRE_LOGIN) router.use(requireInternalAuth);
 
-function technicianName(technicianId?: string | null): string | null {
+async function technicianName(technicianId?: string | null): Promise<string | null> {
   if (!technicianId) return null;
-  return internalAccounts.find((a) => a.id === technicianId)?.name ?? technicianId;
+  const account = await prisma.internalAccount.findUnique({ where: { id: technicianId } });
+  return account?.name ?? technicianId;
 }
 
-// GET /dashboard -> tickets grouped by factory (organization) and worker (user)
-router.get("/", (req, res) => {
-  const factories = organizations.map((org) => {
-    const orgUsers = users.filter((u) => u.organizationId === org.id);
+async function canManageTasks(accountId?: string): Promise<boolean> {
+  if (!accountId) return false;
+  const account = await prisma.internalAccount.findUnique({ where: { id: accountId } });
+  return account?.role === "MANAGER" || account?.role === "ADMIN";
+}
 
-    const workers = orgUsers.map((user) => {
-      const userTickets = tickets
-        .filter((t) => t.createdByUserId === user.id)
-        .map((t) => ({
-          id: t.id,
-          issueType: t.issueType,
-          description: t.description,
-          status: t.status,
-          machineName: machines.find((m) => m.id === t.machineId)?.name ?? t.machineId,
-          assignedTo: technicianName(t.technicianId),
-          createdAt: t.createdAt,
-        }));
+// GET /dashboard/accounts -> internal team roster (no passwords), used for
+// the "acting as" switcher and the task assignee picker.
+router.get("/accounts", async (req, res) => {
+  const accounts = await prisma.internalAccount.findMany();
+  res.json(accounts.map((a) => ({ id: a.id, name: a.name, role: a.role })));
+});
+
+// GET /dashboard -> tickets grouped by factory (organization) and worker (user)
+router.get("/", async (req, res) => {
+  const [organizations, users, tickets, machines] = await Promise.all([
+    prisma.organization.findMany(),
+    prisma.user.findMany(),
+    prisma.ticket.findMany(),
+    prisma.machine.findMany(),
+  ]);
+
+  const factories = await Promise.all(
+    organizations.map(async (org) => {
+      const orgUsers = users.filter((u) => u.organizationId === org.id);
+
+      const workers = await Promise.all(
+        orgUsers.map(async (user) => {
+          const userTickets = await Promise.all(
+            tickets
+              .filter((t) => t.createdByUserId === user.id)
+              .map(async (t) => ({
+                id: t.id,
+                issueType: t.issueType,
+                description: t.description,
+                status: t.status,
+                machineName: machines.find((m) => m.id === t.machineId)?.name ?? t.machineId,
+                serialNumber: t.serialNumber,
+                assignedTo: await technicianName(t.technicianId),
+                createdAt: t.createdAt,
+              }))
+          );
+
+          return {
+            id: user.id,
+            name: user.name,
+            ticketCount: userTickets.length,
+            tickets: userTickets,
+          };
+        })
+      );
+
+      const orgTickets = workers.flatMap((w) => w.tickets);
 
       return {
-        id: user.id,
-        name: user.name,
-        ticketCount: userTickets.length,
-        tickets: userTickets,
+        id: org.id,
+        name: org.name,
+        location: org.location,
+        workerCount: workers.length,
+        ticketCount: orgTickets.length,
+        openCount: orgTickets.filter((t) => t.status === "OPEN").length,
+        inProgressCount: orgTickets.filter((t) => t.status === "IN_PROGRESS").length,
+        completedCount: orgTickets.filter((t) => t.status === "COMPLETED").length,
+        workers,
       };
-    });
-
-    const orgTickets = workers.flatMap((w) => w.tickets);
-
-    return {
-      id: org.id,
-      name: org.name,
-      location: org.location,
-      workerCount: workers.length,
-      ticketCount: orgTickets.length,
-      openCount: orgTickets.filter((t) => t.status === "OPEN").length,
-      inProgressCount: orgTickets.filter((t) => t.status === "IN_PROGRESS").length,
-      completedCount: orgTickets.filter((t) => t.status === "COMPLETED").length,
-      workers,
-    };
-  });
+    })
+  );
 
   res.json({
     totals: {
@@ -68,46 +99,68 @@ router.get("/", (req, res) => {
 
 // GET /dashboard/tickets -> flat list for table views, optionally filtered
 // by ?factoryId=&workerId=&status=
-router.get("/tickets", (req, res) => {
+router.get("/tickets", async (req, res) => {
   const { factoryId, workerId, status } = req.query as {
     factoryId?: string;
     workerId?: string;
     status?: string;
   };
 
-  const rows = tickets
-    .filter((t) => {
-      const user = users.find((u) => u.id === t.createdByUserId);
-      if (factoryId && user?.organizationId !== factoryId) return false;
-      if (workerId && t.createdByUserId !== workerId) return false;
-      if (status && t.status !== status) return false;
-      return true;
-    })
-    .map((t) => {
-      const user = users.find((u) => u.id === t.createdByUserId);
-      const org = organizations.find((o) => o.id === user?.organizationId);
-      return {
-        ticketId: t.id,
-        factoryId: org?.id,
-        factoryName: org?.name ?? "Unknown factory",
-        workerId: user?.id,
-        workerName: user?.name ?? "Unknown worker",
-        machineName: machines.find((m) => m.id === t.machineId)?.name ?? t.machineId,
-        issueType: t.issueType,
-        description: t.description,
-        status: t.status,
-        assignedTo: technicianName(t.technicianId),
-        createdAt: t.createdAt,
-      };
-    })
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const [tickets, users, organizations, machines] = await Promise.all([
+    prisma.ticket.findMany({
+      where: {
+        ...(workerId ? { createdByUserId: workerId } : {}),
+        ...(status ? { status } : {}),
+      },
+    }),
+    prisma.user.findMany(),
+    prisma.organization.findMany(),
+    prisma.machine.findMany(),
+  ]);
+
+  const rows = await Promise.all(
+    tickets
+      .filter((t) => {
+        if (!factoryId) return true;
+        const user = users.find((u) => u.id === t.createdByUserId);
+        return user?.organizationId === factoryId;
+      })
+      .map(async (t) => {
+        const user = users.find((u) => u.id === t.createdByUserId);
+        const org = organizations.find((o) => o.id === user?.organizationId);
+        return {
+          ticketId: t.id,
+          factoryId: org?.id,
+          factoryName: org?.name ?? "Unknown factory",
+          workerId: user?.id,
+          workerName: user?.name ?? "Unknown worker",
+          machineName: machines.find((m) => m.id === t.machineId)?.name ?? t.machineId,
+          serialNumber: t.serialNumber,
+          issueType: t.issueType,
+          description: t.description,
+          status: t.status,
+          assignedTo: await technicianName(t.technicianId),
+          createdAt: t.createdAt,
+        };
+      })
+  );
+
+  rows.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   res.json(rows);
 });
 
 // GET /dashboard/assignments -> tickets grouped by the technician they're
 // assigned to, so the internal team can see who's working on what.
-router.get("/assignments", (req, res) => {
+router.get("/assignments", async (req, res) => {
+  const [accounts, tickets, users, organizations, machines] = await Promise.all([
+    prisma.internalAccount.findMany(),
+    prisma.ticket.findMany(),
+    prisma.user.findMany(),
+    prisma.organization.findMany(),
+    prisma.machine.findMany(),
+  ]);
+
   function ticketRow(t: (typeof tickets)[number]) {
     const user = users.find((u) => u.id === t.createdByUserId);
     const org = organizations.find((o) => o.id === user?.organizationId);
@@ -116,6 +169,7 @@ router.get("/assignments", (req, res) => {
       factoryName: org?.name ?? "Unknown factory",
       workerName: user?.name ?? "Unknown worker",
       machineName: machines.find((m) => m.id === t.machineId)?.name ?? t.machineId,
+      serialNumber: t.serialNumber,
       issueType: t.issueType,
       description: t.description,
       status: t.status,
@@ -123,7 +177,7 @@ router.get("/assignments", (req, res) => {
     };
   }
 
-  const assignments = internalAccounts.map((account) => {
+  const assignments = accounts.map((account) => {
     const assignedTickets = tickets.filter((t) => t.technicianId === account.id).map(ticketRow);
 
     return {
@@ -143,6 +197,302 @@ router.get("/assignments", (req, res) => {
       tickets: unassigned,
     },
   });
+});
+
+// GET /dashboard/reorders -> all factory reorder requests, for fulfillment
+router.get("/reorders", async (req, res) => {
+  const reorderRequests = await prisma.reorderRequest.findMany({
+    include: { organization: true, requestedBy: true },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const rows = reorderRequests.map((r) => ({
+    id: r.id,
+    factoryName: r.organization?.name ?? "Unknown factory",
+    requestedByName: r.requestedBy?.name ?? "Unknown",
+    itemType: r.itemType,
+    itemName: r.itemName,
+    quantity: r.quantity,
+    status: r.status,
+    createdAt: r.createdAt,
+  }));
+
+  res.json(rows);
+});
+
+// PATCH /dashboard/reorders/:id -> fulfillment status update
+router.patch("/reorders/:id", async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body as { status: ReorderStatus };
+
+  const request = await prisma.reorderRequest.findUnique({ where: { id } });
+  if (!request) return res.status(404).json({ error: "Reorder request not found" });
+
+  let updated = request;
+  if (status && status !== request.status) {
+    updated = await prisma.reorderRequest.update({ where: { id }, data: { status } });
+    const requester = await prisma.user.findUnique({ where: { id: request.requestedByUserId } });
+    await notify({
+      organizationId: request.organizationId,
+      phone: requester?.phone ?? undefined,
+      message: `Your order for ${request.quantity}x ${request.itemName} is now ${status}.`,
+    });
+  }
+
+  return res.json({ ok: true, request: updated });
+});
+
+// GET /dashboard/notifications -> simulated SMS/WhatsApp log for the team
+router.get("/notifications", async (req, res) => {
+  const [log, organizations] = await Promise.all([
+    prisma.notificationLogEntry.findMany({ orderBy: { createdAt: "desc" } }),
+    prisma.organization.findMany(),
+  ]);
+  const rows = log.map((n) => ({
+    ...n,
+    factoryName: organizations.find((o) => o.id === n.organizationId)?.name ?? n.organizationId,
+  }));
+  res.json(rows);
+});
+
+const taskInclude = { events: true, comments: true };
+type TaskWithRelations = Prisma.InternalTaskGetPayload<{ include: typeof taskInclude }>;
+
+async function enrichTask(t: TaskWithRelations) {
+  const [assignee, creator] = await Promise.all([
+    t.assigneeId ? prisma.internalAccount.findUnique({ where: { id: t.assigneeId } }) : null,
+    prisma.internalAccount.findUnique({ where: { id: t.createdByAccountId } }),
+  ]);
+
+  return {
+    ...t,
+    assigneeName: t.assigneeId ? assignee?.name ?? t.assigneeId : null,
+    createdByName: creator?.name ?? t.createdByAccountId,
+    events: t.events
+      .map((e) => ({ ...e, createdAt: e.createdAt.toISOString() }))
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
+    comments: t.comments
+      .map((c) => ({ ...c, createdAt: c.createdAt.toISOString() }))
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
+    createdAt: t.createdAt.toISOString(),
+    updatedAt: t.updatedAt.toISOString(),
+  };
+}
+
+const COLUMN_LABELS: Record<TaskColumn, string> = {
+  BACKLOG: "Backlog",
+  PENDING: "Pending",
+  IN_PROGRESS: "In Progress",
+  COMPLETED: "Completed",
+};
+
+function mkTaskEventData(type: string, description: string, authorAccountId: string, authorName: string) {
+  return {
+    id: `tev-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    type,
+    description,
+    authorAccountId,
+    authorName,
+    createdAt: new Date(),
+  };
+}
+
+async function notifyManagersOfMove(task: { id: string; title: string; column: string }, mover: { id: string; name: string }) {
+  await prisma.internalNotification.create({
+    data: {
+      id: `inot-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      message: `${mover.name} moved "${task.title}" to ${COLUMN_LABELS[task.column as TaskColumn]}`,
+      taskId: task.id,
+      triggeredByAccountId: mover.id,
+      triggeredByName: mover.name,
+      read: false,
+    },
+  });
+}
+
+// GET /dashboard/tasks -> the team Kanban board, everyone can view it
+router.get("/tasks", async (req, res) => {
+  const tasks = await prisma.internalTask.findMany({ include: taskInclude, orderBy: { createdAt: "asc" } });
+  res.json(await Promise.all(tasks.map(enrichTask)));
+});
+
+// POST /dashboard/tasks -> create a task (manager/admin only)
+router.post("/tasks", async (req, res) => {
+  const { title, description, priority, assigneeId, column, dueDate, actingAccountId } = req.body as {
+    title: string;
+    description?: string;
+    priority?: TaskPriority;
+    assigneeId?: string | null;
+    column?: TaskColumn;
+    dueDate?: string | null;
+    actingAccountId: string;
+  };
+
+  if (!(await canManageTasks(actingAccountId))) {
+    return res.status(403).json({ error: "Only a manager or admin can create tasks." });
+  }
+  if (!title?.trim()) {
+    return res.status(400).json({ error: "title is required" });
+  }
+
+  const author = await prisma.internalAccount.findUnique({ where: { id: actingAccountId } });
+  if (!author) return res.status(401).json({ error: "Unknown acting account." });
+
+  const newTask = await prisma.internalTask.create({
+    data: {
+      id: `task-${Date.now()}`,
+      title: title.trim(),
+      description: description ?? null,
+      column: column ?? "BACKLOG",
+      priority: priority ?? "MEDIUM",
+      assigneeId: assigneeId ?? null,
+      dueDate: dueDate ?? null,
+      createdByAccountId: actingAccountId,
+      events: { create: [mkTaskEventData("CREATED", "Task created", author.id, author.name)] },
+    },
+    include: taskInclude,
+  });
+
+  res.status(201).json(await enrichTask(newTask));
+});
+
+// PATCH /dashboard/tasks/:id -> move column (anyone on the team), or change
+// priority/assignee/title/description/due date (manager/admin only). If a
+// technician moves a task, the manager/admin get an in-app notification.
+router.patch("/tasks/:id", async (req, res) => {
+  const { id } = req.params;
+  const { column, priority, assigneeId, title, description, dueDate, actingAccountId } = req.body as {
+    column?: TaskColumn;
+    priority?: TaskPriority;
+    assigneeId?: string | null;
+    title?: string;
+    description?: string;
+    dueDate?: string | null;
+    actingAccountId: string;
+  };
+
+  const account = await prisma.internalAccount.findUnique({ where: { id: actingAccountId } });
+  if (!account) return res.status(401).json({ error: "Unknown acting account." });
+
+  const task = await prisma.internalTask.findUnique({ where: { id } });
+  if (!task) return res.status(404).json({ error: "Task not found" });
+
+  const editingDetails =
+    priority !== undefined || assigneeId !== undefined || title !== undefined || description !== undefined || dueDate !== undefined;
+
+  if (editingDetails && !(await canManageTasks(actingAccountId))) {
+    return res.status(403).json({ error: "Only a manager or admin can edit task details." });
+  }
+
+  const eventsToCreate: ReturnType<typeof mkTaskEventData>[] = [];
+  const data: Prisma.InternalTaskUpdateInput = {};
+  let movedByTechnician = false;
+
+  if (column && column !== task.column) {
+    data.column = column;
+    eventsToCreate.push(
+      mkTaskEventData("MOVED", `Moved from ${COLUMN_LABELS[task.column as TaskColumn]} to ${COLUMN_LABELS[column]}`, account.id, account.name)
+    );
+    if (account.role === "TECHNICIAN") movedByTechnician = true;
+  }
+
+  if (priority && priority !== task.priority) {
+    eventsToCreate.push(mkTaskEventData("PRIORITY_CHANGED", `Priority changed to ${priority}`, account.id, account.name));
+    data.priority = priority;
+  }
+
+  if (assigneeId !== undefined && assigneeId !== task.assigneeId) {
+    const assigneeAccount = assigneeId ? await prisma.internalAccount.findUnique({ where: { id: assigneeId } }) : null;
+    const assigneeName = assigneeId ? assigneeAccount?.name ?? assigneeId : "Unassigned";
+    eventsToCreate.push(mkTaskEventData("ASSIGNED", `Assigned to ${assigneeName}`, account.id, account.name));
+    data.assigneeId = assigneeId;
+  }
+
+  if (dueDate !== undefined && dueDate !== task.dueDate) {
+    eventsToCreate.push(
+      mkTaskEventData("DUE_DATE_CHANGED", dueDate ? `Due date set to ${dueDate}` : "Due date cleared", account.id, account.name)
+    );
+    data.dueDate = dueDate;
+  }
+
+  if (title?.trim()) data.title = title.trim();
+  if (description !== undefined) data.description = description;
+  if (eventsToCreate.length) data.events = { create: eventsToCreate };
+
+  const updated = await prisma.internalTask.update({
+    where: { id },
+    data,
+    include: taskInclude,
+  });
+
+  if (movedByTechnician) {
+    await notifyManagersOfMove(updated, account);
+  }
+
+  res.json(await enrichTask(updated));
+});
+
+// POST /dashboard/tasks/:id/comments -> feedback thread, open to anyone on
+// the team (this is how a technician gives feedback on a task).
+router.post("/tasks/:id/comments", async (req, res) => {
+  const { id } = req.params;
+  const { text, actingAccountId } = req.body as { text: string; actingAccountId: string };
+
+  const account = await prisma.internalAccount.findUnique({ where: { id: actingAccountId } });
+  if (!account) return res.status(401).json({ error: "Unknown acting account." });
+  if (!text?.trim()) return res.status(400).json({ error: "text is required" });
+
+  const task = await prisma.internalTask.findUnique({ where: { id } });
+  if (!task) return res.status(404).json({ error: "Task not found" });
+
+  const updated = await prisma.internalTask.update({
+    where: { id },
+    data: {
+      comments: {
+        create: [
+          {
+            id: `tcm-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+            authorAccountId: account.id,
+            authorName: account.name,
+            text: text.trim(),
+            createdAt: new Date(),
+          },
+        ],
+      },
+    },
+    include: taskInclude,
+  });
+
+  res.status(201).json(await enrichTask(updated));
+});
+
+// DELETE /dashboard/tasks/:id -> remove a task (manager/admin only)
+router.delete("/tasks/:id", async (req, res) => {
+  const { id } = req.params;
+  const { actingAccountId } = req.query as { actingAccountId?: string };
+
+  if (!(await canManageTasks(actingAccountId))) {
+    return res.status(403).json({ error: "Only a manager or admin can delete tasks." });
+  }
+
+  const task = await prisma.internalTask.findUnique({ where: { id } });
+  if (!task) return res.status(404).json({ error: "Task not found" });
+
+  await prisma.internalTask.delete({ where: { id } });
+  res.json({ ok: true });
+});
+
+// GET /dashboard/task-notifications -> in-app alerts (e.g. a technician
+// moved a task) — intended for managers/admins.
+router.get("/task-notifications", async (req, res) => {
+  const rows = await prisma.internalNotification.findMany({ orderBy: { createdAt: "desc" } });
+  res.json(rows);
+});
+
+// PATCH /dashboard/task-notifications/read-all -> mark every notification read
+router.patch("/task-notifications/read-all", async (req, res) => {
+  await prisma.internalNotification.updateMany({ data: { read: true }, where: {} });
+  res.json({ ok: true });
 });
 
 export default router;

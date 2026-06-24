@@ -1,0 +1,32 @@
+databases:
+  - name: fm-support-db
+    plan: free
+    databaseName: fm_support
+    user: fm_support
+
+services:
+  - type: web
+    name: fm-support-backend
+    runtime: node
+    plan: free
+    buildCommand: >-
+      npm install &&
+      npx prisma generate &&
+      npx prisma migrate deploy &&
+      npm install --prefix fm-support-frontend &&
+      npm run build --prefix fm-support-frontend
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fm-support-db
+          property: connectionString
+      # AI is switched off for now — ticket suggestions already use canned
+      # responses, and the portal search bar falls back to local keyword
+      # routing (see src/services/openai.ts). Add OPENAI_API_KEY here and
+      # flip this to "false" once a real/trained model is ready.
+      - key: OPENAI_DEMO_MODE
+        value: "true"
+      - key: PORT
+        value: "4000"

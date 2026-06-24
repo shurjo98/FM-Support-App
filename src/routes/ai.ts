@@ -1,6 +1,6 @@
 // src/routes/ai.ts
 import express from "express";
-import { diagnoseText, textToSpeechBangla, transcribeBanglaAudio } from "../services/openai";
+import { diagnoseText, textToSpeechBangla, transcribeBanglaAudio, routePortalQuery } from "../services/openai";
 
 const router = express.Router();
 
@@ -22,6 +22,23 @@ router.post("/diagnose", async (req, res) => {
   } catch (err: any) {
     console.error(err);
     return res.status(500).json({ error: "AI failed", detail: err?.message || String(err) });
+  }
+});
+
+// POST /ai/portal-search -> the top search bar's AI agent: decides whether
+// to navigate the customer somewhere in the portal or answer their question.
+router.post("/portal-search", async (req, res) => {
+  try {
+    const { query, lang } = req.body || {};
+    if (!query?.trim()) {
+      return res.status(400).json({ error: "Query is required." });
+    }
+
+    const result = await routePortalQuery({ query, lang: lang === "bn" ? "bn" : "en" });
+    return res.json(result);
+  } catch (err: any) {
+    console.error(err);
+    return res.status(500).json({ error: "AI search failed", detail: err?.message || String(err) });
   }
 });
 

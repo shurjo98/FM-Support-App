@@ -1,35 +1,24 @@
 // src/services/cacheService.ts
-import { cache } from "../store";
-import { CachedAnswer, IssueType } from "../types";
+import { prisma } from "../db";
+import type { CachedAnswer, IssueType } from "../types";
+import type { SuggestionLang } from "./aiService";
 
-export function buildCacheKey(issueType: IssueType, description: string): string {
-  // super simple key for now: only issueType.
+export function buildCacheKey(issueType: IssueType, description: string, lang: SuggestionLang = "en"): string {
+  // super simple key for now: only issueType + lang.
   // later you can make it smarter (normalize text, machine model, etc.)
-  return `issue:${issueType}`;
+  return `issue:${issueType}:${lang}`;
 }
 
-export function getCachedAnswer(key: string): CachedAnswer | undefined {
-  return cache.find((item) => item.key === key);
+export async function getCachedAnswer(key: string): Promise<CachedAnswer | null> {
+  const row = await prisma.cachedAnswer.findUnique({ where: { key } });
+  return row as CachedAnswer | null;
 }
 
-export function setCachedAnswer(
-  key: string,
-  issueType: IssueType,
-  text: string
-): CachedAnswer {
-  const existingIndex = cache.findIndex((c) => c.key === key);
-  const item: CachedAnswer = {
-    key,
-    issueType,
-    text,
-    createdAt: new Date(),
-  };
-
-  if (existingIndex >= 0) {
-    cache[existingIndex] = item;
-  } else {
-    cache.push(item);
-  }
-
-  return item;
+export async function setCachedAnswer(key: string, issueType: IssueType, text: string): Promise<CachedAnswer> {
+  const row = await prisma.cachedAnswer.upsert({
+    where: { key },
+    update: { issueType, text },
+    create: { key, issueType, text },
+  });
+  return row as CachedAnswer;
 }

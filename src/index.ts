@@ -13,6 +13,9 @@ import authRouter from "./routes/auth";
 import usersRouter from "./routes/users";
 import purchasesRouter from "./routes/purchases";
 import needlesRouter from "./routes/needles";
+import reordersRouter from "./routes/reorders";
+import garmentsRouter from "./routes/garments";
+import sparePartsRouter from "./routes/spareparts";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -26,6 +29,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/public", express.static("public"));
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 // API routes
 app.use("/tickets", ticketsRouter);
@@ -36,6 +40,9 @@ app.use("/auth", authRouter);
 app.use("/users", usersRouter);
 app.use("/purchases", purchasesRouter);
 app.use("/needles", needlesRouter);
+app.use("/reorders", reordersRouter);
+app.use("/garments", garmentsRouter);
+app.use("/spareparts", sparePartsRouter);
 
 // Serve the built frontend (npm run build) so the whole app is reachable
 // from a single URL/port — needed for hosting on Render etc. In local dev,

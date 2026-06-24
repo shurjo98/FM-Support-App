@@ -1,18 +1,23 @@
 // src/routes/users.ts
 import { Router } from "express";
-import { users, organizations } from "../store";
+import { prisma } from "../db";
 
 const router = Router();
 
-// GET /users -> workers available to act as the logged-in customer, with
+// GET /users -> accounts available to act as the logged-in customer, with
 // their factory name attached, since the customer dashboard doesn't have
-// real login yet.
-router.get("/", (req, res) => {
-  const rows = users.map((u) => ({
+// real login yet. Only IEs can use the customer portal — operators don't
+// get a dashboard view at all — so only IE accounts are listed here.
+router.get("/", async (req, res) => {
+  const ies = await prisma.user.findMany({
+    where: { role: "IE" },
+    include: { organization: true },
+  });
+  const rows = ies.map((u) => ({
     id: u.id,
     name: u.name,
     organizationId: u.organizationId,
-    organizationName: organizations.find((o) => o.id === u.organizationId)?.name ?? u.organizationId,
+    organizationName: u.organization?.name ?? u.organizationId,
     role: u.role,
   }));
   res.json(rows);

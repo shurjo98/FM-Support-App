@@ -9,10 +9,14 @@ node_modules
 # build outputs
 dist
 build
+!fm-support-desktop/build
 *.tsbuildinfo
 
 # local tool config
 .claude/
+
+# user-uploaded ticket attachments (runtime-only, not seed data)
+uploads/
 
 # macOS
 .DS_Store

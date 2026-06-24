@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id       String  @id
+  name     String
+  location String?
+
+  machines         Machine[]
+  machineInstances MachineInstance[]
+  users            User[]
+  purchases        Purchase[]
+  reorderRequests  ReorderRequest[]
+  notifications    NotificationLogEntry[]
+}
+
+model Machine {
+  id             String   @id
+  name           String
+  model          String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  productLine    String
+  category       String?
+  imageUrl       String?
+  images         String[]
+  description    String?
+
+  instances MachineInstance[]
+  tickets   Ticket[]
+  purchases Purchase[]
+  reorders  ReorderRequest[]
+}
+
+model NeedleProduct {
+  id          String  @id
+  name        String
+  system      String
+  brand       String
+  imageUrl    String
+  description String?
+
+  purchases Purchase[]
+  reorders  ReorderRequest[]
+}
+
+model MachineInstance {
+  id             String  @id
+  serialNumber   String  @unique
+  machineId      String
+  machine        Machine @relation(fields: [machineId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  location       String?
+}
+
+model User {
+  id             String  @id
+  name           String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  role           String
+  aiCredits      Int
+  phone          String?
+
+  tickets         Ticket[]
+  reorderRequests ReorderRequest[]
+}
+
+model InternalAccount {
+  id        String @id
+  accountId String @unique
+  password  String
+  name      String
+  role      String
+}
+
+model SparePart {
+  id             String  @id
+  name           String
+  compatibleWith String
+  imageUrl       String?
+  description    String?
+
+  purchases Purchase[]
+  reorders  ReorderRequest[]
+}
+
+model Purchase {
+  id              String         @id
+  organizationId  String
+  organization    Organization   @relation(fields: [organizationId], references: [id])
+  itemType        String
+  itemName        String
+  machineId       String?
+  machine         Machine?       @relation(fields: [machineId], references: [id])
+  needleProductId String?
+  needleProduct   NeedleProduct? @relation(fields: [needleProductId], references: [id])
+  sparePartId     String?
+  sparePart       SparePart?     @relation(fields: [sparePartId], references: [id])
+  serialNumber    String?
+  quantity        Int
+  unitPrice       Float
+  purchaseDate    String
+}
+
+model Ticket {
+  id              String   @id
+  machineId       String
+  machine         Machine  @relation(fields: [machineId], references: [id])
+  serialNumber    String?
+  createdByUserId String
+  createdBy       User     @relation(fields: [createdByUserId], references: [id])
+  issueType       String
+  description     String
+
+  aiSuggestionText        String?
+  aiSuggestionFromCache   Boolean?
+  aiSuggestionCreditsUsed Int?
+
+  status          String
+  technicianId    String?
+  technicianNotes String[]
+  createdAt       DateTime @default(now())
+
+  events      TicketEvent[]
+  attachments TicketAttachment[]
+}
+
+model TicketEvent {
+  id          String   @id
+  ticketId    String
+  ticket      Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  type        String
+  description String
+  authorName  String?
+  createdAt   DateTime
+}
+
+model TicketAttachment {
+  id         String   @id
+  ticketId   String
+  ticket     Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  kind       String
+  url        String
+  uploadedAt DateTime
+}
+
+model ReorderRequest {
+  id                String         @id
+  organizationId    String
+  organization      Organization   @relation(fields: [organizationId], references: [id])
+  requestedByUserId String
+  requestedBy       User           @relation(fields: [requestedByUserId], references: [id])
+  itemType          String
+  itemName          String
+  needleProductId   String?
+  needleProduct     NeedleProduct? @relation(fields: [needleProductId], references: [id])
+  sparePartId       String?
+  sparePart         SparePart?     @relation(fields: [sparePartId], references: [id])
+  machineId         String?
+  machine           Machine?       @relation(fields: [machineId], references: [id])
+  serialNumber      String?
+  quantity          Int
+  status            String
+  createdAt         DateTime       @default(now())
+}
+
+model NotificationLogEntry {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  toPhone        String?
+  channel        String
+  message        String
+  status         String
+  createdAt      DateTime     @default(now())
+}
+
+model InternalTask {
+  id                 String   @id
+  title              String
+  description        String?
+  column             String
+  priority           String
+  assigneeId         String?
+  dueDate            String?
+  createdByAccountId String
+  relatedTicketId    String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  events   TaskEvent[]
+  comments TaskComment[]
+}
+
+model TaskEvent {
+  id              String       @id
+  taskId          String
+  task            InternalTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  type            String
+  description     String
+  authorAccountId String
+  authorName      String
+  createdAt       DateTime
+}
+
+model TaskComment {
+  id              String       @id
+  taskId          String
+  task            InternalTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  authorAccountId String
+  authorName      String
+  text            String
+  createdAt       DateTime
+}
+
+model InternalNotification {
+  id                   String   @id
+  message              String
+  taskId               String
+  triggeredByAccountId String
+  triggeredByName      String
+  read                 Boolean  @default(false)
+  createdAt            DateTime @default(now())
+}
+
+model GarmentRecommendation {
+  id               String @id
+  garment          String @unique
+  name             String
+  description      String
+  machineIds       String[]
+  needleProductIds String[]
+
+  processes GarmentProcess[]
+}
+
+model GarmentProcess {
+  id               String                @id
+  recommendationId String
+  recommendation   GarmentRecommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
+  order            Int
+  name             String
+  description      String
+  machineIds       String[]
+  needleProductIds String[]
+}
+
+model CachedAnswer {
+  key       String   @id
+  issueType String
+  text      String
+  createdAt DateTime @default(now())
+}

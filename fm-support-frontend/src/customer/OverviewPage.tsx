@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { fetchCustomerTickets, fetchPurchases } from "../api";
 import type { CustomerTicket, CustomerUser, Purchase } from "../types";
 import type { CustomerSection } from "./CustomerLayout";
+import { useLang, type TranslationKey } from "./i18n";
 
-const PRODUCT_LINES: { section: CustomerSection; name: string; image: string }[] = [
-  { section: "sewing", name: "Sewing Machines", image: "/public/categories/lockstitch.png" },
-  { section: "automated", name: "Automated Machines", image: "/public/machines/Interlock/K10.png" },
-  { section: "needles", name: "Needles (Groz-Beckert)", image: "/public/needles/packing_image_1.png" },
+const PRODUCT_LINES: { section: CustomerSection; nameKey: TranslationKey; image: string }[] = [
+  { section: "sewing", nameKey: "nav.sewing", image: "/public/categories/lockstitch.png" },
+  { section: "automated", nameKey: "nav.automated", image: "/public/machines/Interlock/K10.png" },
+  { section: "needles", nameKey: "nav.needles", image: "/public/needles/packing_image_1.png" },
 ];
 
 const STATUS_COLORS: Record<string, string> = {
@@ -22,6 +23,7 @@ export default function OverviewPage({
   user: CustomerUser;
   onNavigate: (section: CustomerSection) => void;
 }) {
+  const { t } = useLang();
   const [tickets, setTickets] = useState<CustomerTicket[]>([]);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -47,28 +49,28 @@ export default function OverviewPage({
 
       <div className="cust-stat-grid">
         <div className="cust-card">
-          <div className="cust-stat-label">Machines Owned</div>
+          <div className="cust-stat-label">{t("overview.machinesOwned")}</div>
           <div className="cust-stat-value">{machinesOwned}</div>
         </div>
         <div className="cust-card">
-          <div className="cust-stat-label">Total Issues Raised</div>
+          <div className="cust-stat-label">{t("overview.totalIssues")}</div>
           <div className="cust-stat-value">{tickets.length}</div>
         </div>
         <div className="cust-card">
-          <div className="cust-stat-label">Open Issues</div>
+          <div className="cust-stat-label">{t("overview.openIssues")}</div>
           <div className="cust-stat-value">{openTickets}</div>
         </div>
         <div className="cust-card">
-          <div className="cust-stat-label">Needle Orders</div>
+          <div className="cust-stat-label">{t("overview.needleOrders")}</div>
           <div className="cust-stat-value">{needleOrders}</div>
         </div>
         <div className="cust-card">
-          <div className="cust-stat-label">Purchase Records</div>
+          <div className="cust-stat-label">{t("overview.purchaseRecords")}</div>
           <div className="cust-stat-value">{purchases.length}</div>
         </div>
       </div>
 
-      <h2 className="cust-section-title">What we supply</h2>
+      <h2 className="cust-section-title">{t("overview.whatWeSupply")}</h2>
       <div className="cust-category-row">
         {PRODUCT_LINES.map((line) => (
           <div
@@ -76,40 +78,41 @@ export default function OverviewPage({
             className="cust-card cust-card-clickable cust-category-card"
             onClick={() => onNavigate(line.section)}
           >
-            <img src={line.image} alt={line.name} />
-            <div className="cust-category-card-name">{line.name}</div>
+            <img src={line.image} alt={t(line.nameKey)} />
+            <div className="cust-category-card-name">{t(line.nameKey)}</div>
           </div>
         ))}
       </div>
 
-      <h2 className="cust-section-title">Recent issues</h2>
+      <div className="cust-card cust-card-clickable" style={{ marginBottom: 24 }} onClick={() => onNavigate("garments")}>
+        {t("overview.garmentGuideCta")}
+      </div>
+
+      <h2 className="cust-section-title">{t("overview.recentIssues")}</h2>
       {tickets.length === 0 ? (
-        <p className="cust-empty">
-          No issues raised yet. Your factory's IE can report one from the Sewing Machines or
-          Automated Machines page.
-        </p>
+        <p className="cust-empty">{t("overview.noIssues")}</p>
       ) : (
         <div className="cust-card">
           <table className="cust-table">
             <thead>
               <tr>
-                <th>Issue Type</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Raised At</th>
+                <th>{t("table.issueType")}</th>
+                <th>{t("table.description")}</th>
+                <th>{t("table.status")}</th>
+                <th>{t("table.raisedAt")}</th>
               </tr>
             </thead>
             <tbody>
-              {tickets.slice(0, 5).map((t) => (
-                <tr key={t.id}>
-                  <td>{t.issueType.replaceAll("_", " ")}</td>
-                  <td>{t.description}</td>
+              {tickets.slice(0, 5).map((tk) => (
+                <tr key={tk.id}>
+                  <td>{tk.issueType.replaceAll("_", " ")}</td>
+                  <td>{tk.description}</td>
                   <td>
-                    <span className="cust-status-badge" style={{ backgroundColor: STATUS_COLORS[t.status] }}>
-                      {t.status.replaceAll("_", " ")}
+                    <span className="cust-status-badge" style={{ backgroundColor: STATUS_COLORS[tk.status] }}>
+                      {tk.status.replaceAll("_", " ")}
                     </span>
                   </td>
-                  <td>{new Date(t.createdAt).toLocaleDateString()}</td>
+                  <td>{new Date(tk.createdAt).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>

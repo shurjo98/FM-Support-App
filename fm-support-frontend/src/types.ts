@@ -65,13 +65,70 @@ export interface AssignmentsResponse {
   };
 }
 
+export type InternalRole = "MANAGER" | "TECHNICIAN" | "ADMIN";
+
+export interface InternalAccountLite {
+  id: string;
+  name: string;
+  role: InternalRole;
+}
+
+export type TaskColumn = "BACKLOG" | "PENDING" | "IN_PROGRESS" | "COMPLETED";
+export type TaskPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
+export type TaskEventType = "CREATED" | "MOVED" | "PRIORITY_CHANGED" | "ASSIGNED" | "DUE_DATE_CHANGED";
+
+export interface TaskEvent {
+  id: string;
+  type: TaskEventType;
+  description: string;
+  authorAccountId: string;
+  authorName: string;
+  createdAt: string;
+}
+
+export interface TaskComment {
+  id: string;
+  authorAccountId: string;
+  authorName: string;
+  text: string;
+  createdAt: string;
+}
+
+export interface InternalTask {
+  id: string;
+  title: string;
+  description?: string;
+  column: TaskColumn;
+  priority: TaskPriority;
+  assigneeId?: string | null;
+  assigneeName: string | null;
+  dueDate?: string | null;
+  createdByAccountId: string;
+  createdByName: string;
+  relatedTicketId?: string;
+  events: TaskEvent[];
+  comments: TaskComment[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InternalNotification {
+  id: string;
+  message: string;
+  taskId: string;
+  triggeredByAccountId: string;
+  triggeredByName: string;
+  read: boolean;
+  createdAt: string;
+}
+
 export interface LoginResponse {
   token: string;
   accountId: string;
   name: string;
 }
 
-export type MachineCategory = "lockstitch" | "overlock" | "template" | "interlock";
+export type MachineCategory = "lockstitch" | "overlock" | "template" | "interlock" | "welting";
 export type ProductLine = "SEWING" | "AUTOMATED";
 
 export interface Machine {
@@ -82,6 +139,16 @@ export interface Machine {
   productLine: ProductLine;
   category?: MachineCategory;
   imageUrl?: string;
+  images?: string[];
+  description?: string;
+}
+
+export interface MachineInstance {
+  id: string;
+  serialNumber: string;
+  machineId: string;
+  organizationId: string;
+  location?: string;
 }
 
 export interface NeedleProduct {
@@ -90,6 +157,14 @@ export interface NeedleProduct {
   system: string;
   brand: string;
   imageUrl: string;
+  description?: string;
+}
+
+export interface SparePart {
+  id: string;
+  name: string;
+  compatibleWith: string;
+  imageUrl?: string;
   description?: string;
 }
 
@@ -107,6 +182,7 @@ export interface CreateTicketResponse {
   ticket: {
     id: string;
     machineId: string;
+    serialNumber?: string;
     issueType: IssueType;
     description: string;
     status: TicketStatus;
@@ -120,9 +196,29 @@ export interface CreateTicketResponse {
   remainingCredits: number;
 }
 
+export type TicketEventType = "RAISED" | "ASSIGNED" | "STATUS_CHANGED" | "COMMENT" | "ATTACHMENT";
+
+export interface TicketEvent {
+  id: string;
+  type: TicketEventType;
+  description: string;
+  authorName?: string;
+  createdAt: string;
+}
+
+export type AttachmentKind = "image" | "video";
+
+export interface TicketAttachment {
+  id: string;
+  kind: AttachmentKind;
+  url: string;
+  uploadedAt: string;
+}
+
 export interface CustomerTicket {
   id: string;
   machineId: string;
+  serialNumber?: string;
   createdByUserId: string;
   issueType: IssueType;
   description: string;
@@ -132,6 +228,8 @@ export interface CustomerTicket {
     fromCache: boolean;
     creditsUsed: number;
   };
+  events: TicketEvent[];
+  attachments?: TicketAttachment[];
   createdAt: string;
 }
 
@@ -145,9 +243,78 @@ export interface Purchase {
   itemName: string;
   machineModel?: string;
   needleSystem?: string;
+  sparePartName?: string;
   serialNumber?: string;
   quantity: number;
   unitPrice: number;
   totalPrice: number;
   purchaseDate: string;
+}
+
+export type ReorderStatus = "PENDING" | "CONFIRMED" | "FULFILLED";
+
+export interface ReorderRequest {
+  id: string;
+  organizationId: string;
+  organizationName: string;
+  requestedByUserId: string;
+  requestedByName: string;
+  itemType: PurchaseItemType;
+  itemName: string;
+  needleSystem?: string;
+  sparePartName?: string;
+  machineModel?: string;
+  serialNumber?: string;
+  quantity: number;
+  status: ReorderStatus;
+  createdAt: string;
+}
+
+export type PortalSection =
+  | "overview"
+  | "sewing"
+  | "automated"
+  | "needles"
+  | "spareparts"
+  | "garments"
+  | "tickets"
+  | "purchases"
+  | "settings";
+
+export type NotificationChannel = "SMS" | "WHATSAPP";
+export type NotificationStatus = "SIMULATED" | "SENT" | "FAILED";
+
+export interface NotificationLogEntry {
+  id: string;
+  organizationId: string;
+  factoryName: string;
+  toPhone?: string;
+  channel: NotificationChannel;
+  message: string;
+  status: NotificationStatus;
+  createdAt: string;
+}
+
+export interface PortalSearchResult {
+  action: "navigate" | "answer";
+  section?: PortalSection;
+  message: string;
+}
+
+export type GarmentType = "SHIRTS" | "PANTS" | "JEANS";
+
+export interface GarmentProcess {
+  name: string;
+  description: string;
+  machines: Machine[];
+  needles: NeedleProduct[];
+}
+
+export interface GarmentRecommendation {
+  garment: GarmentType;
+  name: string;
+  description: string;
+  machines: Machine[];
+  needles: NeedleProduct[];
+  processes?: GarmentProcess[];
 }

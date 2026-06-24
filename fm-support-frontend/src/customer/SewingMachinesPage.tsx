@@ -6,7 +6,7 @@ export default function SewingMachinesPage({ user }: { user: CustomerUser }) {
     <MachineIssueSection
       user={user}
       productLine="SEWING"
-      intro="Lockstitch and overlock machines for everyday garment sewing. Select your machine, describe the problem, and get instant AI guidance."
+      introKey="machines.intro.sewing"
     />
   );
 }

@@ -6,14 +6,17 @@ import OverviewPage from "./OverviewPage";
 import SewingMachinesPage from "./SewingMachinesPage";
 import AutomatedMachinesPage from "./AutomatedMachinesPage";
 import NeedlesPage from "./NeedlesPage";
+import SparePartsPage from "./SparePartsPage";
+import GarmentGuidePage from "./GarmentGuidePage";
 import TicketHistoryPage from "./TicketHistoryPage";
 import PurchaseHistoryPage from "./PurchaseHistoryPage";
 import SettingsPage from "./SettingsPage";
+import { LanguageProvider } from "./i18n";
 import type { CustomerUser } from "../types";
 
 const USER_KEY = "fm_customer_user";
 
-export default function CustomerApp() {
+function CustomerAppInner() {
   const [user, setUser] = useState<CustomerUser | null>(() => {
     const raw = sessionStorage.getItem(USER_KEY);
     return raw ? (JSON.parse(raw) as CustomerUser) : null;
@@ -40,7 +43,6 @@ export default function CustomerApp() {
       active={section}
       onNavigate={setSection}
       userName={user.name}
-      userRole={user.role}
       organizationName={user.organizationName}
       onLogout={handleLogout}
     >
@@ -48,9 +50,19 @@ export default function CustomerApp() {
       {section === "sewing" && <SewingMachinesPage user={user} />}
       {section === "automated" && <AutomatedMachinesPage user={user} />}
       {section === "needles" && <NeedlesPage user={user} />}
+      {section === "spareparts" && <SparePartsPage user={user} />}
+      {section === "garments" && <GarmentGuidePage user={user} />}
       {section === "tickets" && <TicketHistoryPage user={user} />}
       {section === "purchases" && <PurchaseHistoryPage user={user} />}
       {section === "settings" && <SettingsPage user={user} onSwitchAccount={handleLogout} />}
     </CustomerLayout>
+  );
+}
+
+export default function CustomerApp() {
+  return (
+    <LanguageProvider>
+      <CustomerAppInner />
+    </LanguageProvider>
   );
 }

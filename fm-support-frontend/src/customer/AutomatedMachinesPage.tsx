@@ -6,7 +6,7 @@ export default function AutomatedMachinesPage({ user }: { user: CustomerUser }) 
     <MachineIssueSection
       user={user}
       productLine="AUTOMATED"
-      intro="Computerized template and interlock machines for automated pattern sewing. Select your machine, describe the problem, and get instant AI guidance."
+      introKey="machines.intro.automated"
     />
   );
 }

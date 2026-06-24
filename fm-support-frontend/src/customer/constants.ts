@@ -1,0 +1,1 @@
+export const TECHNICIAN_PHONE = "+8801989716003";

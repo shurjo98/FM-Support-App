@@ -14,7 +14,11 @@ export default defineConfig({
       "/users": "http://localhost:4000",
       "/purchases": "http://localhost:4000",
       "/needles": "http://localhost:4000",
+      "/reorders": "http://localhost:4000",
+      "/garments": "http://localhost:4000",
+      "/spareparts": "http://localhost:4000",
       "/public": "http://localhost:4000",
+      "/uploads": "http://localhost:4000",
     },
   },
 });

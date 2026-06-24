@@ -1,0 +1,42 @@
+{
+  "name": "fm-support-desktop",
+  "version": "1.0.0",
+  "description": "FM Support native desktop app (Windows/Mac) — a branded shell around the hosted FM Support web app.",
+  "main": "main.js",
+  "author": "FM Corporation",
+  "license": "ISC",
+  "scripts": {
+    "start": "electron .",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "dist:all": "electron-builder --mac --win"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.fmcorporation.fmsupport",
+    "productName": "FM Support",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "config.json"
+    ],
+    "icon": "build/icon.png",
+    "mac": {
+      "category": "public.app-category.business",
+      "target": ["dmg", "zip"]
+    },
+    "win": {
+      "target": ["nsis"]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

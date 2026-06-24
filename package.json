@@ -7,17 +7,25 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "cd fm-support-frontend && npm install && npm run build",
-    "start": "ts-node --transpile-only src/index.ts"
+    "start": "ts-node --transpile-only src/index.ts",
+    "postinstall": "prisma generate",
+    "db:seed": "ts-node --transpile-only prisma/seed.ts",
+    "db:migrate": "prisma migrate dev"
+  },
+  "prisma": {
+    "seed": "ts-node --transpile-only prisma/seed.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "openai": "^6.13.0",
+    "prisma": "^5.22.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
