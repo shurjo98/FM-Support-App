@@ -2,14 +2,24 @@
 import OpenAI from "openai";
 import { toFile } from "openai/uploads";
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 // Real OpenAI calls are switched off for now (no product-trained model yet —
 // ticket suggestions already use canned responses in aiService.ts). Flip
 // OPENAI_DEMO_MODE to "false" and set OPENAI_API_KEY once a real key/model
 // is ready to wire back in.
 function isOpenAiEnabled(): boolean {
   return Boolean(process.env.OPENAI_API_KEY) && process.env.OPENAI_DEMO_MODE !== "true";
+}
+
+// Constructed lazily (only once a caller has already confirmed AI is
+// enabled) — the OpenAI SDK throws immediately at construction time if no
+// API key is present, which would crash the server at boot if this ran
+// eagerly at module load.
+let _client: OpenAI | null = null;
+function getClient(): OpenAI {
+  if (!_client) {
+    _client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+  return _client;
 }
 
 export type AiDiagnosis = {
@@ -78,7 +88,7 @@ export async function diagnoseText(params: {
     },
   } as const;
 
-  const resp = await client.chat.completions.create({
+  const resp = await getClient().chat.completions.create({
     model: process.env.OPENAI_DIAGNOSE_MODEL || "gpt-4o-mini",
     temperature: 0.2,
     response_format: { type: "json_schema", json_schema: schema },
@@ -180,7 +190,7 @@ export async function routePortalQuery(params: { query: string; lang: "en" | "bn
     },
   } as const;
 
-  const resp = await client.chat.completions.create({
+  const resp = await getClient().chat.completions.create({
     model: process.env.OPENAI_PORTAL_SEARCH_MODEL || "gpt-4o-mini",
     temperature: 0.2,
     response_format: { type: "json_schema", json_schema: schema },
@@ -211,7 +221,7 @@ export async function textToSpeechBangla(text: string): Promise<Buffer> {
     throw new Error("Voice features are disabled while AI is switched off.");
   }
 
-  const response = await client.audio.speech.create({
+  const response = await getClient().audio.speech.create({
     model: process.env.OPENAI_TTS_MODEL || "gpt-4o-mini-tts",
     voice: process.env.OPENAI_TTS_VOICE || "nova",
     // ✅ IMPORTANT: no prefix like "বাংলায় পড়ো:" (it gets spoken)
@@ -241,7 +251,7 @@ export async function transcribeBanglaAudio(audio: Buffer, mimeType: string): Pr
 
   const file = await toFile(audio, `speech.${ext}`, { type: mimeType });
 
-  const resp = await client.audio.transcriptions.create({
+  const resp = await getClient().audio.transcriptions.create({
     model: process.env.OPENAI_STT_MODEL || "gpt-4o-mini-transcribe",
     file,
     language: "bn",
