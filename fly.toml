@@ -1,0 +1,33 @@
+# Fly.io app config. App names must be globally unique on Fly — if
+# "fm-support-backend" is taken, change `app` here (or let `fly launch`
+# rename it for you) before running `fly deploy`.
+app = "fm-support-backend"
+primary_region = "sin"
+
+[build]
+
+[env]
+  PORT = "4000"
+  OPENAI_DEMO_MODE = "true"
+
+[deploy]
+  release_command = "npx prisma migrate deploy"
+
+[http_service]
+  internal_port = 4000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/health"
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

@@ -1,0 +1,9 @@
+node_modules
+fm-support-frontend/node_modules
+fm-support-frontend/dist
+fm-support-desktop
+uploads
+.git
+.env
+.env.*
+*.log
