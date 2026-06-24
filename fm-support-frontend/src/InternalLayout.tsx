@@ -28,7 +28,7 @@ export default function InternalLayout({
   return (
     <div className="int-shell">
       <aside className="int-sidebar">
-        <div className="int-logo">
+        <a className="int-logo" href="/" title="Back to home">
           <div className="int-logo-badge">
             <img src="/public/logo/No_BG.png" alt="FM" />
           </div>
@@ -36,7 +36,11 @@ export default function InternalLayout({
             <div className="int-logo-text">FM Support</div>
             <div className="int-logo-sub">Internal Dashboard</div>
           </div>
-        </div>
+        </a>
+        <a className="int-nav-item int-home-link" href="/">
+          <span className="int-nav-icon">⬅️</span>
+          Home
+        </a>
 
         <nav className="int-nav">
           {NAV_ITEMS.map((item) => (

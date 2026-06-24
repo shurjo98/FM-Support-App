@@ -175,6 +175,33 @@ router.post("/", async (req, res) => {
       include: ticketInclude,
     });
 
+    // Every customer-raised ticket should show up for the internal team to
+    // triage, so drop a matching task straight into the Kanban backlog.
+    await prisma.internalTask.create({
+      data: {
+        id: `task-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        title: `New ticket: ${issueType.replaceAll("_", " ")} — ${machine.name} (${serialNumber})`,
+        description: `Reported by ${user.name}: ${description}`,
+        column: "BACKLOG",
+        priority: "MEDIUM",
+        assigneeId: null,
+        createdByAccountId: "Customer Portal",
+        relatedTicketId: newTicket.id,
+        events: {
+          create: [
+            {
+              id: `tev-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+              type: "CREATED",
+              description: `Auto-created from ticket raised by ${user.name}`,
+              authorAccountId: "Customer Portal",
+              authorName: "Customer Portal",
+              createdAt: new Date(),
+            },
+          ],
+        },
+      },
+    });
+
     const remainingUser = await prisma.user.findUnique({ where: { id: user.id } });
 
     return res.status(201).json({

@@ -47,6 +47,13 @@
   padding: 0 6px 20px;
   margin-bottom: 10px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  color: inherit;
+  text-decoration: none;
+}
+
+.cust-home-link {
+  margin-bottom: 12px;
+  text-decoration: none;
 }
 
 .cust-logo-badge {

@@ -44,7 +44,7 @@ export default function CustomerLayout({
   return (
     <div className="cust-shell">
       <aside className="cust-sidebar">
-        <div className="cust-logo">
+        <a className="cust-logo" href="/" title="Back to home">
           <div className="cust-logo-badge">
             <img src="/public/logo/No_BG.png" alt="FM" />
           </div>
@@ -52,7 +52,11 @@ export default function CustomerLayout({
             <div className="cust-logo-text">FM Factory Support</div>
             <div className="cust-logo-sub">Customer Portal</div>
           </div>
-        </div>
+        </a>
+        <a className="cust-nav-item cust-home-link" href="/">
+          <span className="cust-nav-icon">⬅️</span>
+          Home
+        </a>
 
         <nav className="cust-nav">
           {NAV_ITEMS.map((item) => (

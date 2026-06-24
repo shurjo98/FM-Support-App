@@ -5,11 +5,18 @@ import InternalApp from "./InternalApp";
 import SplashScreen from "./SplashScreen";
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => !sessionStorage.getItem("fm-splash-shown"));
   const path = window.location.pathname;
 
   if (showSplash) {
-    return <SplashScreen onDone={() => setShowSplash(false)} />;
+    return (
+      <SplashScreen
+        onDone={() => {
+          sessionStorage.setItem("fm-splash-shown", "1");
+          setShowSplash(false);
+        }}
+      />
+    );
   }
 
   if (path.startsWith("/customer")) return <CustomerApp />;
