@@ -1,0 +1,21 @@
+export function initials(name: string): string {
+  return name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
+}
+
+export function Avatar({ name, avatarUrl, size = 36 }: { name: string; avatarUrl?: string | null; size?: number }) {
+  if (avatarUrl) {
+    return (
+      <img
+        src={avatarUrl}
+        alt={name}
+        className="avatar-img"
+        style={{ width: size, height: size, borderRadius: "50%", objectFit: "cover" }}
+      />
+    );
+  }
+  return (
+    <span className="kanban-avatar" style={{ width: size, height: size, fontSize: size * 0.38 }} title={name}>
+      {initials(name)}
+    </span>
+  );
+}

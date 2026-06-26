@@ -71,6 +71,18 @@ export interface InternalAccountLite {
   id: string;
   name: string;
   role: InternalRole;
+  avatarUrl?: string | null;
+}
+
+export interface TeamGoal {
+  id: string;
+  title: string;
+  description?: string | null;
+  targetValue: number;
+  currentValue: number;
+  unit: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type TaskColumn = "BACKLOG" | "PENDING" | "IN_PROGRESS" | "COMPLETED";

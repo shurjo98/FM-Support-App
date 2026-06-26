@@ -6,6 +6,7 @@ import AssignmentsPage from "./pages/AssignmentsPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import TaskBoardPage from "./pages/TaskBoardPage";
 import ContentStudioPage from "./pages/ContentStudioPage";
+import TeamHubPage from "./pages/TeamHubPage";
 import InternalLayout, { type InternalTab } from "./InternalLayout";
 import type { InternalAccountLite } from "./types";
 
@@ -48,6 +49,11 @@ export default function InternalApp() {
     setActingAccount(null);
   }
 
+  function handleAccountUpdated(account: InternalAccountLite) {
+    sessionStorage.setItem(ACTING_ACCOUNT_KEY, JSON.stringify(account));
+    setActingAccount(account);
+  }
+
   function handleLogout() {
     sessionStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(NAME_KEY);
@@ -81,6 +87,14 @@ export default function InternalApp() {
         <TaskBoardPage token={token} actingAccount={actingAccount} onUnauthorized={handleLogout} />
       )}
       {tab === "content" && <ContentStudioPage actingAccount={actingAccount} />}
+      {tab === "teamhub" && (
+        <TeamHubPage
+          token={token}
+          actingAccount={actingAccount}
+          onAccountUpdated={handleAccountUpdated}
+          onUnauthorized={handleLogout}
+        />
+      )}
       {tab === "notifications" && <NotificationsPage token={token} onUnauthorized={handleLogout} />}
     </InternalLayout>
   );

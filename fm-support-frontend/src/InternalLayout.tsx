@@ -1,13 +1,15 @@
 import { useState, type ReactNode } from "react";
 import type { InternalAccountLite } from "./types";
+import { Avatar } from "./Avatar";
 
-export type InternalTab = "dashboard" | "assignments" | "tasks" | "content" | "notifications";
+export type InternalTab = "dashboard" | "assignments" | "tasks" | "content" | "teamhub" | "notifications";
 
 const NAV_ITEMS: { key: InternalTab; label: string; icon: string }[] = [
   { key: "dashboard", label: "By Factory", icon: "🏭" },
   { key: "assignments", label: "Assignments", icon: "👥" },
   { key: "tasks", label: "Task Board", icon: "📋" },
   { key: "content", label: "Content Studio", icon: "📰" },
+  { key: "teamhub", label: "Team Hub", icon: "🎯" },
   { key: "notifications", label: "Notifications", icon: "🔔" },
 ];
 
@@ -85,6 +87,7 @@ export default function InternalLayout({
             </div>
           </div>
           <div className="int-acting-as">
+            <Avatar name={actingAccount.name} avatarUrl={actingAccount.avatarUrl} size={32} />
             <div className="int-acting-as-info">
               <span className="int-acting-as-name">{actingAccount.name}</span>
               <span className={`int-role-badge int-role-${actingAccount.role.toLowerCase()}`}>

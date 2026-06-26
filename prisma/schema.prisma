@@ -74,11 +74,12 @@ model User {
 }
 
 model InternalAccount {
-  id        String @id
-  accountId String @unique
+  id        String  @id
+  accountId String  @unique
   password  String
   name      String
   role      String
+  avatarUrl String?
 }
 
 model SparePart {
@@ -251,6 +252,20 @@ model GarmentProcess {
   description      String
   machineIds       String[]
   needleProductIds String[]
+}
+
+// Team targets shown as progress bars on the internal "Team Hub" page
+// (e.g. a quarterly sales target, tickets-resolved goal) — set by
+// managers/admins, visible to everyone as a shared sense of direction.
+model TeamGoal {
+  id           String   @id
+  title        String
+  description  String?
+  targetValue  Float
+  currentValue Float    @default(0)
+  unit         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 // Editorial cards staff write (text + an uploaded image) that surface on the

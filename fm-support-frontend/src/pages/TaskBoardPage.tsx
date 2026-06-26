@@ -11,6 +11,7 @@ import {
   UnauthorizedError,
 } from "../api";
 import type { InternalAccountLite, InternalNotification, InternalTask, TaskColumn, TaskEventType, TaskPriority } from "../types";
+import { Avatar } from "../Avatar";
 
 const COLUMNS: { key: TaskColumn; label: string }[] = [
   { key: "BACKLOG", label: "Backlog" },
@@ -36,10 +37,6 @@ const EVENT_ICON: Record<TaskEventType, string> = {
   ASSIGNED: "👤",
   DUE_DATE_CHANGED: "📅",
 };
-
-function initials(name: string): string {
-  return name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
-}
 
 function isOverdue(task: InternalTask): boolean {
   if (!task.dueDate || task.column === "COMPLETED") return false;
@@ -211,9 +208,11 @@ export default function TaskBoardPage({
                     <div className="kanban-card-footer">
                       {task.comments.length > 0 && <span className="kanban-comment-count">💬 {task.comments.length}</span>}
                       {task.assigneeName ? (
-                        <span className="kanban-avatar" title={task.assigneeName}>
-                          {initials(task.assigneeName)}
-                        </span>
+                        <Avatar
+                          name={task.assigneeName}
+                          avatarUrl={accounts.find((a) => a.id === task.assigneeId)?.avatarUrl}
+                          size={28}
+                        />
                       ) : (
                         <span className="empty">Unassigned</span>
                       )}
@@ -424,7 +423,7 @@ function TaskDetailModal({
           {task.comments.length === 0 && <p className="empty">No comments yet — leave feedback below.</p>}
           {task.comments.map((c) => (
             <div key={c.id} className="int-comment-item">
-              <span className="kanban-avatar">{initials(c.authorName)}</span>
+              <Avatar name={c.authorName} avatarUrl={accounts.find((a) => a.id === c.authorAccountId)?.avatarUrl} size={32} />
               <div>
                 <div className="int-comment-author">{c.authorName}</div>
                 <div>{c.text}</div>

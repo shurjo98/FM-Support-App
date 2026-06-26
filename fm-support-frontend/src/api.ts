@@ -23,6 +23,7 @@ import type {
   SparePart,
   TaskColumn,
   TaskPriority,
+  TeamGoal,
 } from "./types";
 
 type SuggestionLang = "en" | "bn";
@@ -78,6 +79,66 @@ export function fetchAssignments(token: string): Promise<AssignmentsResponse> {
 
 export function fetchInternalAccounts(token: string): Promise<InternalAccountLite[]> {
   return authedGet<InternalAccountLite[]>("/dashboard/accounts", token);
+}
+
+export async function uploadAvatar(accountId: string, file: File): Promise<InternalAccountLite> {
+  const res = await fetch(`/dashboard/accounts/${encodeURIComponent(accountId)}/avatar`, {
+    method: "POST",
+    headers: { "Content-Type": file.type },
+    body: file,
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `Failed to upload avatar (${res.status})`);
+  return body;
+}
+
+export async function fetchTeamGoals(): Promise<TeamGoal[]> {
+  const res = await fetch("/dashboard/goals");
+  if (!res.ok) throw new Error(`Failed to load team goals (${res.status})`);
+  return res.json();
+}
+
+export async function createTeamGoal(payload: {
+  title: string;
+  description?: string;
+  targetValue: number;
+  currentValue?: number;
+  unit: string;
+  actingAccountId: string;
+}): Promise<TeamGoal> {
+  const res = await fetch("/dashboard/goals", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `Failed to create goal (${res.status})`);
+  return body;
+}
+
+export async function updateTeamGoal(
+  id: string,
+  payload: Partial<Pick<TeamGoal, "title" | "description" | "targetValue" | "currentValue" | "unit">> & {
+    actingAccountId: string;
+  }
+): Promise<TeamGoal> {
+  const res = await fetch(`/dashboard/goals/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `Failed to update goal (${res.status})`);
+  return body;
+}
+
+export async function deleteTeamGoal(id: string, actingAccountId: string): Promise<{ ok: boolean }> {
+  const res = await fetch(`/dashboard/goals/${encodeURIComponent(id)}?actingAccountId=${encodeURIComponent(actingAccountId)}`, {
+    method: "DELETE",
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `Failed to delete goal (${res.status})`);
+  return body;
 }
 
 export function fetchTasks(token: string): Promise<InternalTask[]> {

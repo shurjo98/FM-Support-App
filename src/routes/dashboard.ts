@@ -1,5 +1,7 @@
 // src/routes/dashboard.ts
-import { Router } from "express";
+import express, { Router } from "express";
+import fs from "fs";
+import path from "path";
 import { prisma } from "../db";
 import type { ReorderStatus, TaskColumn, TaskPriority } from "../types";
 import { requireInternalAuth } from "../middleware/requireInternalAuth";
@@ -7,6 +9,15 @@ import { notify } from "../services/notificationService";
 import type { Prisma } from "@prisma/client";
 
 const router = Router();
+
+const UPLOADS_DIR = path.join(__dirname, "..", "..", "uploads");
+fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+const AVATAR_MIME_EXT: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+};
 
 // TEMP: login is disabled while we're testing the apps end-to-end.
 // Flip back to true to require internal login before launch.
@@ -29,7 +40,123 @@ async function canManageTasks(accountId?: string): Promise<boolean> {
 // the "acting as" switcher and the task assignee picker.
 router.get("/accounts", async (req, res) => {
   const accounts = await prisma.internalAccount.findMany();
-  res.json(accounts.map((a) => ({ id: a.id, name: a.name, role: a.role })));
+  res.json(accounts.map((a) => ({ id: a.id, name: a.name, role: a.role, avatarUrl: a.avatarUrl })));
+});
+
+// POST /dashboard/accounts/:id/avatar -> upload a profile picture (raw image
+// bytes, same pattern as ticket attachments / content card images).
+router.post(
+  "/accounts/:id/avatar",
+  express.raw({ type: Object.keys(AVATAR_MIME_EXT), limit: "10mb" }),
+  async (req, res) => {
+    const { id } = req.params;
+    const account = await prisma.internalAccount.findUnique({ where: { id } });
+    if (!account) return res.status(404).json({ error: "Account not found" });
+
+    const mimeType = (req.headers["content-type"]?.toString() || "").split(";")[0]?.trim() ?? "";
+    const ext = AVATAR_MIME_EXT[mimeType];
+    if (!ext) return res.status(400).json({ error: "Unsupported image type" });
+
+    const buf = Buffer.isBuffer(req.body) ? req.body : Buffer.from(req.body || "");
+    if (!buf.length) return res.status(400).json({ error: "Missing image bytes" });
+
+    const filename = `avatar-${id}-${Date.now()}.${ext}`;
+    fs.writeFileSync(path.join(UPLOADS_DIR, filename), buf);
+
+    const updated = await prisma.internalAccount.update({
+      where: { id },
+      data: { avatarUrl: `/uploads/${filename}` },
+    });
+
+    res.status(201).json({ id: updated.id, name: updated.name, role: updated.role, avatarUrl: updated.avatarUrl });
+  }
+);
+
+// GET /dashboard/goals -> team vision / targets, visible to everyone
+router.get("/goals", async (req, res) => {
+  const goals = await prisma.teamGoal.findMany({ orderBy: { createdAt: "asc" } });
+  res.json(goals);
+});
+
+// POST /dashboard/goals -> create a team goal (manager/admin only)
+router.post("/goals", async (req, res) => {
+  const { title, description, targetValue, currentValue, unit, actingAccountId } = req.body as {
+    title: string;
+    description?: string;
+    targetValue: number;
+    currentValue?: number;
+    unit: string;
+    actingAccountId: string;
+  };
+
+  if (!(await canManageTasks(actingAccountId))) {
+    return res.status(403).json({ error: "Only a manager or admin can set team goals." });
+  }
+  if (!title?.trim() || !unit?.trim() || !targetValue) {
+    return res.status(400).json({ error: "title, unit, and targetValue are required" });
+  }
+
+  const goal = await prisma.teamGoal.create({
+    data: {
+      id: `goal-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      title: title.trim(),
+      description: description?.trim() || null,
+      targetValue,
+      currentValue: currentValue ?? 0,
+      unit: unit.trim(),
+    },
+  });
+
+  res.status(201).json(goal);
+});
+
+// PATCH /dashboard/goals/:id -> update progress/fields (manager/admin only)
+router.patch("/goals/:id", async (req, res) => {
+  const { id } = req.params;
+  const { title, description, targetValue, currentValue, unit, actingAccountId } = req.body as {
+    title?: string;
+    description?: string | null;
+    targetValue?: number;
+    currentValue?: number;
+    unit?: string;
+    actingAccountId: string;
+  };
+
+  if (!(await canManageTasks(actingAccountId))) {
+    return res.status(403).json({ error: "Only a manager or admin can update team goals." });
+  }
+
+  const goal = await prisma.teamGoal.findUnique({ where: { id } });
+  if (!goal) return res.status(404).json({ error: "Goal not found" });
+
+  const updated = await prisma.teamGoal.update({
+    where: { id },
+    data: {
+      ...(title !== undefined ? { title: title.trim() } : {}),
+      ...(description !== undefined ? { description } : {}),
+      ...(targetValue !== undefined ? { targetValue } : {}),
+      ...(currentValue !== undefined ? { currentValue } : {}),
+      ...(unit !== undefined ? { unit: unit.trim() } : {}),
+    },
+  });
+
+  res.json(updated);
+});
+
+// DELETE /dashboard/goals/:id -> (manager/admin only)
+router.delete("/goals/:id", async (req, res) => {
+  const { id } = req.params;
+  const { actingAccountId } = req.query as { actingAccountId?: string };
+
+  if (!(await canManageTasks(actingAccountId))) {
+    return res.status(403).json({ error: "Only a manager or admin can delete team goals." });
+  }
+
+  const goal = await prisma.teamGoal.findUnique({ where: { id } });
+  if (!goal) return res.status(404).json({ error: "Goal not found" });
+
+  await prisma.teamGoal.delete({ where: { id } });
+  res.json({ ok: true });
 });
 
 // GET /dashboard -> tickets grouped by factory (organization) and worker (user)
