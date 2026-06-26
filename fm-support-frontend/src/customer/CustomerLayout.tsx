@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useLang, type TranslationKey } from "./i18n";
 import PortalSearchBar from "./PortalSearchBar";
 
@@ -40,10 +40,18 @@ export default function CustomerLayout({
   children: ReactNode;
 }) {
   const { lang, setLang, t } = useLang();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  function navigate(section: CustomerSection) {
+    onNavigate(section);
+    setMenuOpen(false);
+  }
 
   return (
     <div className="cust-shell">
-      <aside className="cust-sidebar">
+      {menuOpen && <div className="cust-sidebar-backdrop" onClick={() => setMenuOpen(false)} />}
+
+      <aside className={`cust-sidebar ${menuOpen ? "mobile-open" : ""}`}>
         <a className="cust-logo" href="/" title="Back to home">
           <div className="cust-logo-badge">
             <img src="/public/logo/No_BG.png" alt="FM" />
@@ -63,7 +71,7 @@ export default function CustomerLayout({
             <button
               key={item.key}
               className={`cust-nav-item ${active === item.key ? "active" : ""}`}
-              onClick={() => onNavigate(item.key)}
+              onClick={() => navigate(item.key)}
             >
               <span className="cust-nav-icon">{item.icon}</span>
               {t(item.labelKey)}
@@ -82,7 +90,7 @@ export default function CustomerLayout({
           </div>
           <button
             className={`cust-nav-item ${active === "settings" ? "active" : ""}`}
-            onClick={() => onNavigate("settings")}
+            onClick={() => navigate("settings")}
           >
             <span className="cust-nav-icon">⚙️</span>
             {t("nav.settings")}
@@ -96,9 +104,14 @@ export default function CustomerLayout({
 
       <div className="cust-main">
         <header className="cust-topbar">
-          <div>
-            <h1>{t(NAV_ITEMS.find((n) => n.key === active)?.labelKey ?? "nav.settings")}</h1>
-            <div className="cust-topbar-sub">{t("topbar.subtitle")}</div>
+          <div className="cust-topbar-left">
+            <button className="cust-hamburger" onClick={() => setMenuOpen((o) => !o)} aria-label="Menu">
+              ☰
+            </button>
+            <div>
+              <h1>{t(NAV_ITEMS.find((n) => n.key === active)?.labelKey ?? "nav.settings")}</h1>
+              <div className="cust-topbar-sub">{t("topbar.subtitle")}</div>
+            </div>
           </div>
           <div className="cust-profile">
             <div className="cust-profile-name">{userName}</div>

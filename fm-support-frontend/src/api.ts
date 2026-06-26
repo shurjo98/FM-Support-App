@@ -1,5 +1,6 @@
 import type {
   AssignmentsResponse,
+  ContentCard,
   CreateTicketResponse,
   CustomerTicket,
   CustomerUser,
@@ -260,6 +261,63 @@ export async function searchPortal(query: string, lang: SuggestionLang): Promise
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(body.error ?? `Search failed (${res.status})`);
+  return body;
+}
+
+export async function fetchContentCards(publishedOnly: boolean): Promise<ContentCard[]> {
+  const res = await fetch(`/content${publishedOnly ? "?published=true" : ""}`);
+  if (!res.ok) throw new Error(`Failed to load content (${res.status})`);
+  return res.json();
+}
+
+export async function uploadContentImage(file: File): Promise<{ url: string }> {
+  const res = await fetch("/content/upload", {
+    method: "POST",
+    headers: { "Content-Type": file.type },
+    body: file,
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `Failed to upload image (${res.status})`);
+  return body;
+}
+
+export async function createContentCard(payload: {
+  title: string;
+  subtitle?: string;
+  body?: string;
+  imageUrl: string;
+  published?: boolean;
+  order?: number;
+  actingAccountId: string;
+}): Promise<ContentCard> {
+  const res = await fetch("/content", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const responseBody = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(responseBody.error ?? `Failed to create content card (${res.status})`);
+  return responseBody;
+}
+
+export async function updateContentCard(
+  id: string,
+  payload: Partial<Pick<ContentCard, "title" | "subtitle" | "body" | "imageUrl" | "published" | "order">>
+): Promise<ContentCard> {
+  const res = await fetch(`/content/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `Failed to update content card (${res.status})`);
+  return body;
+}
+
+export async function deleteContentCard(id: string): Promise<{ ok: boolean }> {
+  const res = await fetch(`/content/${encodeURIComponent(id)}`, { method: "DELETE" });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `Failed to delete content card (${res.status})`);
   return body;
 }
 

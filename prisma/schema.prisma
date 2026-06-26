@@ -253,6 +253,22 @@ model GarmentProcess {
   needleProductIds String[]
 }
 
+// Editorial cards staff write (text + an uploaded image) that surface on the
+// customer portal homepage as an Apple App-Store-style featured carousel.
+model ContentCard {
+  id                 String   @id
+  title              String
+  subtitle           String?
+  body               String?
+  imageUrl           String
+  published          Boolean  @default(true)
+  order              Int      @default(0)
+  createdByAccountId String
+  createdByName      String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
 model CachedAnswer {
   key       String   @id
   issueType String

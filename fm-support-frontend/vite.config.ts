@@ -19,6 +19,7 @@ export default defineConfig({
       "/spareparts": "http://localhost:4000",
       "/public": "http://localhost:4000",
       "/uploads": "http://localhost:4000",
+      "/content": "http://localhost:4000",
     },
   },
 });

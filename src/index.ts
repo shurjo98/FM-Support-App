@@ -16,6 +16,7 @@ import needlesRouter from "./routes/needles";
 import reordersRouter from "./routes/reorders";
 import garmentsRouter from "./routes/garments";
 import sparePartsRouter from "./routes/spareparts";
+import contentRouter from "./routes/content";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -43,6 +44,7 @@ app.use("/needles", needlesRouter);
 app.use("/reorders", reordersRouter);
 app.use("/garments", garmentsRouter);
 app.use("/spareparts", sparePartsRouter);
+app.use("/content", contentRouter);
 
 // Serve the built frontend (npm run build) so the whole app is reachable
 // from a single URL/port — needed for hosting on Render etc. In local dev,

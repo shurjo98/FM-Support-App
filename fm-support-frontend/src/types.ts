@@ -318,3 +318,17 @@ export interface GarmentRecommendation {
   needles: NeedleProduct[];
   processes?: GarmentProcess[];
 }
+
+export interface ContentCard {
+  id: string;
+  title: string;
+  subtitle?: string | null;
+  body?: string | null;
+  imageUrl: string;
+  published: boolean;
+  order: number;
+  createdByAccountId: string;
+  createdByName: string;
+  createdAt: string;
+  updatedAt: string;
+}

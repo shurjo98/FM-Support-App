@@ -633,6 +633,21 @@ h1 {
   margin-top: 6px;
 }
 
+.int-button-secondary {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #374151;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.int-button-secondary:hover {
+  background: #f3f4f6;
+}
+
 .int-role-badge {
   display: inline-block;
   font-size: 0.65rem;
@@ -1156,4 +1171,199 @@ h1 {
     transform: scale(1.08);
     opacity: 1;
   }
+}
+
+/* ---- Content Studio (internal) ---- */
+
+.content-studio {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.content-grid-card {
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-grid-thumb {
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+  background-color: #f3f4f6;
+}
+
+.content-grid-body {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.content-grid-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.content-grid-title-row h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.content-status-badge {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.content-status-badge.published {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.content-status-badge.draft {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.content-grid-subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.content-grid-meta {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+
+.content-grid-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.content-image-preview {
+  height: 160px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  background-color: #f3f4f6;
+}
+
+/* ---- mobile ---- */
+
+.int-hamburger {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #1f2933;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.int-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.int-sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 880px) {
+  .int-shell {
+    display: block;
+  }
+
+  .int-hamburger {
+    display: inline-flex;
+  }
+
+  .int-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+    width: 260px;
+    background: white;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.25);
+  }
+
+  .int-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .int-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+  }
+
+  .int-main {
+    width: 100%;
+  }
+
+  .int-topbar {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .int-topbar h1 {
+    font-size: 1rem;
+  }
+
+  .int-acting-as-info {
+    display: none;
+  }
+
+  .kanban-page,
+  .content-studio,
+  .dashboard,
+  .assignments {
+    padding: 16px;
+  }
+
+  .kanban-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .kanban-toolbar-actions {
+    flex-wrap: wrap;
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.assignment-card:has(.ticket-table),
+.factory-card:has(table) {
+  overflow-x: auto;
 }

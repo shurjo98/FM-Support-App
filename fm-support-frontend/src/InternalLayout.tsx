@@ -1,12 +1,13 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { InternalAccountLite } from "./types";
 
-export type InternalTab = "dashboard" | "assignments" | "tasks" | "notifications";
+export type InternalTab = "dashboard" | "assignments" | "tasks" | "content" | "notifications";
 
 const NAV_ITEMS: { key: InternalTab; label: string; icon: string }[] = [
   { key: "dashboard", label: "By Factory", icon: "🏭" },
   { key: "assignments", label: "Assignments", icon: "👥" },
   { key: "tasks", label: "Task Board", icon: "📋" },
+  { key: "content", label: "Content Studio", icon: "📰" },
   { key: "notifications", label: "Notifications", icon: "🔔" },
 ];
 
@@ -25,9 +26,18 @@ export default function InternalLayout({
   onLogout: () => void;
   children: ReactNode;
 }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  function navigate(tab: InternalTab) {
+    onNavigate(tab);
+    setMenuOpen(false);
+  }
+
   return (
     <div className="int-shell">
-      <aside className="int-sidebar">
+      {menuOpen && <div className="int-sidebar-backdrop" onClick={() => setMenuOpen(false)} />}
+
+      <aside className={`int-sidebar ${menuOpen ? "mobile-open" : ""}`}>
         <a className="int-logo" href="/" title="Back to home">
           <div className="int-logo-badge">
             <img src="/public/logo/No_BG.png" alt="FM" />
@@ -47,7 +57,7 @@ export default function InternalLayout({
             <button
               key={item.key}
               className={`int-nav-item ${active === item.key ? "active" : ""}`}
-              onClick={() => onNavigate(item.key)}
+              onClick={() => navigate(item.key)}
             >
               <span className="int-nav-icon">{item.icon}</span>
               {item.label}
@@ -65,9 +75,14 @@ export default function InternalLayout({
 
       <div className="int-main">
         <header className="int-topbar">
-          <div>
-            <h1>{NAV_ITEMS.find((n) => n.key === active)?.label}</h1>
-            <div className="int-topbar-sub">FM Factory Support — Internal Team</div>
+          <div className="int-topbar-left">
+            <button className="int-hamburger" onClick={() => setMenuOpen((o) => !o)} aria-label="Menu">
+              ☰
+            </button>
+            <div>
+              <h1>{NAV_ITEMS.find((n) => n.key === active)?.label}</h1>
+              <div className="int-topbar-sub">FM Factory Support — Internal Team</div>
+            </div>
           </div>
           <div className="int-acting-as">
             <div className="int-acting-as-info">

@@ -5,6 +5,7 @@ import DashboardPage from "./pages/DashboardPage";
 import AssignmentsPage from "./pages/AssignmentsPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import TaskBoardPage from "./pages/TaskBoardPage";
+import ContentStudioPage from "./pages/ContentStudioPage";
 import InternalLayout, { type InternalTab } from "./InternalLayout";
 import type { InternalAccountLite } from "./types";
 
@@ -79,6 +80,7 @@ export default function InternalApp() {
       {tab === "tasks" && (
         <TaskBoardPage token={token} actingAccount={actingAccount} onUnauthorized={handleLogout} />
       )}
+      {tab === "content" && <ContentStudioPage actingAccount={actingAccount} />}
       {tab === "notifications" && <NotificationsPage token={token} onUnauthorized={handleLogout} />}
     </InternalLayout>
   );

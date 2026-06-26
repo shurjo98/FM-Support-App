@@ -3,6 +3,7 @@ import { fetchCustomerTickets, fetchPurchases } from "../api";
 import type { CustomerTicket, CustomerUser, Purchase } from "../types";
 import type { CustomerSection } from "./CustomerLayout";
 import { useLang, type TranslationKey } from "./i18n";
+import FeaturedCards from "./FeaturedCards";
 
 const PRODUCT_LINES: { section: CustomerSection; nameKey: TranslationKey; image: string }[] = [
   { section: "sewing", nameKey: "nav.sewing", image: "/public/categories/lockstitch.png" },
@@ -46,6 +47,8 @@ export default function OverviewPage({
   return (
     <div>
       {error && <div className="cust-error">{error}</div>}
+
+      <FeaturedCards />
 
       <div className="cust-stat-grid">
         <div className="cust-card">
