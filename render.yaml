@@ -30,3 +30,13 @@ services:
         value: "true"
       - key: PORT
         value: "4000"
+      # Web Push (mobile/desktop notifications). Generate with:
+      #   npx web-push generate-vapid-keys
+      # and paste the values into the Render dashboard — without these, push
+      # is silently disabled (in-app notifications still work fine).
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_SUBJECT
+        value: "mailto:support@fmcorporation.com"

@@ -20,6 +20,7 @@ export default defineConfig({
       "/public": "http://localhost:4000",
       "/uploads": "http://localhost:4000",
       "/content": "http://localhost:4000",
+      "/push": "http://localhost:4000",
     },
   },
 });

@@ -196,12 +196,42 @@ export function addTaskComment(
   });
 }
 
-export function fetchTaskNotifications(token: string): Promise<InternalNotification[]> {
-  return authedGet<InternalNotification[]>("/dashboard/task-notifications", token);
+export function fetchTaskNotifications(token: string, accountId: string): Promise<InternalNotification[]> {
+  return authedGet<InternalNotification[]>(`/dashboard/task-notifications?accountId=${encodeURIComponent(accountId)}`, token);
 }
 
-export function markAllTaskNotificationsRead(token: string): Promise<{ ok: boolean }> {
-  return authedMutate<{ ok: boolean }>("/dashboard/task-notifications/read-all", token, "PATCH");
+export function markAllTaskNotificationsRead(token: string, actingAccountId: string): Promise<{ ok: boolean }> {
+  return authedMutate<{ ok: boolean }>("/dashboard/task-notifications/read-all", token, "PATCH", { actingAccountId });
+}
+
+export async function fetchVapidPublicKey(): Promise<string | null> {
+  const res = await fetch("/push/vapid-public-key");
+  if (!res.ok) return null;
+  const body = await res.json();
+  return body.publicKey ?? null;
+}
+
+export async function subscribePush(
+  accountId: string,
+  subscription: { endpoint: string; keys: { p256dh: string; auth: string } }
+): Promise<{ ok: boolean }> {
+  const res = await fetch("/push/subscribe", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ accountId, subscription }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `Failed to subscribe to push (${res.status})`);
+  return body;
+}
+
+export async function unsubscribePush(endpoint: string): Promise<{ ok: boolean }> {
+  const res = await fetch("/push/unsubscribe", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ endpoint }),
+  });
+  return res.json().catch(() => ({ ok: false }));
 }
 
 export async function fetchMachines(productLine?: ProductLine, organizationId?: string): Promise<Machine[]> {

@@ -78,14 +78,23 @@ export default function TaskBoardPage({
   }
 
   function loadNotifications() {
-    if (!canManage) return;
-    fetchTaskNotifications(token)
+    fetchTaskNotifications(token, actingAccount.id)
       .then(setNotifications)
       .catch(() => {});
   }
 
   useEffect(load, [token]);
-  useEffect(loadNotifications, [token, canManage]);
+  useEffect(loadNotifications, [token, actingAccount.id]);
+
+  // Auto-refresh: pick up task moves, assignments, and comments made by
+  // other people without needing a manual reload.
+  useEffect(() => {
+    const interval = setInterval(() => {
+      load();
+      loadNotifications();
+    }, 12000);
+    return () => clearInterval(interval);
+  }, [token, actingAccount.id]);
 
   async function handleDrop(column: TaskColumn) {
     if (!draggingId) return;
@@ -117,7 +126,7 @@ export default function TaskBoardPage({
   }
 
   async function handleMarkAllRead() {
-    await markAllTaskNotificationsRead(token).catch(() => {});
+    await markAllTaskNotificationsRead(token, actingAccount.id).catch(() => {});
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   }
 
@@ -139,31 +148,29 @@ export default function TaskBoardPage({
             <input type="checkbox" checked={myTasksOnly} onChange={(e) => setMyTasksOnly(e.target.checked)} />
             My tasks
           </label>
-          {canManage && (
-            <div className="int-bell-wrap">
-              <button className="int-bell" onClick={() => setShowNotifications((s) => !s)}>
-                🔔{unreadCount > 0 && <span className="int-bell-badge">{unreadCount}</span>}
-              </button>
-              {showNotifications && (
-                <div className="int-bell-dropdown">
-                  <div className="int-bell-dropdown-header">
-                    <span>Notifications</span>
-                    <button onClick={handleMarkAllRead}>Mark all read</button>
-                  </div>
-                  {notifications.length === 0 ? (
-                    <p className="empty">No notifications yet.</p>
-                  ) : (
-                    notifications.slice(0, 10).map((n) => (
-                      <div key={n.id} className={`int-bell-item ${n.read ? "" : "unread"}`}>
-                        <div>{n.message}</div>
-                        <div className="int-bell-time">{new Date(n.createdAt).toLocaleString()}</div>
-                      </div>
-                    ))
-                  )}
+          <div className="int-bell-wrap">
+            <button className="int-bell" onClick={() => setShowNotifications((s) => !s)}>
+              🔔{unreadCount > 0 && <span className="int-bell-badge">{unreadCount}</span>}
+            </button>
+            {showNotifications && (
+              <div className="int-bell-dropdown">
+                <div className="int-bell-dropdown-header">
+                  <span>Notifications</span>
+                  <button onClick={handleMarkAllRead}>Mark all read</button>
                 </div>
-              )}
-            </div>
-          )}
+                {notifications.length === 0 ? (
+                  <p className="empty">No notifications yet.</p>
+                ) : (
+                  notifications.slice(0, 10).map((n) => (
+                    <div key={n.id} className={`int-bell-item ${n.read ? "" : "unread"}`}>
+                      <div>{n.message}</div>
+                      <div className="int-bell-time">{new Date(n.createdAt).toLocaleString()}</div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
           {canManage && (
             <button className="int-button" onClick={() => setShowNewTask(true)}>
               + New Task

@@ -130,6 +130,7 @@ export interface InternalNotification {
   taskId: string;
   triggeredByAccountId: string;
   triggeredByName: string;
+  recipientAccountId?: string | null;
   read: boolean;
   createdAt: string;
 }

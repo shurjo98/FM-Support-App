@@ -228,8 +228,22 @@ model InternalNotification {
   taskId               String
   triggeredByAccountId String
   triggeredByName      String
+  // null = broadcast to managers/admins (e.g. "a technician moved a task");
+  // set = aimed at one person (e.g. "you were assigned this task").
+  recipientAccountId   String?
   read                 Boolean  @default(false)
   createdAt            DateTime @default(now())
+}
+
+// A browser/device registered for Web Push. One account can have several
+// (phone + laptop, etc.) — each gets pushed to independently.
+model PushSubscription {
+  id        String   @id
+  accountId String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
 }
 
 model GarmentRecommendation {

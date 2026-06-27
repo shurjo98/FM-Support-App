@@ -11,6 +11,7 @@ import {
 } from "../api";
 import type { InternalAccountLite, InternalTask, TeamGoal } from "../types";
 import { Avatar } from "../Avatar";
+import { enablePushNotifications, isPushSupported } from "../push";
 
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -31,6 +32,8 @@ export default function TeamHubPage({
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [showNewGoal, setShowNewGoal] = useState(false);
+  const [pushStatus, setPushStatus] = useState<string | null>(null);
+  const [enablingPush, setEnablingPush] = useState(false);
 
   const canManage = actingAccount.role === "MANAGER" || actingAccount.role === "ADMIN";
 
@@ -60,6 +63,19 @@ export default function TeamHubPage({
       setError(err instanceof Error ? err.message : "Failed to upload photo");
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function handleEnablePush() {
+    setEnablingPush(true);
+    setPushStatus(null);
+    try {
+      const result = await enablePushNotifications(actingAccount.id);
+      setPushStatus(result.message);
+    } catch (err) {
+      setPushStatus(err instanceof Error ? err.message : "Failed to enable notifications");
+    } finally {
+      setEnablingPush(false);
     }
   }
 
@@ -110,8 +126,14 @@ export default function TeamHubPage({
                   hidden
                 />
               </label>
+              {isPushSupported() && (
+                <button className="int-button-secondary team-avatar-upload" onClick={handleEnablePush} disabled={enablingPush}>
+                  {enablingPush ? "Enabling..." : "🔔 Enable mobile notifications"}
+                </button>
+              )}
             </div>
           </div>
+          {pushStatus && <p className="empty" style={{ marginBottom: 12 }}>{pushStatus}</p>}
 
           <div className="team-stat-row">
             <div className="team-stat">

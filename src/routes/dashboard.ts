@@ -6,6 +6,7 @@ import { prisma } from "../db";
 import type { ReorderStatus, TaskColumn, TaskPriority } from "../types";
 import { requireInternalAuth } from "../middleware/requireInternalAuth";
 import { notify } from "../services/notificationService";
+import { sendPushToAccount } from "../services/pushService";
 import type { Prisma } from "@prisma/client";
 
 const router = Router();
@@ -432,9 +433,37 @@ async function notifyManagersOfMove(task: { id: string; title: string; column: s
       taskId: task.id,
       triggeredByAccountId: mover.id,
       triggeredByName: mover.name,
+      recipientAccountId: null,
       read: false,
     },
   });
+}
+
+// Notifies one specific person (assigned a task, someone commented on their
+// task, etc.) — both as an in-app bell entry and a Web Push notification to
+// any devices they've enabled notifications on. Never notifies someone about
+// their own action.
+async function notifyAccount(
+  recipientAccountId: string,
+  message: string,
+  taskId: string,
+  triggeredBy: { id: string; name: string }
+) {
+  if (recipientAccountId === triggeredBy.id) return;
+
+  await prisma.internalNotification.create({
+    data: {
+      id: `inot-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      message,
+      taskId,
+      triggeredByAccountId: triggeredBy.id,
+      triggeredByName: triggeredBy.name,
+      recipientAccountId,
+      read: false,
+    },
+  });
+
+  await sendPushToAccount(recipientAccountId, { title: "FM Support", body: message });
 }
 
 // GET /dashboard/tasks -> the team Kanban board, everyone can view it
@@ -556,6 +585,10 @@ router.patch("/tasks/:id", async (req, res) => {
     await notifyManagersOfMove(updated, account);
   }
 
+  if (assigneeId && assigneeId !== task.assigneeId) {
+    await notifyAccount(assigneeId, `${account.name} assigned you to "${updated.title}"`, updated.id, account);
+  }
+
   res.json(await enrichTask(updated));
 });
 
@@ -590,6 +623,11 @@ router.post("/tasks/:id/comments", async (req, res) => {
     include: taskInclude,
   });
 
+  const recipients = new Set([task.assigneeId, task.createdByAccountId].filter((id): id is string => Boolean(id)));
+  for (const recipientId of recipients) {
+    await notifyAccount(recipientId, `${account.name} commented on "${task.title}": "${text.trim().slice(0, 80)}"`, task.id, account);
+  }
+
   res.status(201).json(await enrichTask(updated));
 });
 
@@ -609,16 +647,37 @@ router.delete("/tasks/:id", async (req, res) => {
   res.json({ ok: true });
 });
 
-// GET /dashboard/task-notifications -> in-app alerts (e.g. a technician
-// moved a task) — intended for managers/admins.
+// GET /dashboard/task-notifications?accountId=X -> alerts for one person:
+// anything addressed to them directly (assigned, commented on), plus the
+// manager/admin broadcast feed (e.g. "a technician moved a task") if they
+// have that role.
 router.get("/task-notifications", async (req, res) => {
-  const rows = await prisma.internalNotification.findMany({ orderBy: { createdAt: "desc" } });
+  const { accountId } = req.query as { accountId?: string };
+  if (!accountId) return res.json([]);
+
+  const isManager = await canManageTasks(accountId);
+  const rows = await prisma.internalNotification.findMany({
+    where: {
+      OR: [{ recipientAccountId: accountId }, ...(isManager ? [{ recipientAccountId: null }] : [])],
+    },
+    orderBy: { createdAt: "desc" },
+  });
   res.json(rows);
 });
 
-// PATCH /dashboard/task-notifications/read-all -> mark every notification read
+// PATCH /dashboard/task-notifications/read-all?accountId=X -> mark every
+// notification visible to that person as read.
 router.patch("/task-notifications/read-all", async (req, res) => {
-  await prisma.internalNotification.updateMany({ data: { read: true }, where: {} });
+  const { actingAccountId } = req.body as { actingAccountId?: string };
+  if (!actingAccountId) return res.status(400).json({ error: "actingAccountId is required" });
+
+  const isManager = await canManageTasks(actingAccountId);
+  await prisma.internalNotification.updateMany({
+    where: {
+      OR: [{ recipientAccountId: actingAccountId }, ...(isManager ? [{ recipientAccountId: null }] : [])],
+    },
+    data: { read: true },
+  });
   res.json({ ok: true });
 });
 
