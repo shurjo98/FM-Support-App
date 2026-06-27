@@ -290,6 +290,9 @@ model ContentCard {
   subtitle           String?
   body               String?
   imageUrl           String
+  // Extra images beyond the cover (imageUrl) — together they form the
+  // swipeable "story" gallery shown when a customer opens the card.
+  images             String[] @default([])
   published          Boolean  @default(true)
   order              Int      @default(0)
   createdByAccountId String

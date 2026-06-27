@@ -120,9 +120,12 @@
 }
 
 .cust-nav-icon {
-  font-size: 1rem;
   width: 18px;
-  text-align: center;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
 }
 
 .cust-lang-toggle {
@@ -971,14 +974,34 @@
     max-width: 100%;
   }
 
-  .cust-stat-grid,
   .cust-category-row {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* A cramped 2-col grid of 5 stats looks cluttered on a phone — a single
+     scrollable row gives each one room to breathe instead. */
+  .cust-stat-grid {
+    display: flex;
+    grid-template-columns: unset;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 4px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .cust-stat-grid .cust-card {
+    flex: 0 0 auto;
+    width: 132px;
+    scroll-snap-align: start;
+  }
+
+  .cust-section-title {
+    margin-top: 28px;
   }
 }
 
 @media (max-width: 460px) {
-  .cust-stat-grid,
   .cust-category-row {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
@@ -991,4 +1014,163 @@
 
 .cust-card:has(.cust-table) {
   overflow-x: auto;
+}
+
+/* ---- Story view (Apple App Store-style featured story) ---- */
+
+.story-view-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 10, 20, 0.88);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.story-view {
+  width: 100%;
+  max-width: 460px;
+  max-height: 90vh;
+  background: #00203a;
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.story-view-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 5;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.story-view-dots {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 60px;
+  z-index: 5;
+  display: flex;
+  gap: 4px;
+}
+
+.story-view-dot {
+  flex: 1;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.story-view-dot.active {
+  background: white;
+}
+
+.story-view-image-wrap {
+  position: relative;
+  width: 100%;
+  height: 46vh;
+  min-height: 260px;
+  flex-shrink: 0;
+  background: #001b30;
+}
+
+.story-view-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.story-view-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 55%, rgba(0, 32, 58, 0.95) 100%);
+  pointer-events: none;
+}
+
+.story-view-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.story-view-nav.prev {
+  left: 12px;
+}
+
+.story-view-nav.next {
+  right: 12px;
+}
+
+.story-view-content {
+  padding: 24px 24px 28px;
+  overflow-y: auto;
+  color: white;
+}
+
+.story-view-eyebrow {
+  color: #4fb3e8;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.story-view-title {
+  margin: 0 0 12px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.story-view-body {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: pre-wrap;
+}
+
+@media (max-width: 540px) {
+  .story-view-overlay {
+    padding: 0;
+  }
+
+  .story-view {
+    max-width: 100%;
+    max-height: 100vh;
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .story-view-image-wrap {
+    height: 50vh;
+  }
 }

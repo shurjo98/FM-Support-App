@@ -377,6 +377,7 @@ export async function createContentCard(payload: {
   subtitle?: string;
   body?: string;
   imageUrl: string;
+  images?: string[];
   published?: boolean;
   order?: number;
   actingAccountId: string;
@@ -393,7 +394,7 @@ export async function createContentCard(payload: {
 
 export async function updateContentCard(
   id: string,
-  payload: Partial<Pick<ContentCard, "title" | "subtitle" | "body" | "imageUrl" | "published" | "order">>
+  payload: Partial<Pick<ContentCard, "title" | "subtitle" | "body" | "imageUrl" | "images" | "published" | "order">>
 ): Promise<ContentCard> {
   const res = await fetch(`/content/${encodeURIComponent(id)}`, {
     method: "PATCH",

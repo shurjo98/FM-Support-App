@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchContentCards } from "../api";
 import type { ContentCard } from "../types";
-import DetailModal from "./DetailModal";
+import StoryView from "./StoryView";
 
 export default function FeaturedCards() {
   const [cards, setCards] = useState<ContentCard[]>([]);
@@ -27,15 +27,7 @@ export default function FeaturedCards() {
         </button>
       ))}
 
-      {openCard && (
-        <DetailModal
-          title={openCard.title}
-          subtitle={openCard.subtitle ?? undefined}
-          images={[openCard.imageUrl]}
-          description={openCard.body ?? undefined}
-          onClose={() => setOpenCard(null)}
-        />
-      )}
+      {openCard && <StoryView card={openCard} onClose={() => setOpenCard(null)} />}
     </div>
   );
 }

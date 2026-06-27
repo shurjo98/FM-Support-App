@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createContentCard, deleteContentCard, fetchContentCards, updateContentCard, uploadContentImage } from "../api";
 import type { ContentCard, InternalAccountLite } from "../types";
+import { ImagePlus, X, GripVertical } from "lucide-react";
 
 export default function ContentStudioPage({ actingAccount }: { actingAccount: InternalAccountLite }) {
   const [cards, setCards] = useState<ContentCard[] | null>(null);
@@ -41,21 +42,23 @@ export default function ContentStudioPage({ actingAccount }: { actingAccount: In
     <div className="content-studio">
       <div className="kanban-toolbar">
         <p className="empty">
-          Write up a new product, tip, or announcement with a photo — it shows up as a featured card
-          on the customer portal homepage. Anyone on the team can post.
+          Write up a new product, tip, or announcement as a multi-photo story — it shows up as a
+          featured card on the customer portal homepage. Anyone on the team can post.
         </p>
         <button className="int-button" onClick={() => setShowEditor(true)}>
-          + New Card
+          + New Story
         </button>
       </div>
 
       {cards.length === 0 ? (
-        <p className="empty">No content yet. Create the first card above.</p>
+        <p className="empty">No content yet. Create the first story above.</p>
       ) : (
         <div className="content-grid">
           {cards.map((card) => (
             <div key={card.id} className="content-grid-card">
-              <div className="content-grid-thumb" style={{ backgroundImage: `url(${card.imageUrl})` }} />
+              <div className="content-grid-thumb" style={{ backgroundImage: `url(${card.imageUrl})` }}>
+                {card.images.length > 0 && <span className="content-photo-count">+{card.images.length} more</span>}
+              </div>
               <div className="content-grid-body">
                 <div className="content-grid-title-row">
                   <h3>{card.title}</h3>
@@ -124,44 +127,55 @@ function ContentEditorModal({
   const [title, setTitle] = useState(existing?.title ?? "");
   const [subtitle, setSubtitle] = useState(existing?.subtitle ?? "");
   const [body, setBody] = useState(existing?.body ?? "");
-  const [imageUrl, setImageUrl] = useState(existing?.imageUrl ?? "");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState(existing?.imageUrl ?? "");
+  // First photo is the cover shown on the homepage carousel; the rest form
+  // the swipeable story gallery a customer sees after tapping it.
+  const [photos, setPhotos] = useState<string[]>(existing ? [existing.imageUrl, ...existing.images] : []);
+  const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function handleFileChange(file: File | null) {
-    setImageFile(file);
-    if (file) setPreviewUrl(URL.createObjectURL(file));
+  async function handleFilesSelected(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const uploads = await Promise.all(Array.from(files).map((file) => uploadContentImage(file)));
+      setPhotos((prev) => [...prev, ...uploads.map((u) => u.url)]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to upload photo");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  function removePhoto(index: number) {
+    setPhotos((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function makeCover(index: number) {
+    setPhotos((prev) => [prev[index]!, ...prev.filter((_, i) => i !== index)]);
   }
 
   async function handleSubmit() {
-    if (!title.trim()) return;
-    if (!imageFile && !imageUrl) {
-      setError("An image is required.");
-      return;
-    }
+    if (!title.trim() || photos.length === 0) return;
     setSubmitting(true);
     setError(null);
     try {
-      let finalImageUrl = imageUrl;
-      if (imageFile) {
-        const uploaded = await uploadContentImage(imageFile);
-        finalImageUrl = uploaded.url;
-      }
-
+      const [imageUrl, ...images] = photos;
       const card = existing
         ? await updateContentCard(existing.id, {
             title: title.trim(),
             subtitle: subtitle.trim() || undefined,
             body: body.trim() || undefined,
-            imageUrl: finalImageUrl,
+            imageUrl,
+            images,
           })
         : await createContentCard({
             title: title.trim(),
             subtitle: subtitle.trim() || undefined,
             body: body.trim() || undefined,
-            imageUrl: finalImageUrl,
+            imageUrl,
+            images,
             actingAccountId,
           });
       onSaved(card);
@@ -176,18 +190,43 @@ function ContentEditorModal({
     <div className="int-modal-overlay" onClick={onClose}>
       <div className="int-modal" onClick={(e) => e.stopPropagation()}>
         <button className="int-modal-close" onClick={onClose}>
-          ✕
+          <X size={18} />
         </button>
-        <h2 className="int-modal-title">{existing ? "Edit Card" : "New Card"}</h2>
+        <h2 className="int-modal-title">{existing ? "Edit Story" : "New Story"}</h2>
 
         <div className="int-modal-fields">
-          <label>
-            Image
-            <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={(e) => handleFileChange(e.target.files?.[0] ?? null)} />
-          </label>
-          {previewUrl && (
-            <div className="content-image-preview" style={{ backgroundImage: `url(${previewUrl})` }} />
-          )}
+          <label>Story photos (first one is the cover)</label>
+          <div className="story-photo-grid">
+            {photos.map((url, i) => (
+              <div key={url + i} className="story-photo-thumb" style={{ backgroundImage: `url(${url})` }}>
+                {i === 0 && <span className="story-cover-badge">Cover</span>}
+                <button type="button" className="story-photo-remove" onClick={() => removePhoto(i)}>
+                  <X size={12} strokeWidth={3} />
+                </button>
+                {i !== 0 && (
+                  <button type="button" className="story-photo-make-cover" onClick={() => makeCover(i)} title="Make cover">
+                    <GripVertical size={12} />
+                  </button>
+                )}
+              </div>
+            ))}
+            <label className="story-photo-add">
+              {uploading ? "Uploading..." : (
+                <>
+                  <ImagePlus size={20} strokeWidth={1.75} />
+                  Add photos
+                </>
+              )}
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+                multiple
+                onChange={(e) => handleFilesSelected(e.target.files)}
+                disabled={uploading}
+                hidden
+              />
+            </label>
+          </div>
 
           <label>
             Title
@@ -199,13 +238,13 @@ function ContentEditorModal({
           </label>
           <label>
             Body
-            <textarea rows={4} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Full details shown when a customer opens the card" />
+            <textarea rows={4} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Full details shown when a customer opens the story" />
           </label>
 
           {error && <div className="login-error">{error}</div>}
 
-          <button className="int-button" onClick={handleSubmit} disabled={submitting || !title.trim()}>
-            {submitting ? "Saving..." : existing ? "Save changes" : "Publish card"}
+          <button className="int-button" onClick={handleSubmit} disabled={submitting || uploading || !title.trim() || photos.length === 0}>
+            {submitting ? "Saving..." : existing ? "Save changes" : "Publish story"}
           </button>
         </div>
       </div>

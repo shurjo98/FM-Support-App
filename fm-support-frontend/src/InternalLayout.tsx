@@ -1,16 +1,17 @@
 import { useState, type ReactNode } from "react";
+import { ArrowLeft, Factory, Users, Kanban, Newspaper, Target, Bell, LogOut, Menu, RefreshCw, type LucideIcon } from "lucide-react";
 import type { InternalAccountLite } from "./types";
 import { Avatar } from "./Avatar";
 
 export type InternalTab = "dashboard" | "assignments" | "tasks" | "content" | "teamhub" | "notifications";
 
-const NAV_ITEMS: { key: InternalTab; label: string; icon: string }[] = [
-  { key: "dashboard", label: "By Factory", icon: "🏭" },
-  { key: "assignments", label: "Assignments", icon: "👥" },
-  { key: "tasks", label: "Task Board", icon: "📋" },
-  { key: "content", label: "Content Studio", icon: "📰" },
-  { key: "teamhub", label: "Team Hub", icon: "🎯" },
-  { key: "notifications", label: "Notifications", icon: "🔔" },
+const NAV_ITEMS: { key: InternalTab; label: string; icon: LucideIcon }[] = [
+  { key: "dashboard", label: "By Factory", icon: Factory },
+  { key: "assignments", label: "Assignments", icon: Users },
+  { key: "tasks", label: "Task Board", icon: Kanban },
+  { key: "content", label: "Content Studio", icon: Newspaper },
+  { key: "teamhub", label: "Team Hub", icon: Target },
+  { key: "notifications", label: "Notifications", icon: Bell },
 ];
 
 export default function InternalLayout({
@@ -50,7 +51,9 @@ export default function InternalLayout({
           </div>
         </a>
         <a className="int-nav-item int-home-link" href="/">
-          <span className="int-nav-icon">⬅️</span>
+          <span className="int-nav-icon">
+            <ArrowLeft size={18} strokeWidth={2} />
+          </span>
           Home
         </a>
 
@@ -61,7 +64,9 @@ export default function InternalLayout({
               className={`int-nav-item ${active === item.key ? "active" : ""}`}
               onClick={() => navigate(item.key)}
             >
-              <span className="int-nav-icon">{item.icon}</span>
+              <span className="int-nav-icon">
+                <item.icon size={18} strokeWidth={2} />
+              </span>
               {item.label}
             </button>
           ))}
@@ -69,7 +74,9 @@ export default function InternalLayout({
 
         <div className="int-sidebar-footer">
           <button className="int-nav-item" onClick={onLogout}>
-            <span className="int-nav-icon">🚪</span>
+            <span className="int-nav-icon">
+              <LogOut size={18} strokeWidth={2} />
+            </span>
             Log out
           </button>
         </div>
@@ -79,7 +86,7 @@ export default function InternalLayout({
         <header className="int-topbar">
           <div className="int-topbar-left">
             <button className="int-hamburger" onClick={() => setMenuOpen((o) => !o)} aria-label="Menu">
-              ☰
+              <Menu size={22} strokeWidth={2} />
             </button>
             <div>
               <h1>{NAV_ITEMS.find((n) => n.key === active)?.label}</h1>
@@ -95,6 +102,7 @@ export default function InternalLayout({
               </span>
             </div>
             <button className="int-switch-btn" onClick={onSwitchAccount}>
+              <RefreshCw size={14} strokeWidth={2} />
               Switch
             </button>
           </div>

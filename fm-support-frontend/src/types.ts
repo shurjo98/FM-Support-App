@@ -338,6 +338,7 @@ export interface ContentCard {
   subtitle?: string | null;
   body?: string | null;
   imageUrl: string;
+  images: string[];
   published: boolean;
   order: number;
   createdByAccountId: string;

@@ -43,13 +43,16 @@ router.get("/", async (req, res) => {
   res.json(cards);
 });
 
-// POST /content -> create a card (any internal account can write content)
+// POST /content -> create a card (any internal account can write content).
+// imageUrl is the cover shown on the carousel; images is the rest of the
+// "story" gallery shown when a customer opens the card.
 router.post("/", async (req, res) => {
-  const { title, subtitle, body, imageUrl, published, order, actingAccountId } = req.body as {
+  const { title, subtitle, body, imageUrl, images, published, order, actingAccountId } = req.body as {
     title: string;
     subtitle?: string;
     body?: string;
     imageUrl: string;
+    images?: string[];
     published?: boolean;
     order?: number;
     actingAccountId: string;
@@ -67,6 +70,7 @@ router.post("/", async (req, res) => {
       subtitle: subtitle ?? null,
       body: body ?? null,
       imageUrl,
+      images: images ?? [],
       published: published ?? true,
       order: order ?? 0,
       createdByAccountId: author.id,
@@ -80,11 +84,12 @@ router.post("/", async (req, res) => {
 // PATCH /content/:id -> edit fields and/or toggle published
 router.patch("/:id", async (req, res) => {
   const { id } = req.params;
-  const { title, subtitle, body, imageUrl, published, order } = req.body as {
+  const { title, subtitle, body, imageUrl, images, published, order } = req.body as {
     title?: string;
     subtitle?: string | null;
     body?: string | null;
     imageUrl?: string;
+    images?: string[];
     published?: boolean;
     order?: number;
   };
@@ -99,6 +104,7 @@ router.patch("/:id", async (req, res) => {
       ...(subtitle !== undefined ? { subtitle } : {}),
       ...(body !== undefined ? { body } : {}),
       ...(imageUrl !== undefined ? { imageUrl } : {}),
+      ...(images !== undefined ? { images } : {}),
       ...(published !== undefined ? { published } : {}),
       ...(order !== undefined ? { order } : {}),
     },

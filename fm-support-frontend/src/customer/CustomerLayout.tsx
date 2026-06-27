@@ -1,4 +1,19 @@
 import { useState, type ReactNode } from "react";
+import {
+  ArrowLeft,
+  LayoutDashboard,
+  Scissors,
+  Bot,
+  PenTool,
+  Wrench,
+  Shirt,
+  History,
+  Receipt,
+  Settings,
+  LogOut,
+  Menu,
+  type LucideIcon,
+} from "lucide-react";
 import { useLang, type TranslationKey } from "./i18n";
 import PortalSearchBar from "./PortalSearchBar";
 
@@ -13,15 +28,15 @@ export type CustomerSection =
   | "purchases"
   | "settings";
 
-const NAV_ITEMS: { key: CustomerSection; labelKey: TranslationKey; icon: string }[] = [
-  { key: "overview", labelKey: "nav.overview", icon: "🏠" },
-  { key: "sewing", labelKey: "nav.sewing", icon: "🧵" },
-  { key: "automated", labelKey: "nav.automated", icon: "⚙️" },
-  { key: "needles", labelKey: "nav.needles", icon: "📍" },
-  { key: "spareparts", labelKey: "nav.spareparts", icon: "🔧" },
-  { key: "garments", labelKey: "nav.garments", icon: "👕" },
-  { key: "tickets", labelKey: "nav.tickets", icon: "📜" },
-  { key: "purchases", labelKey: "nav.purchases", icon: "🧾" },
+const NAV_ITEMS: { key: CustomerSection; labelKey: TranslationKey; icon: LucideIcon }[] = [
+  { key: "overview", labelKey: "nav.overview", icon: LayoutDashboard },
+  { key: "sewing", labelKey: "nav.sewing", icon: Scissors },
+  { key: "automated", labelKey: "nav.automated", icon: Bot },
+  { key: "needles", labelKey: "nav.needles", icon: PenTool },
+  { key: "spareparts", labelKey: "nav.spareparts", icon: Wrench },
+  { key: "garments", labelKey: "nav.garments", icon: Shirt },
+  { key: "tickets", labelKey: "nav.tickets", icon: History },
+  { key: "purchases", labelKey: "nav.purchases", icon: Receipt },
 ];
 
 export default function CustomerLayout({
@@ -62,7 +77,9 @@ export default function CustomerLayout({
           </div>
         </a>
         <a className="cust-nav-item cust-home-link" href="/">
-          <span className="cust-nav-icon">⬅️</span>
+          <span className="cust-nav-icon">
+            <ArrowLeft size={18} strokeWidth={2} />
+          </span>
           Home
         </a>
 
@@ -73,7 +90,9 @@ export default function CustomerLayout({
               className={`cust-nav-item ${active === item.key ? "active" : ""}`}
               onClick={() => navigate(item.key)}
             >
-              <span className="cust-nav-icon">{item.icon}</span>
+              <span className="cust-nav-icon">
+                <item.icon size={18} strokeWidth={2} />
+              </span>
               {t(item.labelKey)}
             </button>
           ))}
@@ -92,11 +111,15 @@ export default function CustomerLayout({
             className={`cust-nav-item ${active === "settings" ? "active" : ""}`}
             onClick={() => navigate("settings")}
           >
-            <span className="cust-nav-icon">⚙️</span>
+            <span className="cust-nav-icon">
+              <Settings size={18} strokeWidth={2} />
+            </span>
             {t("nav.settings")}
           </button>
           <button className="cust-nav-item" onClick={onLogout}>
-            <span className="cust-nav-icon">🚪</span>
+            <span className="cust-nav-icon">
+              <LogOut size={18} strokeWidth={2} />
+            </span>
             {t("nav.logout")}
           </button>
         </div>
@@ -106,7 +129,7 @@ export default function CustomerLayout({
         <header className="cust-topbar">
           <div className="cust-topbar-left">
             <button className="cust-hamburger" onClick={() => setMenuOpen((o) => !o)} aria-label="Menu">
-              ☰
+              <Menu size={22} strokeWidth={2} />
             </button>
             <div>
               <h1>{t(NAV_ITEMS.find((n) => n.key === active)?.labelKey ?? "nav.settings")}</h1>

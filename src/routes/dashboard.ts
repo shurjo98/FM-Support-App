@@ -472,7 +472,9 @@ router.get("/tasks", async (req, res) => {
   res.json(await Promise.all(tasks.map(enrichTask)));
 });
 
-// POST /dashboard/tasks -> create a task (manager/admin only)
+// POST /dashboard/tasks -> create a task. Open to anyone on the team, so
+// people can add their own tasks — editing another task's details (priority,
+// assignee, etc.) is still manager/admin only, see PATCH below.
 router.post("/tasks", async (req, res) => {
   const { title, description, priority, assigneeId, column, dueDate, actingAccountId } = req.body as {
     title: string;
@@ -484,9 +486,6 @@ router.post("/tasks", async (req, res) => {
     actingAccountId: string;
   };
 
-  if (!(await canManageTasks(actingAccountId))) {
-    return res.status(403).json({ error: "Only a manager or admin can create tasks." });
-  }
   if (!title?.trim()) {
     return res.status(400).json({ error: "title is required" });
   }

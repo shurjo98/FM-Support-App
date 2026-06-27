@@ -541,9 +541,16 @@ h1 {
 }
 
 .int-nav-icon {
-  font-size: 1rem;
   width: 18px;
-  text-align: center;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}
+
+.int-nav-item.active .int-nav-icon {
+  color: #1890d8;
 }
 
 .int-sidebar-footer {
@@ -599,6 +606,9 @@ h1 {
   font-size: 0.8rem;
   cursor: pointer;
   color: #374151;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .int-content {
@@ -614,6 +624,9 @@ h1 {
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .int-button:disabled {
@@ -746,6 +759,13 @@ h1 {
   border-radius: 14px;
   padding: 14px;
   min-height: 200px;
+  transition: background-color 0.15s ease;
+}
+
+.kanban-column.drag-over {
+  background: #dbeafe;
+  outline: 2px dashed #1890d8;
+  outline-offset: -2px;
 }
 
 .kanban-column-header {
@@ -784,11 +804,20 @@ h1 {
   border-radius: 10px;
   padding: 12px 14px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  cursor: pointer;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
 }
 
 .kanban-card.dragging {
-  opacity: 0.4;
+  opacity: 0.35;
+}
+
+.kanban-card-ghost {
+  z-index: 999;
+  cursor: grabbing;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  transform: rotate(-2deg);
 }
 
 .kanban-priority-badge {
@@ -1009,6 +1038,9 @@ h1 {
   font-size: 0.72rem;
   color: #6b7280;
   margin-right: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* ============ notification bell ============ */
@@ -1023,8 +1055,10 @@ h1 {
   background: white;
   border-radius: 8px;
   padding: 8px 12px;
-  font-size: 1rem;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  color: #374151;
 }
 
 .int-bell-badge {
@@ -1266,6 +1300,106 @@ h1 {
   background-size: cover;
   background-position: center;
   background-color: #f3f4f6;
+}
+
+.content-photo-count {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.content-grid-thumb {
+  position: relative;
+}
+
+.story-photo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.story-photo-thumb {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}
+
+.story-cover-badge {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  background: rgba(24, 144, 216, 0.9);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.story-photo-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #dc2626;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.story-photo-make-cover {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.story-photo-add {
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  border: 1.5px dashed #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  color: #6b7280;
+  cursor: pointer;
+  text-align: center;
+}
+
+.story-photo-add:hover {
+  border-color: #1890d8;
+  color: #1890d8;
 }
 
 /* ---- mobile ---- */

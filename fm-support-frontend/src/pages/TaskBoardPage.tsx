@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import {
   addTaskComment,
   createTask,
@@ -12,6 +12,7 @@ import {
 } from "../api";
 import type { InternalAccountLite, InternalNotification, InternalTask, TaskColumn, TaskEventType, TaskPriority } from "../types";
 import { Avatar } from "../Avatar";
+import { Bell, MessageCircle, Plus, Sparkles, ArrowRightLeft, Zap, UserCheck, CalendarClock, type LucideIcon } from "lucide-react";
 
 const COLUMNS: { key: TaskColumn; label: string }[] = [
   { key: "BACKLOG", label: "Backlog" },
@@ -30,17 +31,35 @@ const PRIORITY_COLORS: Record<TaskPriority, string> = {
   URGENT: "#dc2626",
 };
 
-const EVENT_ICON: Record<TaskEventType, string> = {
-  CREATED: "🆕",
-  MOVED: "🔄",
-  PRIORITY_CHANGED: "⚡",
-  ASSIGNED: "👤",
-  DUE_DATE_CHANGED: "📅",
+const EVENT_ICON: Record<TaskEventType, LucideIcon> = {
+  CREATED: Sparkles,
+  MOVED: ArrowRightLeft,
+  PRIORITY_CHANGED: Zap,
+  ASSIGNED: UserCheck,
+  DUE_DATE_CHANGED: CalendarClock,
 };
 
 function isOverdue(task: InternalTask): boolean {
   if (!task.dueDate || task.column === "COMPLETED") return false;
   return new Date(task.dueDate).getTime() < Date.now();
+}
+
+const DRAG_THRESHOLD = 6;
+
+interface DragState {
+  taskId: string;
+  pointerId: number;
+  fromColumn: TaskColumn;
+  originX: number;
+  originY: number;
+  offsetX: number;
+  offsetY: number;
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+  isDragging: boolean;
+  overColumn: TaskColumn | null;
 }
 
 export default function TaskBoardPage({
@@ -56,11 +75,12 @@ export default function TaskBoardPage({
   const [accounts, setAccounts] = useState<InternalAccountLite[]>([]);
   const [notifications, setNotifications] = useState<InternalNotification[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [drag, setDrag] = useState<DragState | null>(null);
   const [detailTask, setDetailTask] = useState<InternalTask | null>(null);
   const [showNewTask, setShowNewTask] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [myTasksOnly, setMyTasksOnly] = useState(false);
+  const columnRefs = useRef<Partial<Record<TaskColumn, HTMLDivElement>>>({});
 
   const canManage = actingAccount.role === "MANAGER" || actingAccount.role === "ADMIN";
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -96,16 +116,72 @@ export default function TaskBoardPage({
     return () => clearInterval(interval);
   }, [token, actingAccount.id]);
 
-  async function handleDrop(column: TaskColumn) {
-    if (!draggingId) return;
-    const taskId = draggingId;
-    setDraggingId(null);
+  async function moveTask(taskId: string, column: TaskColumn) {
     try {
       const updated = await updateTask(token, taskId, { column, actingAccountId: actingAccount.id });
       setTasks((prev) => prev?.map((t) => (t.id === taskId ? updated : t)) ?? prev);
       loadNotifications();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to move task");
+    }
+  }
+
+  // Pointer Events work for mouse AND touch, unlike the old HTML5 drag API
+  // (which never fires on phones/tablets) — this is what makes dragging
+  // cards work on mobile.
+  function handlePointerDown(e: PointerEvent<HTMLDivElement>, task: InternalTask) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    card.setPointerCapture(e.pointerId);
+    setDrag({
+      taskId: task.id,
+      pointerId: e.pointerId,
+      fromColumn: task.column,
+      originX: e.clientX,
+      originY: e.clientY,
+      offsetX: e.clientX - rect.left,
+      offsetY: e.clientY - rect.top,
+      width: rect.width,
+      height: rect.height,
+      x: rect.left,
+      y: rect.top,
+      isDragging: false,
+      overColumn: null,
+    });
+  }
+
+  function handlePointerMove(e: PointerEvent<HTMLDivElement>) {
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    const dx = e.clientX - drag.originX;
+    const dy = e.clientY - drag.originY;
+    const isDragging = drag.isDragging || Math.hypot(dx, dy) > DRAG_THRESHOLD;
+
+    let overColumn = drag.overColumn;
+    if (isDragging) {
+      overColumn = null;
+      for (const col of COLUMNS) {
+        const el = columnRefs.current[col.key];
+        if (!el) continue;
+        const r = el.getBoundingClientRect();
+        if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
+          overColumn = col.key;
+          break;
+        }
+      }
+    }
+
+    setDrag({ ...drag, x: e.clientX - drag.offsetX, y: e.clientY - drag.offsetY, isDragging, overColumn });
+  }
+
+  function handlePointerUp(e: PointerEvent<HTMLDivElement>, task: InternalTask) {
+    if (!drag || e.pointerId !== drag.pointerId) return;
+    const { isDragging, overColumn } = drag;
+    setDrag(null);
+    if (!isDragging) {
+      setDetailTask(task);
+    } else if (overColumn && overColumn !== task.column) {
+      moveTask(task.id, overColumn);
     }
   }
 
@@ -150,7 +226,8 @@ export default function TaskBoardPage({
           </label>
           <div className="int-bell-wrap">
             <button className="int-bell" onClick={() => setShowNotifications((s) => !s)}>
-              🔔{unreadCount > 0 && <span className="int-bell-badge">{unreadCount}</span>}
+              <Bell size={18} strokeWidth={2} />
+              {unreadCount > 0 && <span className="int-bell-badge">{unreadCount}</span>}
             </button>
             {showNotifications && (
               <div className="int-bell-dropdown">
@@ -171,11 +248,10 @@ export default function TaskBoardPage({
               </div>
             )}
           </div>
-          {canManage && (
-            <button className="int-button" onClick={() => setShowNewTask(true)}>
-              + New Task
-            </button>
-          )}
+          <button className="int-button" onClick={() => setShowNewTask(true)}>
+            <Plus size={16} strokeWidth={2.5} />
+            New Task
+          </button>
         </div>
       </div>
 
@@ -186,7 +262,13 @@ export default function TaskBoardPage({
             .slice()
             .sort((a, b) => PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority]);
           return (
-            <div key={col.key} className="kanban-column" onDragOver={(e) => e.preventDefault()} onDrop={() => handleDrop(col.key)}>
+            <div
+              key={col.key}
+              ref={(el) => {
+                if (el) columnRefs.current[col.key] = el;
+              }}
+              className={`kanban-column ${drag?.isDragging && drag.overColumn === col.key ? "drag-over" : ""}`}
+            >
               <div className="kanban-column-header">
                 <span>{col.label}</span>
                 <span className="kanban-column-count">{colTasks.length}</span>
@@ -196,11 +278,11 @@ export default function TaskBoardPage({
                 {colTasks.map((task) => (
                   <div
                     key={task.id}
-                    className={`kanban-card ${draggingId === task.id ? "dragging" : ""}`}
-                    draggable
-                    onDragStart={() => setDraggingId(task.id)}
-                    onDragEnd={() => setDraggingId(null)}
-                    onClick={() => setDetailTask(task)}
+                    className={`kanban-card ${drag?.taskId === task.id && drag.isDragging ? "dragging" : ""}`}
+                    onPointerDown={(e) => handlePointerDown(e, task)}
+                    onPointerMove={handlePointerMove}
+                    onPointerUp={(e) => handlePointerUp(e, task)}
+                    onPointerCancel={() => setDrag(null)}
                   >
                     <span className="kanban-priority-badge" style={{ backgroundColor: PRIORITY_COLORS[task.priority] }}>
                       {task.priority}
@@ -213,7 +295,12 @@ export default function TaskBoardPage({
                       </div>
                     )}
                     <div className="kanban-card-footer">
-                      {task.comments.length > 0 && <span className="kanban-comment-count">💬 {task.comments.length}</span>}
+                      {task.comments.length > 0 && (
+                        <span className="kanban-comment-count">
+                          <MessageCircle size={13} strokeWidth={2} />
+                          {task.comments.length}
+                        </span>
+                      )}
                       {task.assigneeName ? (
                         <Avatar
                           name={task.assigneeName}
@@ -232,6 +319,23 @@ export default function TaskBoardPage({
           );
         })}
       </div>
+
+      {drag?.isDragging &&
+        (() => {
+          const draggedTask = tasks.find((t) => t.id === drag.taskId);
+          if (!draggedTask) return null;
+          return (
+            <div
+              className="kanban-card kanban-card-ghost"
+              style={{ position: "fixed", left: drag.x, top: drag.y, width: drag.width, pointerEvents: "none" }}
+            >
+              <span className="kanban-priority-badge" style={{ backgroundColor: PRIORITY_COLORS[draggedTask.priority] }}>
+                {draggedTask.priority}
+              </span>
+              <div className="kanban-card-title">{draggedTask.title}</div>
+            </div>
+          );
+        })()}
 
       {detailTask && (
         <TaskDetailModal
@@ -412,9 +516,11 @@ function TaskDetailModal({
 
         <h3 className="int-section-heading">Activity</h3>
         <div className="int-activity-feed">
-          {timeline.map((ev) => (
+          {timeline.map((ev) => {
+            const EventIcon = EVENT_ICON[ev.type];
+            return (
             <div key={ev.id} className="int-activity-item">
-              <span>{EVENT_ICON[ev.type]}</span>
+              <span><EventIcon size={15} strokeWidth={2} /></span>
               <div>
                 <div>{ev.description}</div>
                 <div className="int-activity-meta">
@@ -422,7 +528,8 @@ function TaskDetailModal({
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         <h3 className="int-section-heading">Comments</h3>
