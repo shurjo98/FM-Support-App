@@ -20,9 +20,9 @@ const AVATAR_MIME_EXT: Record<string, string> = {
   "image/gif": "gif",
 };
 
-// TEMP: login is disabled while we're testing the apps end-to-end.
-// Flip back to true to require internal login before launch.
-const REQUIRE_LOGIN = false;
+// Internal dashboard requires signing in with the shared FM/1111 credential
+// (see src/services/authService.ts) before reaching the acting-as picker.
+const REQUIRE_LOGIN = true;
 if (REQUIRE_LOGIN) router.use(requireInternalAuth);
 
 async function technicianName(technicianId?: string | null): Promise<string | null> {

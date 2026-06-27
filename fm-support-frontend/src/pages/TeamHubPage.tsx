@@ -38,7 +38,7 @@ export default function TeamHubPage({
   const canManage = actingAccount.role === "MANAGER" || actingAccount.role === "ADMIN";
 
   function load() {
-    Promise.all([fetchInternalAccounts(token), fetchTasks(token), fetchTeamGoals()])
+    Promise.all([fetchInternalAccounts(token), fetchTasks(token), fetchTeamGoals(token)])
       .then(([a, t, g]) => {
         setAccounts(a);
         setGoals(g);
@@ -56,7 +56,7 @@ export default function TeamHubPage({
     if (!file) return;
     setUploading(true);
     try {
-      const updated = await uploadAvatar(actingAccount.id, file);
+      const updated = await uploadAvatar(token, actingAccount.id, file);
       onAccountUpdated(updated);
       setAccounts((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
     } catch (err) {
@@ -81,7 +81,7 @@ export default function TeamHubPage({
 
   async function handleDeleteGoal(id: string) {
     try {
-      await deleteTeamGoal(id, actingAccount.id);
+      await deleteTeamGoal(token, id, actingAccount.id);
       setGoals((prev) => prev.filter((g) => g.id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to delete goal");
@@ -198,7 +198,15 @@ export default function TeamHubPage({
         ) : (
           <div className="goal-list">
             {goals.map((goal) => (
-              <GoalRow key={goal.id} goal={goal} canManage={canManage} actingAccountId={actingAccount.id} onDelete={handleDeleteGoal} onUpdated={(g) => setGoals((prev) => prev.map((x) => (x.id === g.id ? g : x)))} />
+              <GoalRow
+                key={goal.id}
+                token={token}
+                goal={goal}
+                canManage={canManage}
+                actingAccountId={actingAccount.id}
+                onDelete={handleDeleteGoal}
+                onUpdated={(g) => setGoals((prev) => prev.map((x) => (x.id === g.id ? g : x)))}
+              />
             ))}
           </div>
         )}
@@ -206,6 +214,7 @@ export default function TeamHubPage({
 
       {showNewGoal && (
         <NewGoalModal
+          token={token}
           actingAccountId={actingAccount.id}
           onClose={() => setShowNewGoal(false)}
           onCreated={(goal) => {
@@ -219,12 +228,14 @@ export default function TeamHubPage({
 }
 
 function GoalRow({
+  token,
   goal,
   canManage,
   actingAccountId,
   onDelete,
   onUpdated,
 }: {
+  token: string;
   goal: TeamGoal;
   canManage: boolean;
   actingAccountId: string;
@@ -240,7 +251,7 @@ function GoalRow({
     setEditingValue(false);
     if (Number.isNaN(num) || num === goal.currentValue) return;
     try {
-      const updated = await updateTeamGoal(goal.id, { currentValue: num, actingAccountId });
+      const updated = await updateTeamGoal(token, goal.id, { currentValue: num, actingAccountId });
       onUpdated(updated);
     } catch {
       // swallow — leave UI as-is, value will revert visually on next load
@@ -286,10 +297,12 @@ function GoalRow({
 }
 
 function NewGoalModal({
+  token,
   actingAccountId,
   onClose,
   onCreated,
 }: {
+  token: string;
   actingAccountId: string;
   onClose: () => void;
   onCreated: (goal: TeamGoal) => void;
@@ -308,7 +321,7 @@ function NewGoalModal({
     setSubmitting(true);
     setError(null);
     try {
-      const goal = await createTeamGoal({
+      const goal = await createTeamGoal(token, {
         title: title.trim(),
         description: description.trim() || undefined,
         targetValue: target,

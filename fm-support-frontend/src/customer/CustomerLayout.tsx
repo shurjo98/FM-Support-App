@@ -148,6 +148,25 @@ export default function CustomerLayout({
 
         <div className="cust-content">{children}</div>
       </div>
+
+      <nav className="cust-bottom-tabbar">
+        <button className={active === "overview" ? "active" : ""} onClick={() => navigate("overview")}>
+          <LayoutDashboard size={20} strokeWidth={2} />
+          <span>{t("nav.overview")}</span>
+        </button>
+        <button className={active === "tickets" ? "active" : ""} onClick={() => navigate("tickets")}>
+          <History size={20} strokeWidth={2} />
+          <span>{t("nav.tickets")}</span>
+        </button>
+        <button className={active === "purchases" ? "active" : ""} onClick={() => navigate("purchases")}>
+          <Receipt size={20} strokeWidth={2} />
+          <span>{t("nav.purchases")}</span>
+        </button>
+        <button className={menuOpen ? "active" : ""} onClick={() => setMenuOpen(true)}>
+          <Menu size={20} strokeWidth={2} />
+          <span>More</span>
+        </button>
+      </nav>
     </div>
   );
 }

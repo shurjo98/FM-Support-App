@@ -14,10 +14,10 @@ const TOKEN_KEY = "fm_internal_token";
 const NAME_KEY = "fm_internal_name";
 const ACTING_ACCOUNT_KEY = "fm_internal_acting_account";
 
-// TEMP: login is disabled while we're testing the apps end-to-end.
-// Flip back to true to require internal login before launch (also flip
-// REQUIRE_LOGIN back to true in src/routes/dashboard.ts on the backend).
-const REQUIRE_LOGIN = false;
+// Internal team must sign in with the shared FM/1111 credential before
+// picking who they are (see InternalAccountPicker) — also gated on the
+// backend via REQUIRE_LOGIN in src/routes/dashboard.ts.
+const REQUIRE_LOGIN = true;
 
 export default function InternalApp() {
   const [token, setToken] = useState<string | null>(() =>

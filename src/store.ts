@@ -35,7 +35,7 @@ export const internalAccounts: InternalAccount[] = [
   { id: "mgr1", accountId: "faisal.manager", password: "fm12345", name: "Faisal (Manager)", role: "MANAGER" },
   { id: "tech1", accountId: "rashed.tech", password: "fm12345", name: "Rashed (Technician)", role: "TECHNICIAN" },
   { id: "tech2", accountId: "nila.tech", password: "fm12345", name: "Nila (Technician)", role: "TECHNICIAN" },
-  { id: "admin1", accountId: "admin", password: "admin123", name: "Admin Team", role: "ADMIN" },
+  { id: "admin1", accountId: "FM", password: "1111", name: "FM Team", role: "ADMIN" },
   { id: "farhad", accountId: "farhad.manager", password: "fm12345", name: "Farhad (Manager)", role: "MANAGER" },
   { id: "manna", accountId: "manna.tech", password: "fm12345", name: "Manna", role: "TECHNICIAN" },
   { id: "alamin", accountId: "alamin.manager", password: "fm12345", name: "Al Amin (Manager)", role: "MANAGER" },

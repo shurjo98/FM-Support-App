@@ -917,6 +917,10 @@
   gap: 8px;
 }
 
+.cust-bottom-tabbar {
+  display: none;
+}
+
 .cust-sidebar-backdrop {
   display: none;
 }
@@ -970,8 +974,38 @@
   }
 
   .cust-content {
-    padding: 16px 16px 48px;
+    padding: 16px 16px calc(80px + env(safe-area-inset-bottom, 0px));
     max-width: 100%;
+  }
+
+  .cust-bottom-tabbar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 45;
+    background: #00203a;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .cust-bottom-tabbar button {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.65rem;
+    padding: 6px 0;
+    cursor: pointer;
+  }
+
+  .cust-bottom-tabbar button.active {
+    color: #4fb3e8;
   }
 
   .cust-category-row {
