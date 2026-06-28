@@ -7,6 +7,7 @@ import NotificationsPage from "./pages/NotificationsPage";
 import TaskBoardPage from "./pages/TaskBoardPage";
 import ContentStudioPage from "./pages/ContentStudioPage";
 import TeamHubPage from "./pages/TeamHubPage";
+import TeamManagementPage from "./pages/TeamManagementPage";
 import InternalLayout, { type InternalTab } from "./InternalLayout";
 import type { InternalAccountLite } from "./types";
 
@@ -94,6 +95,9 @@ export default function InternalApp() {
           onAccountUpdated={handleAccountUpdated}
           onUnauthorized={handleLogout}
         />
+      )}
+      {tab === "team" && actingAccount.role === "ADMIN" && (
+        <TeamManagementPage token={token} actingAccount={actingAccount} onUnauthorized={handleLogout} />
       )}
       {tab === "notifications" && <NotificationsPage token={token} onUnauthorized={handleLogout} />}
     </InternalLayout>

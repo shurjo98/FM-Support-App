@@ -29,11 +29,122 @@ async function canManageTasks(accountId?: string): Promise<boolean> {
   return account?.role === "MANAGER" || account?.role === "ADMIN";
 }
 
+async function isAdmin(accountId?: string): Promise<boolean> {
+  if (!accountId) return false;
+  const account = await prisma.internalAccount.findUnique({ where: { id: accountId } });
+  return account?.role === "ADMIN";
+}
+
+const VALID_ROLES = ["TECHNICIAN", "MANAGER", "ADMIN"];
+
+function slugify(accountId: string): string {
+  return accountId.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
 // GET /dashboard/accounts -> internal team roster (no passwords), used for
 // the "acting as" switcher and the task assignee picker.
 router.get("/accounts", async (req, res) => {
   const accounts = await prisma.internalAccount.findMany();
   res.json(accounts.map((a) => ({ id: a.id, name: a.name, role: a.role, avatarUrl: a.avatarUrl })));
+});
+
+// POST /dashboard/accounts -> add a new team member (FM Admin only).
+router.post("/accounts", async (req, res) => {
+  const { name, accountId, password, role, actingAccountId } = req.body as {
+    name: string;
+    accountId: string;
+    password: string;
+    role: string;
+    actingAccountId: string;
+  };
+
+  if (!(await isAdmin(actingAccountId))) {
+    return res.status(403).json({ error: "Only an FM Admin can add team members." });
+  }
+  if (!name?.trim() || !accountId?.trim() || !password?.trim() || !VALID_ROLES.includes(role)) {
+    return res.status(400).json({ error: "name, accountId, password, and a valid role are required" });
+  }
+
+  const existing = await prisma.internalAccount.findUnique({ where: { accountId: accountId.trim() } });
+  if (existing) return res.status(409).json({ error: "That login ID is already taken." });
+
+  const baseId = slugify(accountId) || `member-${Date.now()}`;
+  let id = baseId;
+  let suffix = 1;
+  while (await prisma.internalAccount.findUnique({ where: { id } })) {
+    id = `${baseId}-${++suffix}`;
+  }
+
+  const created = await prisma.internalAccount.create({
+    data: { id, accountId: accountId.trim(), password: password.trim(), name: name.trim(), role },
+  });
+
+  res.status(201).json({ id: created.id, name: created.name, role: created.role, avatarUrl: created.avatarUrl });
+});
+
+// PATCH /dashboard/accounts/:id -> edit a team member's name/login/role/password (FM Admin only).
+router.patch("/accounts/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name, accountId, password, role, actingAccountId } = req.body as {
+    name?: string;
+    accountId?: string;
+    password?: string;
+    role?: string;
+    actingAccountId: string;
+  };
+
+  if (!(await isAdmin(actingAccountId))) {
+    return res.status(403).json({ error: "Only an FM Admin can edit team members." });
+  }
+
+  const account = await prisma.internalAccount.findUnique({ where: { id } });
+  if (!account) return res.status(404).json({ error: "Account not found" });
+
+  if (role !== undefined && !VALID_ROLES.includes(role)) {
+    return res.status(400).json({ error: "Invalid role" });
+  }
+  if (accountId !== undefined && accountId.trim() !== account.accountId) {
+    const existing = await prisma.internalAccount.findUnique({ where: { accountId: accountId.trim() } });
+    if (existing) return res.status(409).json({ error: "That login ID is already taken." });
+  }
+
+  const updated = await prisma.internalAccount.update({
+    where: { id },
+    data: {
+      ...(name !== undefined ? { name: name.trim() } : {}),
+      ...(accountId !== undefined ? { accountId: accountId.trim() } : {}),
+      ...(password !== undefined && password.trim() ? { password: password.trim() } : {}),
+      ...(role !== undefined ? { role } : {}),
+    },
+  });
+
+  res.json({ id: updated.id, name: updated.name, role: updated.role, avatarUrl: updated.avatarUrl });
+});
+
+// DELETE /dashboard/accounts/:id -> remove a team member (FM Admin only).
+router.delete("/accounts/:id", async (req, res) => {
+  const { id } = req.params;
+  const { actingAccountId } = req.query as { actingAccountId?: string };
+
+  if (!(await isAdmin(actingAccountId))) {
+    return res.status(403).json({ error: "Only an FM Admin can remove team members." });
+  }
+  if (id === actingAccountId) {
+    return res.status(400).json({ error: "You can't remove your own account while acting as them." });
+  }
+
+  const account = await prisma.internalAccount.findUnique({ where: { id } });
+  if (!account) return res.status(404).json({ error: "Account not found" });
+
+  if (account.role === "ADMIN") {
+    const adminCount = await prisma.internalAccount.count({ where: { role: "ADMIN" } });
+    if (adminCount <= 1) {
+      return res.status(400).json({ error: "Can't remove the last remaining FM Admin." });
+    }
+  }
+
+  await prisma.internalAccount.delete({ where: { id } });
+  res.json({ ok: true });
 });
 
 // POST /dashboard/accounts/:id/avatar -> upload a profile picture (raw image

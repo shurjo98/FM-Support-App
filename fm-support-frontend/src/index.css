@@ -1593,6 +1593,32 @@ h1 {
   gap: 8px;
 }
 
+.team-roster-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.team-roster-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.team-roster-name {
+  flex: 1;
+  font-weight: 600;
+  color: #1f2933;
+}
+
+.team-roster-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .leaderboard-row {
   display: flex;
   align-items: center;

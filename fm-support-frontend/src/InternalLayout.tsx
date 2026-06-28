@@ -1,16 +1,17 @@
 import { useState, type ReactNode } from "react";
-import { ArrowLeft, Factory, Users, Kanban, Newspaper, Target, Bell, LogOut, Menu, RefreshCw, type LucideIcon } from "lucide-react";
+import { ArrowLeft, Factory, Users, Kanban, Newspaper, Target, Bell, LogOut, Menu, RefreshCw, ShieldCheck, type LucideIcon } from "lucide-react";
 import type { InternalAccountLite } from "./types";
 import { Avatar } from "./Avatar";
 
-export type InternalTab = "dashboard" | "assignments" | "tasks" | "content" | "teamhub" | "notifications";
+export type InternalTab = "dashboard" | "assignments" | "tasks" | "content" | "teamhub" | "team" | "notifications";
 
-const NAV_ITEMS: { key: InternalTab; label: string; icon: LucideIcon }[] = [
+const NAV_ITEMS: { key: InternalTab; label: string; icon: LucideIcon; adminOnly?: boolean }[] = [
   { key: "dashboard", label: "By Factory", icon: Factory },
   { key: "assignments", label: "Assignments", icon: Users },
   { key: "tasks", label: "Task Board", icon: Kanban },
   { key: "content", label: "Content Studio", icon: Newspaper },
   { key: "teamhub", label: "Team Hub", icon: Target },
+  { key: "team", label: "Team Management", icon: ShieldCheck, adminOnly: true },
   { key: "notifications", label: "Notifications", icon: Bell },
 ];
 
@@ -30,6 +31,7 @@ export default function InternalLayout({
   children: ReactNode;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const visibleNavItems = NAV_ITEMS.filter((item) => !item.adminOnly || actingAccount.role === "ADMIN");
 
   function navigate(tab: InternalTab) {
     onNavigate(tab);
@@ -58,7 +60,7 @@ export default function InternalLayout({
         </a>
 
         <nav className="int-nav">
-          {NAV_ITEMS.map((item) => (
+          {visibleNavItems.map((item) => (
             <button
               key={item.key}
               className={`int-nav-item ${active === item.key ? "active" : ""}`}

@@ -9,6 +9,7 @@ import type {
   GarmentRecommendation,
   InternalAccountLite,
   InternalNotification,
+  InternalRole,
   InternalTask,
   IssueType,
   LoginResponse,
@@ -80,6 +81,29 @@ export function fetchAssignments(token: string): Promise<AssignmentsResponse> {
 
 export function fetchInternalAccounts(token: string): Promise<InternalAccountLite[]> {
   return authedGet<InternalAccountLite[]>("/dashboard/accounts", token);
+}
+
+export function createInternalAccount(
+  token: string,
+  payload: { name: string; accountId: string; password: string; role: InternalRole; actingAccountId: string }
+): Promise<InternalAccountLite> {
+  return authedMutate<InternalAccountLite>("/dashboard/accounts", token, "POST", payload);
+}
+
+export function updateInternalAccount(
+  token: string,
+  id: string,
+  payload: Partial<{ name: string; accountId: string; password: string; role: InternalRole }> & { actingAccountId: string }
+): Promise<InternalAccountLite> {
+  return authedMutate<InternalAccountLite>(`/dashboard/accounts/${encodeURIComponent(id)}`, token, "PATCH", payload);
+}
+
+export function deleteInternalAccount(token: string, id: string, actingAccountId: string): Promise<{ ok: boolean }> {
+  return authedMutate<{ ok: boolean }>(
+    `/dashboard/accounts/${encodeURIComponent(id)}?actingAccountId=${encodeURIComponent(actingAccountId)}`,
+    token,
+    "DELETE"
+  );
 }
 
 export async function uploadAvatar(token: string, accountId: string, file: File): Promise<InternalAccountLite> {
