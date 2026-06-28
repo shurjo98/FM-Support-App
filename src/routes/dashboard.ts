@@ -1,24 +1,16 @@
 // src/routes/dashboard.ts
 import express, { Router } from "express";
-import fs from "fs";
-import path from "path";
 import { prisma } from "../db";
 import type { ReorderStatus, TaskColumn, TaskPriority } from "../types";
 import { requireInternalAuth } from "../middleware/requireInternalAuth";
 import { notify } from "../services/notificationService";
 import { sendPushToAccount } from "../services/pushService";
+import { storeFile } from "../services/fileStorage";
 import type { Prisma } from "@prisma/client";
 
 const router = Router();
 
-const UPLOADS_DIR = path.join(__dirname, "..", "..", "uploads");
-fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-const AVATAR_MIME_EXT: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-  "image/gif": "gif",
-};
+const AVATAR_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
 // Internal dashboard requires signing in with the shared FM/1111 credential
 // (see src/services/authService.ts) before reaching the acting-as picker.
@@ -48,25 +40,23 @@ router.get("/accounts", async (req, res) => {
 // bytes, same pattern as ticket attachments / content card images).
 router.post(
   "/accounts/:id/avatar",
-  express.raw({ type: Object.keys(AVATAR_MIME_EXT), limit: "10mb" }),
+  express.raw({ type: AVATAR_MIME_TYPES, limit: "10mb" }),
   async (req, res) => {
     const { id } = req.params;
     const account = await prisma.internalAccount.findUnique({ where: { id } });
     if (!account) return res.status(404).json({ error: "Account not found" });
 
     const mimeType = (req.headers["content-type"]?.toString() || "").split(";")[0]?.trim() ?? "";
-    const ext = AVATAR_MIME_EXT[mimeType];
-    if (!ext) return res.status(400).json({ error: "Unsupported image type" });
+    if (!AVATAR_MIME_TYPES.includes(mimeType)) return res.status(400).json({ error: "Unsupported image type" });
 
     const buf = Buffer.isBuffer(req.body) ? req.body : Buffer.from(req.body || "");
     if (!buf.length) return res.status(400).json({ error: "Missing image bytes" });
 
-    const filename = `avatar-${id}-${Date.now()}.${ext}`;
-    fs.writeFileSync(path.join(UPLOADS_DIR, filename), buf);
+    const avatarUrl = await storeFile(mimeType, buf);
 
     const updated = await prisma.internalAccount.update({
       where: { id },
-      data: { avatarUrl: `/uploads/${filename}` },
+      data: { avatarUrl },
     });
 
     res.status(201).json({ id: updated.id, name: updated.name, role: updated.role, avatarUrl: updated.avatarUrl });
@@ -183,7 +173,7 @@ router.get("/", async (req, res) => {
                 issueType: t.issueType,
                 description: t.description,
                 status: t.status,
-                machineName: machines.find((m) => m.id === t.machineId)?.name ?? t.machineId,
+                machineName: machines.find((m) => m.id === t.machineId)?.name ?? t.customMachineName ?? "Unknown machine",
                 serialNumber: t.serialNumber,
                 assignedTo: await technicianName(t.technicianId),
                 createdAt: t.createdAt,
@@ -262,7 +252,7 @@ router.get("/tickets", async (req, res) => {
           factoryName: org?.name ?? "Unknown factory",
           workerId: user?.id,
           workerName: user?.name ?? "Unknown worker",
-          machineName: machines.find((m) => m.id === t.machineId)?.name ?? t.machineId,
+          machineName: machines.find((m) => m.id === t.machineId)?.name ?? t.customMachineName ?? "Unknown machine",
           serialNumber: t.serialNumber,
           issueType: t.issueType,
           description: t.description,
@@ -296,7 +286,7 @@ router.get("/assignments", async (req, res) => {
       ticketId: t.id,
       factoryName: org?.name ?? "Unknown factory",
       workerName: user?.name ?? "Unknown worker",
-      machineName: machines.find((m) => m.id === t.machineId)?.name ?? t.machineId,
+      machineName: machines.find((m) => m.id === t.machineId)?.name ?? t.customMachineName ?? "Unknown machine",
       serialNumber: t.serialNumber,
       issueType: t.issueType,
       description: t.description,

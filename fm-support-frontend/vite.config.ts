@@ -18,9 +18,9 @@ export default defineConfig({
       "/garments": "http://localhost:4000",
       "/spareparts": "http://localhost:4000",
       "/public": "http://localhost:4000",
-      "/uploads": "http://localhost:4000",
       "/content": "http://localhost:4000",
       "/push": "http://localhost:4000",
+      "/files": "http://localhost:4000",
     },
   },
 });

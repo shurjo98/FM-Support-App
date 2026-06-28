@@ -7,6 +7,7 @@ const LANG_KEY = "fm_customer_lang";
 
 const dict = {
   "nav.overview": { en: "Overview", bn: "ওভারভিউ" },
+  "nav.equipment": { en: "My Equipment", bn: "আমার মেশিনপত্র" },
   "nav.sewing": { en: "Sewing Machines", bn: "সেলাই মেশিন" },
   "nav.automated": { en: "Automated Machines", bn: "অটোমেটেড মেশিন" },
   "nav.needles": { en: "Needles", bn: "সুঁই" },

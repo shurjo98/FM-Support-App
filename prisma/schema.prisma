@@ -24,6 +24,7 @@ model Machine {
   id             String   @id
   name           String
   model          String
+  brand          String   @default("Jack")
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
   productLine    String
@@ -51,13 +52,23 @@ model NeedleProduct {
 }
 
 model MachineInstance {
-  id             String  @id
-  serialNumber   String  @unique
-  machineId      String
-  machine        Machine @relation(fields: [machineId], references: [id])
+  id             String   @id
+  serialNumber   String   @unique
+  // null machineId = equipment of another brand the customer registered
+  // themselves, not part of FM's catalog — brand/customName/category carry
+  // its identity instead.
+  machineId      String?
+  machine        Machine? @relation(fields: [machineId], references: [id])
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
   location       String?
+  brand          String?
+  customName     String?
+  category       String?
+
+  // Maintenance tracking — applies to any machine, FM catalog or otherwise.
+  lastServicedAt        DateTime?
+  serviceIntervalMonths Int?
 }
 
 model User {
@@ -113,8 +124,13 @@ model Purchase {
 
 model Ticket {
   id              String   @id
-  machineId       String
-  machine         Machine  @relation(fields: [machineId], references: [id])
+  // null machineId = the issue is on equipment of another brand the
+  // customer registered themselves — customBrand/customMachineName carry
+  // its identity instead (see MachineInstance).
+  machineId       String?
+  machine         Machine? @relation(fields: [machineId], references: [id])
+  customBrand       String?
+  customMachineName String?
   serialNumber    String?
   createdByUserId String
   createdBy       User     @relation(fields: [createdByUserId], references: [id])
@@ -299,6 +315,16 @@ model ContentCard {
   createdByName      String
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+}
+
+// Uploaded images/videos (avatars, content card photos, ticket attachments)
+// are stored as bytes in the database, not on local disk — Render's free
+// web service filesystem is ephemeral and gets wiped on every redeploy.
+model UploadedFile {
+  id        String   @id
+  mimeType  String
+  data      Bytes
+  createdAt DateTime @default(now())
 }
 
 model CachedAnswer {

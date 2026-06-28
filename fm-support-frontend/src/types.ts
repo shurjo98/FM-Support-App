@@ -164,6 +164,27 @@ export interface MachineInstance {
   location?: string;
 }
 
+export type ServiceStatus = "ok" | "due_soon" | "overdue" | "unscheduled";
+
+// One row in a factory's full equipment list — FM catalog machines and
+// other-brand machines the customer registered themselves, side by side.
+export interface EquipmentItem {
+  id: string;
+  serialNumber: string;
+  machineId: string | null;
+  organizationId: string;
+  location?: string | null;
+  displayName: string;
+  displayBrand: string;
+  displayCategory?: string | null;
+  isCatalogMachine: boolean;
+  imageUrl?: string | null;
+  lastServicedAt: string | null;
+  serviceIntervalMonths: number | null;
+  nextServiceDue: string | null;
+  serviceStatus: ServiceStatus;
+}
+
 export interface NeedleProduct {
   id: string;
   name: string;
@@ -285,6 +306,7 @@ export interface ReorderRequest {
 
 export type PortalSection =
   | "overview"
+  | "equipment"
   | "sewing"
   | "automated"
   | "needles"

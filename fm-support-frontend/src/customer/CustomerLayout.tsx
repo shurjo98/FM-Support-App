@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import {
   ArrowLeft,
   LayoutDashboard,
+  Boxes,
   Scissors,
   Bot,
   PenTool,
@@ -19,6 +20,7 @@ import PortalSearchBar from "./PortalSearchBar";
 
 export type CustomerSection =
   | "overview"
+  | "equipment"
   | "sewing"
   | "automated"
   | "needles"
@@ -30,6 +32,7 @@ export type CustomerSection =
 
 const NAV_ITEMS: { key: CustomerSection; labelKey: TranslationKey; icon: LucideIcon }[] = [
   { key: "overview", labelKey: "nav.overview", icon: LayoutDashboard },
+  { key: "equipment", labelKey: "nav.equipment", icon: Boxes },
   { key: "sewing", labelKey: "nav.sewing", icon: Scissors },
   { key: "automated", labelKey: "nav.automated", icon: Bot },
   { key: "needles", labelKey: "nav.needles", icon: PenTool },

@@ -5,6 +5,7 @@ import type {
   CustomerTicket,
   CustomerUser,
   DashboardResponse,
+  EquipmentItem,
   GarmentRecommendation,
   InternalAccountLite,
   InternalNotification,
@@ -244,6 +245,51 @@ export async function fetchMachineInstances(machineId: string, organizationId: s
   return res.json();
 }
 
+export async function fetchMyEquipment(organizationId: string): Promise<EquipmentItem[]> {
+  const res = await fetch(`/machines/instances?organizationId=${encodeURIComponent(organizationId)}`);
+  if (!res.ok) throw new Error(`Failed to load equipment list (${res.status})`);
+  return res.json();
+}
+
+export async function registerCustomMachine(payload: {
+  organizationId: string;
+  serialNumber: string;
+  brand: string;
+  customName: string;
+  category?: string;
+  location?: string;
+}): Promise<EquipmentItem> {
+  const res = await fetch("/machines/instances", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `Failed to register machine (${res.status})`);
+  return body;
+}
+
+export async function markMachineServiced(id: string): Promise<EquipmentItem> {
+  const res = await fetch(`/machines/instances/${encodeURIComponent(id)}/service`, { method: "PATCH" });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `Failed to update service record (${res.status})`);
+  return body;
+}
+
+export async function updateMachineInstance(
+  id: string,
+  payload: { serviceIntervalMonths?: number | null; location?: string }
+): Promise<EquipmentItem> {
+  const res = await fetch(`/machines/instances/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `Failed to update machine (${res.status})`);
+  return body;
+}
+
 export async function fetchGarmentRecommendations(): Promise<GarmentRecommendation[]> {
   const res = await fetch("/garments");
   if (!res.ok) throw new Error(`Failed to load garment guide (${res.status})`);
@@ -263,7 +309,6 @@ export async function fetchCustomerUsers(): Promise<CustomerUser[]> {
 }
 
 export async function createTicket(payload: {
-  machineId: string;
   serialNumber: string;
   createdByUserId: string;
   issueType: IssueType;

@@ -3,6 +3,7 @@ import "./customer.css";
 import AccountPickerPage from "./AccountPickerPage";
 import CustomerLayout, { type CustomerSection } from "./CustomerLayout";
 import OverviewPage from "./OverviewPage";
+import EquipmentPage from "./EquipmentPage";
 import SewingMachinesPage from "./SewingMachinesPage";
 import AutomatedMachinesPage from "./AutomatedMachinesPage";
 import NeedlesPage from "./NeedlesPage";
@@ -47,6 +48,7 @@ function CustomerAppInner() {
       onLogout={handleLogout}
     >
       {section === "overview" && <OverviewPage user={user} onNavigate={setSection} />}
+      {section === "equipment" && <EquipmentPage user={user} />}
       {section === "sewing" && <SewingMachinesPage user={user} />}
       {section === "automated" && <AutomatedMachinesPage user={user} />}
       {section === "needles" && <NeedlesPage user={user} />}

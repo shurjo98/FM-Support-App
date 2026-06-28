@@ -1,7 +1,5 @@
 // src/routes/tickets.ts
 import express, { Router } from "express";
-import fs from "fs";
-import path from "path";
 import { prisma } from "../db";
 import type { IssueType } from "../types";
 import {
@@ -11,12 +9,10 @@ import {
 } from "../services/cacheService";
 import { generateAiSuggestion, type SuggestionLang } from "../services/aiService"; // <-- RUNTIME import
 import { notify } from "../services/notificationService";
+import { storeFile } from "../services/fileStorage";
 import type { Prisma } from "@prisma/client";
 
 const router = Router();
-
-const UPLOADS_DIR = path.join(__dirname, "..", "..", "uploads");
-fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
 const ATTACHMENT_MIME_KIND: Record<string, "image" | "video"> = {
   "image/jpeg": "image",
@@ -37,6 +33,8 @@ function serializeTicket(t: TicketWithRelations) {
   return {
     id: t.id,
     machineId: t.machineId,
+    customBrand: t.customBrand,
+    customMachineName: t.customMachineName,
     serialNumber: t.serialNumber,
     createdByUserId: t.createdByUserId,
     issueType: t.issueType,
@@ -87,8 +85,7 @@ router.get("/:ticketId", async (req, res) => {
 // create a ticket with AI suggestion + caching + credit usage
 router.post("/", async (req, res) => {
   try {
-    const { machineId, serialNumber, createdByUserId, issueType, description, lang } = req.body as {
-      machineId: string;
+    const { serialNumber, createdByUserId, issueType, description, lang } = req.body as {
       serialNumber?: string;
       createdByUserId: string;
       issueType: IssueType;
@@ -96,12 +93,8 @@ router.post("/", async (req, res) => {
       lang?: SuggestionLang;
     };
 
-    const machine = await prisma.machine.findUnique({ where: { id: machineId } });
     const user = await prisma.user.findUnique({ where: { id: createdByUserId } });
 
-    if (!machine) {
-      return res.status(400).json({ error: "Invalid machineId" });
-    }
     if (!user) {
       return res.status(400).json({ error: "Invalid createdByUserId" });
     }
@@ -113,15 +106,22 @@ router.post("/", async (req, res) => {
     if (!serialNumber) {
       return res.status(400).json({ error: "Please select which machine (serial number) has the issue." });
     }
-    const instance = await prisma.machineInstance.findFirst({
-      where: { machineId, serialNumber },
+    // Resolving by serial number alone (rather than requiring a catalog
+    // machineId) is what lets customers raise tickets on equipment of any
+    // brand — not just FM's — as long as they've registered it.
+    const instance = await prisma.machineInstance.findUnique({
+      where: { serialNumber },
+      include: { machine: true },
     });
     if (!instance) {
-      return res.status(400).json({ error: "Unknown serial number for this machine." });
+      return res.status(400).json({ error: "Unknown serial number. Add this machine under My Equipment first." });
     }
     if (instance.organizationId !== user.organizationId) {
       return res.status(403).json({ error: "That machine isn't registered to your factory." });
     }
+
+    const machineId = instance.machineId;
+    const machineLabel = instance.machine?.name ?? instance.customName ?? "Unknown machine";
 
     const suggestionLang: SuggestionLang = lang === "bn" ? "bn" : "en";
     const cacheKey = buildCacheKey(issueType, description, suggestionLang);
@@ -160,6 +160,8 @@ router.post("/", async (req, res) => {
       data: {
         id: `t-${Date.now()}`,
         machineId,
+        customBrand: machineId ? null : instance.brand,
+        customMachineName: machineId ? null : instance.customName,
         serialNumber,
         createdByUserId,
         issueType,
@@ -180,7 +182,7 @@ router.post("/", async (req, res) => {
     await prisma.internalTask.create({
       data: {
         id: `task-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        title: `New ticket: ${issueType.replaceAll("_", " ")} — ${machine.name} (${serialNumber})`,
+        title: `New ticket: ${issueType.replaceAll("_", " ")} — ${machineLabel} (${serialNumber})`,
         description: `Reported by ${user.name}: ${description}`,
         column: "BACKLOG",
         priority: "MEDIUM",
@@ -302,12 +304,8 @@ router.post(
     const buf = Buffer.isBuffer(req.body) ? req.body : Buffer.from(req.body || "");
     if (!buf.length) return res.status(400).json({ error: "Missing file bytes" });
 
-    const ext = mimeType === "video/quicktime" ? "mov" : mimeType.split("/")[1];
-    const filename = `${ticketId}-${Date.now()}.${ext}`;
-    fs.writeFileSync(path.join(UPLOADS_DIR, filename), buf);
-
     const attachmentId = `att-${Date.now()}`;
-    const url = `/uploads/${filename}`;
+    const url = await storeFile(mimeType, buf);
 
     const updated = await prisma.ticket.update({
       where: { id: ticketId },

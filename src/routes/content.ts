@@ -1,35 +1,23 @@
 // src/routes/content.ts
 import express, { Router } from "express";
-import fs from "fs";
-import path from "path";
 import { prisma } from "../db";
+import { storeFile } from "../services/fileStorage";
 
 const router = Router();
 
-const UPLOADS_DIR = path.join(__dirname, "..", "..", "uploads");
-fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-
-const IMAGE_MIME_EXT: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-  "image/gif": "gif",
-};
+const IMAGE_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
 // POST /content/upload -> raw image bytes, Content-Type set to the file's
 // mime type (same pattern as ticket attachments) -> { url }
-router.post("/upload", express.raw({ type: Object.keys(IMAGE_MIME_EXT), limit: "15mb" }), (req, res) => {
+router.post("/upload", express.raw({ type: IMAGE_MIME_TYPES, limit: "15mb" }), async (req, res) => {
   const mimeType = (req.headers["content-type"]?.toString() || "").split(";")[0]?.trim() ?? "";
-  const ext = IMAGE_MIME_EXT[mimeType];
-  if (!ext) return res.status(400).json({ error: "Unsupported image type" });
+  if (!IMAGE_MIME_TYPES.includes(mimeType)) return res.status(400).json({ error: "Unsupported image type" });
 
   const buf = Buffer.isBuffer(req.body) ? req.body : Buffer.from(req.body || "");
   if (!buf.length) return res.status(400).json({ error: "Missing image bytes" });
 
-  const filename = `content-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
-  fs.writeFileSync(path.join(UPLOADS_DIR, filename), buf);
-
-  res.status(201).json({ url: `/uploads/${filename}` });
+  const url = await storeFile(mimeType, buf);
+  res.status(201).json({ url });
 });
 
 // GET /content?published=true -> customer portal feed; omit the filter to

@@ -115,12 +115,13 @@ export async function diagnoseText(params: {
 
 export type PortalSearchResult = {
   action: "navigate" | "answer";
-  section?: "overview" | "sewing" | "automated" | "needles" | "spareparts" | "garments" | "tickets" | "purchases" | "settings";
+  section?: "overview" | "equipment" | "sewing" | "automated" | "needles" | "spareparts" | "garments" | "tickets" | "purchases" | "settings";
   message: string;
 };
 
 const PORTAL_SECTIONS = [
   "overview — dashboard home with stats and recent activity",
+  "equipment — My Equipment: every machine the factory owns (FM or any other brand), register new machines, report issues by serial, track maintenance",
   "sewing — Sewing Machines (Jack lockstitch/overlock models), browse + report issues",
   "automated — Automated Machines (template, interlock, pocket welting), browse + report issues",
   "needles — Groz-Beckert needle catalog, order history, reorder needles",
@@ -132,6 +133,7 @@ const PORTAL_SECTIONS = [
 ].join("\n");
 
 const SECTION_KEYWORDS: { section: NonNullable<PortalSearchResult["section"]>; keywords: string[] }[] = [
+  { section: "equipment", keywords: ["equipment", "other brand", "register", "maintenance", "service due", "my machines", "brother", "juki", "singer"] },
   { section: "tickets", keywords: ["ticket", "issue", "complaint", "status", "raised"] },
   { section: "purchases", keywords: ["purchase", "order history", "bought", "history"] },
   { section: "needles", keywords: ["needle"] },

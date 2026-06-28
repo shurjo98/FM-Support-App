@@ -1208,3 +1208,99 @@
     height: 50vh;
   }
 }
+
+/* ---- My Equipment ---- */
+
+.equip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.equip-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.equip-card-top {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.equip-card-img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.equip-card-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #4fb3e8;
+}
+
+.equip-card-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.equip-card-meta {
+  font-size: 0.75rem;
+  opacity: 0.65;
+  margin-top: 2px;
+}
+
+.equip-card-serial {
+  font-size: 0.72rem;
+  opacity: 0.5;
+  margin-top: 2px;
+}
+
+.equip-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.equip-badge-ok {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.equip-badge-due {
+  background: rgba(217, 119, 6, 0.15);
+  color: #fbbf24;
+}
+
+.equip-badge-overdue {
+  background: rgba(220, 38, 38, 0.15);
+  color: #f87171;
+}
+
+.equip-badge-unscheduled {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
+
+.equip-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: auto;
+}

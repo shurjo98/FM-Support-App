@@ -81,7 +81,6 @@ export default function MachineIssueSection({
     setUploadedAttachment(null);
     try {
       const res = await createTicket({
-        machineId,
         serialNumber,
         createdByUserId: user.id,
         issueType,
