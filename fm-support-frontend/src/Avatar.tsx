@@ -1,15 +1,20 @@
+import { useState } from "react";
+
 export function initials(name: string): string {
   return name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
 }
 
 export function Avatar({ name, avatarUrl, size = 36 }: { name: string; avatarUrl?: string | null; size?: number }) {
-  if (avatarUrl) {
+  const [broken, setBroken] = useState(false);
+
+  if (avatarUrl && !broken) {
     return (
       <img
         src={avatarUrl}
         alt={name}
         className="avatar-img"
         style={{ width: size, height: size, borderRadius: "50%", objectFit: "cover" }}
+        onError={() => setBroken(true)}
       />
     );
   }
