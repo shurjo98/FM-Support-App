@@ -32,7 +32,7 @@ function mkEvent(
 // Internal staff who can log into the internal dashboard and be assigned
 // tickets/tasks. Demo-only plaintext credentials.
 export const internalAccounts: InternalAccount[] = [
-  { id: "mgr1", accountId: "faisal.manager", password: "fm12345", name: "Faisal (Manager)", role: "MANAGER" },
+  { id: "mgr1", accountId: "faisal.manager", password: "fm12345", name: "Mehrab (Manager)", role: "MANAGER" },
   { id: "tech1", accountId: "rashed.tech", password: "fm12345", name: "Rashed (Technician)", role: "TECHNICIAN" },
   { id: "tech2", accountId: "nila.tech", password: "fm12345", name: "Nila (Technician)", role: "TECHNICIAN" },
   { id: "admin1", accountId: "FM", password: "1111", name: "FM Team", role: "ADMIN" },
@@ -51,8 +51,8 @@ export const internalAccounts: InternalAccount[] = [
   { id: "abdurrahim", accountId: "abdurrahim.accounts", password: "fm12345", name: "Abdur Rahim (Stocks and Accounts)", role: "ADMIN" },
   { id: "riyad", accountId: "riyad.repairs", password: "fm12345", name: "Riyad (Repairs)", role: "TECHNICIAN" },
   { id: "mehedi", accountId: "mehedi.tech", password: "fm12345", name: "Mehedi", role: "TECHNICIAN" },
-  { id: "hena", accountId: "hena.tech", password: "fm12345", name: "Hena", role: "TECHNICIAN" },
-  { id: "rafin", accountId: "rafin.tech", password: "fm12345", name: "Rafin", role: "TECHNICIAN" },
+  { id: "hena", accountId: "hena.tech", password: "fm12345", name: "Hena (Marketing)", role: "TECHNICIAN" },
+  { id: "rafin", accountId: "rafin.tech", password: "fm12345", name: "Rafin (Marketing)", role: "TECHNICIAN" },
   { id: "luke", accountId: "luke.tech", password: "fm12345", name: "Luke", role: "TECHNICIAN" },
 ];
 

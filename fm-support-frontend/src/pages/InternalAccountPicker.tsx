@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchInternalAccounts } from "../api";
 import type { InternalAccountLite } from "../types";
+import { Avatar } from "../Avatar";
 
 export default function InternalAccountPicker({
   token,
@@ -32,7 +33,10 @@ export default function InternalAccountPicker({
         <div className="int-picker-grid">
           {accounts.map((account) => (
             <button key={account.id} className="int-picker-option" onClick={() => onPick(account)}>
-              <span className="int-picker-option-name">{account.name}</span>
+              <span className="int-picker-option-left">
+                <Avatar name={account.name} avatarUrl={account.avatarUrl} size={40} />
+                <span className="int-picker-option-name">{account.name}</span>
+              </span>
               <span className={`int-role-badge int-role-${account.role.toLowerCase()}`}>{account.role}</span>
             </button>
           ))}

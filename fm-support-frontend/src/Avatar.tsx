@@ -1,7 +1,8 @@
 import { useState } from "react";
 
 export function initials(name: string): string {
-  return name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
+  const withoutTitle = name.replace(/\(.*?\)/g, "").trim();
+  return withoutTitle.split(" ").filter(Boolean).map((p) => p[0]).slice(0, 2).join("").toUpperCase();
 }
 
 export function Avatar({ name, avatarUrl, size = 36 }: { name: string; avatarUrl?: string | null; size?: number }) {
