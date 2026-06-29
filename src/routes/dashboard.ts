@@ -45,16 +45,17 @@ function slugify(accountId: string): string {
 // the "acting as" switcher and the task assignee picker.
 router.get("/accounts", async (req, res) => {
   const accounts = await prisma.internalAccount.findMany();
-  res.json(accounts.map((a) => ({ id: a.id, name: a.name, role: a.role, avatarUrl: a.avatarUrl })));
+  res.json(accounts.map((a) => ({ id: a.id, name: a.name, role: a.role, avatarUrl: a.avatarUrl, skills: a.skills })));
 });
 
 // POST /dashboard/accounts -> add a new team member (FM Admin only).
 router.post("/accounts", async (req, res) => {
-  const { name, accountId, password, role, actingAccountId } = req.body as {
+  const { name, accountId, password, role, skills, actingAccountId } = req.body as {
     name: string;
     accountId: string;
     password: string;
     role: string;
+    skills?: string[];
     actingAccountId: string;
   };
 
@@ -76,20 +77,28 @@ router.post("/accounts", async (req, res) => {
   }
 
   const created = await prisma.internalAccount.create({
-    data: { id, accountId: accountId.trim(), password: password.trim(), name: name.trim(), role },
+    data: {
+      id,
+      accountId: accountId.trim(),
+      password: password.trim(),
+      name: name.trim(),
+      role,
+      skills: (skills ?? []).map((s) => s.trim()).filter(Boolean),
+    },
   });
 
-  res.status(201).json({ id: created.id, name: created.name, role: created.role, avatarUrl: created.avatarUrl });
+  res.status(201).json({ id: created.id, name: created.name, role: created.role, avatarUrl: created.avatarUrl, skills: created.skills });
 });
 
-// PATCH /dashboard/accounts/:id -> edit a team member's name/login/role/password (FM Admin only).
+// PATCH /dashboard/accounts/:id -> edit a team member's name/login/role/password/skills (FM Admin only).
 router.patch("/accounts/:id", async (req, res) => {
   const { id } = req.params;
-  const { name, accountId, password, role, actingAccountId } = req.body as {
+  const { name, accountId, password, role, skills, actingAccountId } = req.body as {
     name?: string;
     accountId?: string;
     password?: string;
     role?: string;
+    skills?: string[];
     actingAccountId: string;
   };
 
@@ -115,10 +124,11 @@ router.patch("/accounts/:id", async (req, res) => {
       ...(accountId !== undefined ? { accountId: accountId.trim() } : {}),
       ...(password !== undefined && password.trim() ? { password: password.trim() } : {}),
       ...(role !== undefined ? { role } : {}),
+      ...(skills !== undefined ? { skills: skills.map((s) => s.trim()).filter(Boolean) } : {}),
     },
   });
 
-  res.json({ id: updated.id, name: updated.name, role: updated.role, avatarUrl: updated.avatarUrl });
+  res.json({ id: updated.id, name: updated.name, role: updated.role, avatarUrl: updated.avatarUrl, skills: updated.skills });
 });
 
 // DELETE /dashboard/accounts/:id -> remove a team member (FM Admin only).
@@ -170,7 +180,7 @@ router.post(
       data: { avatarUrl },
     });
 
-    res.status(201).json({ id: updated.id, name: updated.name, role: updated.role, avatarUrl: updated.avatarUrl });
+    res.status(201).json({ id: updated.id, name: updated.name, role: updated.role, avatarUrl: updated.avatarUrl, skills: updated.skills });
   }
 );
 
@@ -484,18 +494,26 @@ router.get("/notifications", async (req, res) => {
   res.json(rows);
 });
 
-const taskInclude = { events: true, comments: true };
+const taskInclude = { events: true, comments: true, assignments: { include: { account: true } } };
 type TaskWithRelations = Prisma.InternalTaskGetPayload<{ include: typeof taskInclude }>;
 
+// Lead first (the "striker"), then assists, in the order they were added.
+function sortAssignees<T extends { role: string }>(assignments: T[]): T[] {
+  return [...assignments].sort((a, b) => (a.role === b.role ? 0 : a.role === "LEAD" ? -1 : 1));
+}
+
 async function enrichTask(t: TaskWithRelations) {
-  const [assignee, creator] = await Promise.all([
-    t.assigneeId ? prisma.internalAccount.findUnique({ where: { id: t.assigneeId } }) : null,
-    prisma.internalAccount.findUnique({ where: { id: t.createdByAccountId } }),
-  ]);
+  const { assignments, ...rest } = t;
+  const creator = await prisma.internalAccount.findUnique({ where: { id: t.createdByAccountId } });
 
   return {
-    ...t,
-    assigneeName: t.assigneeId ? assignee?.name ?? t.assigneeId : null,
+    ...rest,
+    assignees: sortAssignees(assignments).map((a) => ({
+      accountId: a.accountId,
+      name: a.account.name,
+      avatarUrl: a.account.avatarUrl,
+      role: a.role,
+    })),
     createdByName: creator?.name ?? t.createdByAccountId,
     events: t.events
       .map((e) => ({ ...e, createdAt: e.createdAt.toISOString() }))
@@ -514,6 +532,33 @@ const COLUMN_LABELS: Record<TaskColumn, string> = {
   IN_PROGRESS: "In Progress",
   COMPLETED: "Completed",
 };
+
+// One LEAD (the "striker") plus de-duplicated ASSIST helpers — a person
+// can't be both on the same task, lead wins if they appear in both lists.
+function buildAssignmentRows(leadId: string | null, assistIds: string[]): { id: string; accountId: string; role: "LEAD" | "ASSIST" }[] {
+  const rows: { id: string; accountId: string; role: "LEAD" | "ASSIST" }[] = [];
+  const seen = new Set<string>();
+  if (leadId) {
+    rows.push({ id: `ta-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, accountId: leadId, role: "LEAD" });
+    seen.add(leadId);
+  }
+  for (const accountId of assistIds) {
+    if (seen.has(accountId)) continue;
+    seen.add(accountId);
+    rows.push({ id: `ta-${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${accountId}`, accountId, role: "ASSIST" });
+  }
+  return rows;
+}
+
+function describeAssignment(rows: { accountId: string; role: "LEAD" | "ASSIST" }[], namesById: Map<string, string>): string {
+  if (rows.length === 0) return "Unassigned";
+  const lead = rows.find((r) => r.role === "LEAD");
+  const assists = rows.filter((r) => r.role === "ASSIST");
+  const parts: string[] = [];
+  if (lead) parts.push(`Lead: ${namesById.get(lead.accountId) ?? lead.accountId}`);
+  if (assists.length) parts.push(`Assist: ${assists.map((a) => namesById.get(a.accountId) ?? a.accountId).join(", ")}`);
+  return parts.join(" · ");
+}
 
 function mkTaskEventData(type: string, description: string, authorAccountId: string, authorName: string) {
   return {
@@ -577,11 +622,12 @@ router.get("/tasks", async (req, res) => {
 // people can add their own tasks — editing another task's details (priority,
 // assignee, etc.) is still manager/admin only, see PATCH below.
 router.post("/tasks", async (req, res) => {
-  const { title, description, priority, assigneeId, column, dueDate, actingAccountId } = req.body as {
+  const { title, description, priority, leadId, assistIds, column, dueDate, actingAccountId } = req.body as {
     title: string;
     description?: string;
     priority?: TaskPriority;
-    assigneeId?: string | null;
+    leadId?: string | null;
+    assistIds?: string[];
     column?: TaskColumn;
     dueDate?: string | null;
     actingAccountId: string;
@@ -594,6 +640,8 @@ router.post("/tasks", async (req, res) => {
   const author = await prisma.internalAccount.findUnique({ where: { id: actingAccountId } });
   if (!author) return res.status(401).json({ error: "Unknown acting account." });
 
+  const assignmentsToCreate = buildAssignmentRows(leadId ?? null, assistIds ?? []);
+
   const newTask = await prisma.internalTask.create({
     data: {
       id: `task-${Date.now()}`,
@@ -601,13 +649,22 @@ router.post("/tasks", async (req, res) => {
       description: description ?? null,
       column: column ?? "BACKLOG",
       priority: priority ?? "MEDIUM",
-      assigneeId: assigneeId ?? null,
       dueDate: dueDate ?? null,
       createdByAccountId: actingAccountId,
       events: { create: [mkTaskEventData("CREATED", "Task created", author.id, author.name)] },
+      ...(assignmentsToCreate.length ? { assignments: { create: assignmentsToCreate } } : {}),
     },
     include: taskInclude,
   });
+
+  for (const a of assignmentsToCreate) {
+    await notifyAccount(
+      a.accountId,
+      `${author.name} added you as ${a.role === "LEAD" ? "the lead" : "an assist"} on "${newTask.title}"`,
+      newTask.id,
+      author
+    );
+  }
 
   res.status(201).json(await enrichTask(newTask));
 });
@@ -617,10 +674,11 @@ router.post("/tasks", async (req, res) => {
 // technician moves a task, the manager/admin get an in-app notification.
 router.patch("/tasks/:id", async (req, res) => {
   const { id } = req.params;
-  const { column, priority, assigneeId, title, description, dueDate, actingAccountId } = req.body as {
+  const { column, priority, leadId, assistIds, title, description, dueDate, actingAccountId } = req.body as {
     column?: TaskColumn;
     priority?: TaskPriority;
-    assigneeId?: string | null;
+    leadId?: string | null;
+    assistIds?: string[];
     title?: string;
     description?: string;
     dueDate?: string | null;
@@ -630,11 +688,11 @@ router.patch("/tasks/:id", async (req, res) => {
   const account = await prisma.internalAccount.findUnique({ where: { id: actingAccountId } });
   if (!account) return res.status(401).json({ error: "Unknown acting account." });
 
-  const task = await prisma.internalTask.findUnique({ where: { id } });
+  const task = await prisma.internalTask.findUnique({ where: { id }, include: { assignments: true } });
   if (!task) return res.status(404).json({ error: "Task not found" });
 
-  const editingDetails =
-    priority !== undefined || assigneeId !== undefined || title !== undefined || description !== undefined || dueDate !== undefined;
+  const editingAssignees = leadId !== undefined || assistIds !== undefined;
+  const editingDetails = priority !== undefined || editingAssignees || title !== undefined || description !== undefined || dueDate !== undefined;
 
   if (editingDetails && !(await canManageTasks(actingAccountId))) {
     return res.status(403).json({ error: "Only a manager or admin can edit task details." });
@@ -657,11 +715,36 @@ router.patch("/tasks/:id", async (req, res) => {
     data.priority = priority;
   }
 
-  if (assigneeId !== undefined && assigneeId !== task.assigneeId) {
-    const assigneeAccount = assigneeId ? await prisma.internalAccount.findUnique({ where: { id: assigneeId } }) : null;
-    const assigneeName = assigneeId ? assigneeAccount?.name ?? assigneeId : "Unassigned";
-    eventsToCreate.push(mkTaskEventData("ASSIGNED", `Assigned to ${assigneeName}`, account.id, account.name));
-    data.assigneeId = assigneeId;
+  let accountsToNotify: string[] = [];
+  if (editingAssignees) {
+    const currentLead = task.assignments.find((a) => a.role === "LEAD");
+    const currentAssistIds = task.assignments.filter((a) => a.role === "ASSIST").map((a) => a.accountId);
+
+    const resolvedLeadId = leadId !== undefined ? leadId : currentLead?.accountId ?? null;
+    const resolvedAssistIds = assistIds !== undefined ? assistIds : currentAssistIds;
+    const newRows = buildAssignmentRows(resolvedLeadId, resolvedAssistIds);
+
+    const oldByAccount = new Map(task.assignments.map((a) => [a.accountId, a.role]));
+    const newByAccount = new Map(newRows.map((r) => [r.accountId, r.role]));
+    const changed =
+      oldByAccount.size !== newByAccount.size ||
+      [...newByAccount.entries()].some(([accountId, role]) => oldByAccount.get(accountId) !== role);
+
+    if (changed) {
+      // Notify anyone newly on the task, plus anyone promoted/demoted between
+      // Lead and Assist — both are meaningful changes worth a ping.
+      accountsToNotify = [...newByAccount.keys()].filter((accountId) => oldByAccount.get(accountId) !== newByAccount.get(accountId));
+
+      await prisma.taskAssignment.deleteMany({ where: { taskId: id } });
+      if (newRows.length) {
+        await prisma.taskAssignment.createMany({ data: newRows.map((r) => ({ ...r, taskId: id })) });
+      }
+
+      const namesById = new Map(
+        (await prisma.internalAccount.findMany({ where: { id: { in: newRows.map((r) => r.accountId) } } })).map((a) => [a.id, a.name])
+      );
+      eventsToCreate.push(mkTaskEventData("ASSIGNED", describeAssignment(newRows, namesById), account.id, account.name));
+    }
   }
 
   if (dueDate !== undefined && dueDate !== task.dueDate) {
@@ -685,8 +768,14 @@ router.patch("/tasks/:id", async (req, res) => {
     await notifyManagersOfMove(updated, account);
   }
 
-  if (assigneeId && assigneeId !== task.assigneeId) {
-    await notifyAccount(assigneeId, `${account.name} assigned you to "${updated.title}"`, updated.id, account);
+  for (const newAccountId of accountsToNotify) {
+    const role = updated.assignments.find((a) => a.accountId === newAccountId)?.role;
+    await notifyAccount(
+      newAccountId,
+      `${account.name} added you as ${role === "LEAD" ? "the lead" : "an assist"} on "${updated.title}"`,
+      updated.id,
+      account
+    );
   }
 
   res.json(await enrichTask(updated));
@@ -702,7 +791,7 @@ router.post("/tasks/:id/comments", async (req, res) => {
   if (!account) return res.status(401).json({ error: "Unknown acting account." });
   if (!text?.trim()) return res.status(400).json({ error: "text is required" });
 
-  const task = await prisma.internalTask.findUnique({ where: { id } });
+  const task = await prisma.internalTask.findUnique({ where: { id }, include: { assignments: true } });
   if (!task) return res.status(404).json({ error: "Task not found" });
 
   const updated = await prisma.internalTask.update({
@@ -723,7 +812,7 @@ router.post("/tasks/:id/comments", async (req, res) => {
     include: taskInclude,
   });
 
-  const recipients = new Set([task.assigneeId, task.createdByAccountId].filter((id): id is string => Boolean(id)));
+  const recipients = new Set([...task.assignments.map((a) => a.accountId), task.createdByAccountId].filter(Boolean));
   for (const recipientId of recipients) {
     await notifyAccount(recipientId, `${account.name} commented on "${task.title}": "${text.trim().slice(0, 80)}"`, task.id, account);
   }

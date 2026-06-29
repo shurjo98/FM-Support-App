@@ -869,8 +869,10 @@ function mkTaskComment(authorAccountId: string, authorName: string, text: string
   return { id: `tcm-seed-${taskCommentCounter}`, authorAccountId, authorName, text, createdAt: new Date(at).toISOString() };
 }
 
-// Internal team Kanban task board.
-export const internalTasks: InternalTask[] = [
+// Internal team Kanban task board. Seed-only shape: a plain `assigneeId`
+// here becomes that task's LEAD TaskAssignment row (see prisma/seed.ts) —
+// simpler than writing out the live multi-assignee shape by hand for fixtures.
+export const internalTasks: (Omit<InternalTask, "assignees"> & { assigneeId?: string | null })[] = [
   {
     id: "task-1",
     title: "Stock check: Groz-Beckert needle inventory",

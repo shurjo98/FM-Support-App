@@ -865,6 +865,77 @@ h1 {
   justify-content: center;
 }
 
+.kanban-assignee-stack {
+  display: flex;
+  align-items: center;
+}
+
+.kanban-assignee {
+  border-radius: 999px;
+  border: 2px solid white;
+  margin-left: -8px;
+}
+
+.kanban-assignee:first-child {
+  margin-left: 0;
+}
+
+.kanban-assignee.lead {
+  z-index: 1;
+  box-shadow: 0 0 0 1px #fbbf24;
+  border-radius: 999px;
+}
+
+/* ============ assignee picker (lead + assists) ============ */
+
+.assignee-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.assignee-picker-assists-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #374151;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.assist-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.assist-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 5px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.assist-chip.active {
+  border-color: #1890d8;
+  background: #eff6ff;
+  color: #1890d8;
+}
+
+.assist-chip-skills {
+  font-size: 0.68rem;
+  color: #9ca3af;
+}
+
+.assist-chip.active .assist-chip-skills {
+  color: #60a5fa;
+}
+
 /* ============ internal modal ============ */
 
 .int-modal-overlay {
@@ -1525,6 +1596,12 @@ h1 {
   gap: 16px;
 }
 
+.mvp-card {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  border: 1px solid #fde68a;
+}
+
 .team-hub-card {
   background: white;
   border: 1px solid #e5e7eb;
@@ -1554,7 +1631,7 @@ h1 {
 
 .team-stat-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 10px;
 }
 
@@ -1612,6 +1689,13 @@ h1 {
   flex: 1;
   font-weight: 600;
   color: #1f2933;
+}
+
+.team-roster-skills {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: #9ca3af;
+  margin-top: 2px;
 }
 
 .team-roster-actions {

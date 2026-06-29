@@ -85,7 +85,7 @@ export function fetchInternalAccounts(token: string): Promise<InternalAccountLit
 
 export function createInternalAccount(
   token: string,
-  payload: { name: string; accountId: string; password: string; role: InternalRole; actingAccountId: string }
+  payload: { name: string; accountId: string; password: string; role: InternalRole; skills?: string[]; actingAccountId: string }
 ): Promise<InternalAccountLite> {
   return authedMutate<InternalAccountLite>("/dashboard/accounts", token, "POST", payload);
 }
@@ -93,7 +93,9 @@ export function createInternalAccount(
 export function updateInternalAccount(
   token: string,
   id: string,
-  payload: Partial<{ name: string; accountId: string; password: string; role: InternalRole }> & { actingAccountId: string }
+  payload: Partial<{ name: string; accountId: string; password: string; role: InternalRole; skills: string[] }> & {
+    actingAccountId: string;
+  }
 ): Promise<InternalAccountLite> {
   return authedMutate<InternalAccountLite>(`/dashboard/accounts/${encodeURIComponent(id)}`, token, "PATCH", payload);
 }
@@ -164,7 +166,8 @@ export function createTask(
     title: string;
     description?: string;
     priority?: TaskPriority;
-    assigneeId?: string | null;
+    leadId?: string | null;
+    assistIds?: string[];
     column?: TaskColumn;
     dueDate?: string | null;
     actingAccountId: string;
@@ -179,7 +182,8 @@ export function updateTask(
   payload: {
     column?: TaskColumn;
     priority?: TaskPriority;
-    assigneeId?: string | null;
+    leadId?: string | null;
+    assistIds?: string[];
     title?: string;
     description?: string;
     dueDate?: string | null;

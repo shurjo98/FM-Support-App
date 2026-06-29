@@ -15,6 +15,13 @@ import { enablePushNotifications, isPushSupported } from "../push";
 
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
+// Lead on a completed task = a goal (you scored it); Assist = you helped
+// someone else's task across the line — both count toward involvement, but
+// only goals make you the one who finished it.
+function completedAs(t: InternalTask, accountId: string, role: "LEAD" | "ASSIST"): boolean {
+  return t.column === "COMPLETED" && t.assignees.some((a) => a.accountId === accountId && a.role === role);
+}
+
 export default function TeamHubPage({
   token,
   actingAccount,
@@ -90,19 +97,33 @@ export default function TeamHubPage({
 
   if (error) return <div className="page-error">{error}</div>;
 
-  const myCompleted = tasks.filter((t) => t.assigneeId === actingAccount.id && t.column === "COMPLETED");
+  const myCompleted = tasks.filter((t) => t.column === "COMPLETED" && t.assignees.some((a) => a.accountId === actingAccount.id));
   const myCompletedThisWeek = myCompleted.filter((t) => Date.now() - new Date(t.updatedAt).getTime() < ONE_WEEK_MS);
-  const myAssignedOpen = tasks.filter((t) => t.assigneeId === actingAccount.id && t.column !== "COMPLETED");
+  const myAssignedOpen = tasks.filter((t) => t.column !== "COMPLETED" && t.assignees.some((a) => a.accountId === actingAccount.id));
+  const myGoals = tasks.filter((t) => completedAs(t, actingAccount.id, "LEAD"));
+  const myAssists = tasks.filter((t) => completedAs(t, actingAccount.id, "ASSIST"));
   const myComments = tasks.reduce((sum, t) => sum + t.comments.filter((c) => c.authorAccountId === actingAccount.id).length, 0);
 
   const leaderboard = accounts
     .map((a) => ({
       account: a,
-      completedCount: tasks.filter((t) => t.assigneeId === a.id && t.column === "COMPLETED").length,
+      goals: tasks.filter((t) => completedAs(t, a.id, "LEAD")).length,
+      assists: tasks.filter((t) => completedAs(t, a.id, "ASSIST")).length,
     }))
-    .filter((row) => row.completedCount > 0)
-    .sort((a, b) => b.completedCount - a.completedCount)
+    .filter((row) => row.goals > 0 || row.assists > 0)
+    .sort((a, b) => b.goals - a.goals || b.assists - a.assists)
     .slice(0, 8);
+
+  const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+  const mvp = accounts
+    .map((a) => ({
+      account: a,
+      goals: tasks.filter((t) => completedAs(t, a.id, "LEAD") && Date.now() - new Date(t.updatedAt).getTime() < THIRTY_DAYS_MS).length,
+      assists: tasks.filter((t) => completedAs(t, a.id, "ASSIST") && Date.now() - new Date(t.updatedAt).getTime() < THIRTY_DAYS_MS).length,
+    }))
+    .map((row) => ({ ...row, points: row.goals * 2 + row.assists }))
+    .filter((row) => row.points > 0)
+    .sort((a, b) => b.points - a.points)[0];
 
   const MEDALS = ["🥇", "🥈", "🥉"];
 
@@ -138,11 +159,15 @@ export default function TeamHubPage({
           <div className="team-stat-row">
             <div className="team-stat">
               <div className="team-stat-value">{myCompletedThisWeek.length}</div>
-              <div className="team-stat-label">Completed this week</div>
+              <div className="team-stat-label">This week</div>
             </div>
             <div className="team-stat">
-              <div className="team-stat-value">{myCompleted.length}</div>
-              <div className="team-stat-label">Completed all-time</div>
+              <div className="team-stat-value">⚽ {myGoals.length}</div>
+              <div className="team-stat-label">Goals</div>
+            </div>
+            <div className="team-stat">
+              <div className="team-stat-value">🅰️ {myAssists.length}</div>
+              <div className="team-stat-label">Assists</div>
             </div>
             <div className="team-stat">
               <div className="team-stat-value">{myAssignedOpen.length}</div>
@@ -169,12 +194,29 @@ export default function TeamHubPage({
                   <span className="leaderboard-rank">{MEDALS[i] ?? `#${i + 1}`}</span>
                   <Avatar name={row.account.name} avatarUrl={row.account.avatarUrl} size={32} />
                   <span className="leaderboard-name">{row.account.name}</span>
-                  <span className="leaderboard-count">{row.completedCount} done</span>
+                  <span className="leaderboard-count">
+                    ⚽ {row.goals} · 🅰️ {row.assists}
+                  </span>
                 </div>
               ))}
             </div>
           )}
         </div>
+
+        {mvp && (
+          <div className="int-modal-fields team-hub-card mvp-card">
+            <h2 className="int-section-heading">🌟 MVP of the Month</h2>
+            <div className="team-profile-row">
+              <Avatar name={mvp.account.name} avatarUrl={mvp.account.avatarUrl} size={56} />
+              <div>
+                <div className="team-profile-name">{mvp.account.name}</div>
+                <div className="empty" style={{ margin: 0 }}>
+                  ⚽ {mvp.goals} goal{mvp.goals === 1 ? "" : "s"} · 🅰️ {mvp.assists} assist{mvp.assists === 1 ? "" : "s"} in the last 30 days
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="int-modal-fields team-hub-card team-vision-card">

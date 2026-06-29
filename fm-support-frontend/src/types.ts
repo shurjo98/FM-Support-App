@@ -72,6 +72,7 @@ export interface InternalAccountLite {
   name: string;
   role: InternalRole;
   avatarUrl?: string | null;
+  skills?: string[];
 }
 
 export interface TeamGoal {
@@ -106,14 +107,25 @@ export interface TaskComment {
   createdAt: string;
 }
 
+// A task can have one Lead (owns it, like a striker who scores) plus any
+// number of Assists (like a teammate who sets up the goal) — useful when a
+// job needs people with different skill sets working together.
+export type TaskAssigneeRole = "LEAD" | "ASSIST";
+
+export interface TaskAssignee {
+  accountId: string;
+  name: string;
+  avatarUrl?: string | null;
+  role: TaskAssigneeRole;
+}
+
 export interface InternalTask {
   id: string;
   title: string;
   description?: string;
   column: TaskColumn;
   priority: TaskPriority;
-  assigneeId?: string | null;
-  assigneeName: string | null;
+  assignees: TaskAssignee[];
   dueDate?: string | null;
   createdByAccountId: string;
   createdByName: string;

@@ -186,7 +186,6 @@ router.post("/", async (req, res) => {
         description: `Reported by ${user.name}: ${description}`,
         column: "BACKLOG",
         priority: "MEDIUM",
-        assigneeId: null,
         createdByAccountId: "Customer Portal",
         relatedTicketId: newTicket.id,
         events: {

@@ -207,13 +207,25 @@ export interface TaskComment {
   createdAt: string;
 }
 
+// A task can have one LEAD (owns it, like a striker who scores) plus any
+// number of ASSIST helpers (like a teammate who sets up the goal) — useful
+// when a job needs people with different skill sets working together.
+export type TaskAssigneeRole = "LEAD" | "ASSIST";
+
+export interface TaskAssignee {
+  accountId: string;
+  name: string;
+  avatarUrl?: string | null;
+  role: TaskAssigneeRole;
+}
+
 export interface InternalTask {
   id: string;
   title: string;
   description?: string;
   column: TaskColumn;
   priority: TaskPriority;
-  assigneeId?: string | null;
+  assignees: TaskAssignee[];
   dueDate?: string | null;
   createdByAccountId: string;
   relatedTicketId?: string;

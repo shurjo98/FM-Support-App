@@ -209,7 +209,9 @@ export default function TaskBoardPage({
   if (error) return <div className="page-error">{error}</div>;
   if (!tasks) return <div className="page-loading">Loading task board...</div>;
 
-  const visibleTasks = myTasksOnly ? tasks.filter((t) => t.assigneeId === actingAccount.id) : tasks;
+  const visibleTasks = myTasksOnly
+    ? tasks.filter((t) => t.assignees.some((a) => a.accountId === actingAccount.id))
+    : tasks;
 
   return (
     <div className="kanban-page">
@@ -301,12 +303,18 @@ export default function TaskBoardPage({
                           {task.comments.length}
                         </span>
                       )}
-                      {task.assigneeName ? (
-                        <Avatar
-                          name={task.assigneeName}
-                          avatarUrl={accounts.find((a) => a.id === task.assigneeId)?.avatarUrl}
-                          size={28}
-                        />
+                      {task.assignees.length > 0 ? (
+                        <div className="kanban-assignee-stack">
+                          {task.assignees.map((a) => (
+                            <div
+                              key={a.accountId}
+                              className={`kanban-assignee ${a.role === "LEAD" ? "lead" : "assist"}`}
+                              title={`${a.name} — ${a.role === "LEAD" ? "Lead" : "Assist"}`}
+                            >
+                              <Avatar name={a.name} avatarUrl={a.avatarUrl} size={a.role === "LEAD" ? 28 : 22} />
+                            </div>
+                          ))}
+                        </div>
                       ) : (
                         <span className="empty">Unassigned</span>
                       )}
@@ -393,7 +401,8 @@ function TaskDetailModal({
   async function patch(payload: {
     column?: TaskColumn;
     priority?: TaskPriority;
-    assigneeId?: string | null;
+    leadId?: string | null;
+    assistIds?: string[];
     dueDate?: string | null;
   }) {
     setSaving(true);
@@ -467,21 +476,18 @@ function TaskDetailModal({
                 </select>
               </label>
 
-              <label>
-                Assignee
-                <select
-                  value={task.assigneeId ?? ""}
-                  onChange={(e) => patch({ assigneeId: e.target.value || null })}
-                  disabled={saving}
-                >
-                  <option value="">Unassigned</option>
-                  {accounts.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <AssigneePicker
+                accounts={accounts}
+                leadId={task.assignees.find((a) => a.role === "LEAD")?.accountId ?? null}
+                assistIds={task.assignees.filter((a) => a.role === "ASSIST").map((a) => a.accountId)}
+                disabled={saving}
+                onChangeLead={(leadId) => patch({ leadId })}
+                onToggleAssist={(accountId) => {
+                  const current = task.assignees.filter((a) => a.role === "ASSIST").map((a) => a.accountId);
+                  const next = current.includes(accountId) ? current.filter((id) => id !== accountId) : [...current, accountId];
+                  patch({ assistIds: next });
+                }}
+              />
 
               <label>
                 Due date
@@ -503,8 +509,13 @@ function TaskDetailModal({
                 <strong>Priority:</strong> {task.priority}
               </div>
               <div>
-                <strong>Assignee:</strong> {task.assigneeName ?? "Unassigned"}
+                <strong>Lead:</strong> {task.assignees.find((a) => a.role === "LEAD")?.name ?? "Unassigned"}
               </div>
+              {task.assignees.some((a) => a.role === "ASSIST") && (
+                <div>
+                  <strong>Assist:</strong> {task.assignees.filter((a) => a.role === "ASSIST").map((a) => a.name).join(", ")}
+                </div>
+              )}
               {task.dueDate && (
                 <div>
                   <strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString()}
@@ -579,7 +590,8 @@ function NewTaskModal({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<TaskPriority>("MEDIUM");
-  const [assigneeId, setAssigneeId] = useState("");
+  const [leadId, setLeadId] = useState<string | null>(null);
+  const [assistIds, setAssistIds] = useState<string[]>([]);
   const [column, setColumn] = useState<TaskColumn>("BACKLOG");
   const [dueDate, setDueDate] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -594,7 +606,8 @@ function NewTaskModal({
         title: title.trim(),
         description: description.trim() || undefined,
         priority,
-        assigneeId: assigneeId || null,
+        leadId,
+        assistIds,
         column,
         dueDate: dueDate || null,
         actingAccountId,
@@ -639,17 +652,15 @@ function NewTaskModal({
               ))}
             </select>
           </label>
-          <label>
-            Assignee
-            <select value={assigneeId} onChange={(e) => setAssigneeId(e.target.value)}>
-              <option value="">Unassigned</option>
-              {accounts.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          <AssigneePicker
+            accounts={accounts}
+            leadId={leadId}
+            assistIds={assistIds}
+            onChangeLead={setLeadId}
+            onToggleAssist={(accountId) =>
+              setAssistIds((prev) => (prev.includes(accountId) ? prev.filter((id) => id !== accountId) : [...prev, accountId]))
+            }
+          />
           <label>
             Due date
             <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
@@ -670,6 +681,64 @@ function NewTaskModal({
           <button className="int-button" onClick={handleSubmit} disabled={submitting || !title.trim()}>
             {submitting ? "Creating..." : "Create task"}
           </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// One Lead (owns the task, like a striker) plus any number of Assists (like
+// a teammate setting up the goal) — built so jobs that need different skill
+// sets can pull in the right people, each getting credit for their part.
+function AssigneePicker({
+  accounts,
+  leadId,
+  assistIds,
+  disabled,
+  onChangeLead,
+  onToggleAssist,
+}: {
+  accounts: InternalAccountLite[];
+  leadId: string | null;
+  assistIds: string[];
+  disabled?: boolean;
+  onChangeLead: (leadId: string | null) => void;
+  onToggleAssist: (accountId: string) => void;
+}) {
+  const assistCandidates = accounts.filter((a) => a.id !== leadId);
+
+  return (
+    <div className="assignee-picker">
+      <label>
+        Lead
+        <select value={leadId ?? ""} onChange={(e) => onChangeLead(e.target.value || null)} disabled={disabled}>
+          <option value="">Unassigned</option>
+          {accounts.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.name}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <div>
+        <span className="assignee-picker-assists-label">Assists</span>
+        <div className="assist-chip-list">
+          {assistCandidates.length === 0 ? (
+            <p className="empty">No one else to add yet.</p>
+          ) : (
+            assistCandidates.map((a) => {
+              const active = assistIds.includes(a.id);
+              return (
+                <label key={a.id} className={`assist-chip ${active ? "active" : ""}`}>
+                  <input type="checkbox" checked={active} onChange={() => onToggleAssist(a.id)} disabled={disabled} hidden />
+                  <Avatar name={a.name} avatarUrl={a.avatarUrl} size={20} />
+                  <span>{a.name}</span>
+                  {a.skills && a.skills.length > 0 && <span className="assist-chip-skills">{a.skills.join(", ")}</span>}
+                </label>
+              );
+            })
+          )}
         </div>
       </div>
     </div>

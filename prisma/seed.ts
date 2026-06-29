@@ -196,7 +196,9 @@ async function main() {
         description: task.description,
         column: task.column,
         priority: task.priority,
-        assigneeId: task.assigneeId,
+        ...(task.assigneeId
+          ? { assignments: { create: [{ id: `ta-seed-${task.id}`, accountId: task.assigneeId, role: "LEAD" }] } }
+          : {}),
         dueDate: task.dueDate,
         createdByAccountId: task.createdByAccountId,
         relatedTicketId: task.relatedTicketId,

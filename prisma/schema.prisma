@@ -85,12 +85,15 @@ model User {
 }
 
 model InternalAccount {
-  id        String  @id
-  accountId String  @unique
+  id        String   @id
+  accountId String   @unique
   password  String
   name      String
   role      String
   avatarUrl String?
+  skills    String[] @default([])
+
+  assignments TaskAssignment[]
 }
 
 model SparePart {
@@ -206,15 +209,30 @@ model InternalTask {
   description        String?
   column             String
   priority           String
-  assigneeId         String?
   dueDate            String?
   createdByAccountId String
   relatedTicketId    String?
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
-  events   TaskEvent[]
-  comments TaskComment[]
+  events      TaskEvent[]
+  comments    TaskComment[]
+  assignments TaskAssignment[]
+}
+
+// A task can have one LEAD (owns it, like a striker who scores) and any
+// number of ASSIST helpers (like a teammate who sets up the goal) — both
+// roles count toward the assignee's stats, just differently (see the
+// leaderboard's goals-vs-assists split in src/routes/dashboard.ts).
+model TaskAssignment {
+  id        String       @id
+  taskId    String
+  task      InternalTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  accountId String
+  account   InternalAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  role      String
+
+  @@unique([taskId, accountId])
 }
 
 model TaskEvent {

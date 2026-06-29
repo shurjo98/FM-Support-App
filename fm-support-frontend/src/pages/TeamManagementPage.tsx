@@ -79,7 +79,12 @@ export default function TeamManagementPage({
           {accounts.map((account) => (
             <div key={account.id} className="team-roster-row">
               <Avatar name={account.name} avatarUrl={account.avatarUrl} size={40} />
-              <span className="team-roster-name">{account.name}</span>
+              <div className="team-roster-name">
+                {account.name}
+                {account.skills && account.skills.length > 0 && (
+                  <div className="team-roster-skills">{account.skills.join(" · ")}</div>
+                )}
+              </div>
               <span className={`int-role-badge int-role-${account.role.toLowerCase()}`}>{account.role}</span>
               <div className="team-roster-actions">
                 <button className="int-button-secondary" onClick={() => setEditing(account)}>
@@ -141,6 +146,7 @@ function MemberModal({
   const [accountId, setAccountId] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<InternalRole>(existing?.role ?? "TECHNICIAN");
+  const [skillsText, setSkillsText] = useState(existing?.skills?.join(", ") ?? "");
   const [photo, setPhoto] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -152,6 +158,11 @@ function MemberModal({
     if (!fullName.trim()) return;
     if (!isEdit && (!accountId.trim() || !password.trim())) return;
 
+    const skills = skillsText
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
     setSubmitting(true);
     setError(null);
     try {
@@ -160,6 +171,7 @@ function MemberModal({
         account = await updateInternalAccount(token, existing.id, {
           name: fullName,
           role,
+          skills,
           ...(accountId.trim() ? { accountId: accountId.trim() } : {}),
           ...(password.trim() ? { password: password.trim() } : {}),
           actingAccountId,
@@ -170,6 +182,7 @@ function MemberModal({
           accountId: accountId.trim(),
           password: password.trim(),
           role,
+          skills,
           actingAccountId,
         });
       }
@@ -218,6 +231,15 @@ function MemberModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Senior Mechanic, Marketing, Manager"
+            />
+          </label>
+          <label>
+            Skills (comma-separated, optional)
+            <input
+              type="text"
+              value={skillsText}
+              onChange={(e) => setSkillsText(e.target.value)}
+              placeholder="e.g. electrical, customer comms, stitching"
             />
           </label>
           <label>
