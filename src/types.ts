@@ -76,16 +76,16 @@ export interface CachedAnswer {
 
 // Internal staff who log into the internal dashboard. Plaintext password is
 // intentional for now — this is a prototype-only auth scheme, not for
-// production use. Managers (and admins) can create/assign/move tasks on the
-// team task board; technicians can only view it.
-export type InternalRole = "MANAGER" | "TECHNICIAN" | "ADMIN";
-
+// production use. Role *is* the designation — one person can hold several
+// (e.g. "Technician" + "Marketing"); "Admin"/"Manager" among them
+// (case-insensitive) grant the matching permission level — see
+// canManageTasks()/isAdmin() in src/routes/dashboard.ts.
 export interface InternalAccount {
   id: string;
   accountId: string;
   password: string;
   name: string;
-  role: InternalRole;
+  roles: string[];
 }
 
 export interface SparePart {

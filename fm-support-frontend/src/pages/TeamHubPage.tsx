@@ -11,6 +11,8 @@ import {
 } from "../api";
 import type { InternalAccountLite, InternalTask, TeamGoal } from "../types";
 import { Avatar } from "../Avatar";
+import { RoleBadges } from "../RoleBadges";
+import { canManageTasks } from "../permissions";
 import { enablePushNotifications, isPushSupported } from "../push";
 
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
@@ -42,7 +44,7 @@ export default function TeamHubPage({
   const [pushStatus, setPushStatus] = useState<string | null>(null);
   const [enablingPush, setEnablingPush] = useState(false);
 
-  const canManage = actingAccount.role === "MANAGER" || actingAccount.role === "ADMIN";
+  const canManage = canManageTasks(actingAccount);
 
   function load() {
     Promise.all([fetchInternalAccounts(token), fetchTasks(token), fetchTeamGoals(token)])
@@ -136,7 +138,9 @@ export default function TeamHubPage({
             <Avatar name={actingAccount.name} avatarUrl={actingAccount.avatarUrl} size={72} />
             <div>
               <div className="team-profile-name">{actingAccount.name}</div>
-              <span className={`int-role-badge int-role-${actingAccount.role.toLowerCase()}`}>{actingAccount.role}</span>
+              <span className="role-badges-list">
+                <RoleBadges roles={actingAccount.roles} />
+              </span>
               <label className="int-button-secondary team-avatar-upload">
                 {uploading ? "Uploading..." : "Change photo"}
                 <input

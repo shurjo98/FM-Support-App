@@ -87,7 +87,7 @@ async function main() {
       accountId: a.accountId,
       password: a.password,
       name: a.name,
-      role: a.role,
+      roles: a.roles,
     })),
   });
 

@@ -9,7 +9,6 @@ import type {
   GarmentRecommendation,
   InternalAccountLite,
   InternalNotification,
-  InternalRole,
   InternalTask,
   IssueType,
   LoginResponse,
@@ -89,9 +88,8 @@ export function createInternalAccount(
     name: string;
     accountId: string;
     password: string;
-    role: InternalRole;
+    roles: string[];
     skills?: string[];
-    departments?: string[];
     actingAccountId: string;
   }
 ): Promise<InternalAccountLite> {
@@ -105,9 +103,8 @@ export function updateInternalAccount(
     name: string;
     accountId: string;
     password: string;
-    role: InternalRole;
+    roles: string[];
     skills: string[];
-    departments: string[];
   }> & {
     actingAccountId: string;
   }

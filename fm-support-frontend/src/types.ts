@@ -65,15 +65,16 @@ export interface AssignmentsResponse {
   };
 }
 
-export type InternalRole = "MANAGER" | "TECHNICIAN" | "ADMIN";
-
+// Role *is* the designation — one person can hold several (e.g.
+// "Technician" + "Marketing"), picked from a curated list or typed in
+// manually. "Admin"/"Manager" among them (case-insensitive) grant the
+// matching permission level — see src/permissions.ts.
 export interface InternalAccountLite {
   id: string;
   name: string;
-  role: InternalRole;
+  roles: string[];
   avatarUrl?: string | null;
   skills?: string[];
-  departments?: string[];
 }
 
 export interface TeamGoal {

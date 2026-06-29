@@ -2,6 +2,8 @@ import { useState, type ReactNode } from "react";
 import { ArrowLeft, Factory, Users, Kanban, Newspaper, Target, Bell, LogOut, Menu, RefreshCw, ShieldCheck, type LucideIcon } from "lucide-react";
 import type { InternalAccountLite } from "./types";
 import { Avatar } from "./Avatar";
+import { RoleBadges } from "./RoleBadges";
+import { isFmAdmin } from "./permissions";
 
 export type InternalTab = "dashboard" | "assignments" | "tasks" | "content" | "teamhub" | "team" | "notifications";
 
@@ -31,7 +33,7 @@ export default function InternalLayout({
   children: ReactNode;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const visibleNavItems = NAV_ITEMS.filter((item) => !item.adminOnly || actingAccount.role === "ADMIN");
+  const visibleNavItems = NAV_ITEMS.filter((item) => !item.adminOnly || isFmAdmin(actingAccount));
 
   function navigate(tab: InternalTab) {
     onNavigate(tab);
@@ -99,8 +101,8 @@ export default function InternalLayout({
             <Avatar name={actingAccount.name} avatarUrl={actingAccount.avatarUrl} size={32} />
             <div className="int-acting-as-info">
               <span className="int-acting-as-name">{actingAccount.name}</span>
-              <span className={`int-role-badge int-role-${actingAccount.role.toLowerCase()}`}>
-                {actingAccount.role}
+              <span className="role-badges-list">
+                <RoleBadges roles={actingAccount.roles} />
               </span>
             </div>
             <button className="int-switch-btn" onClick={onSwitchAccount}>

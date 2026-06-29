@@ -12,6 +12,7 @@ import {
 } from "../api";
 import type { InternalAccountLite, InternalNotification, InternalTask, TaskColumn, TaskEventType, TaskPriority } from "../types";
 import { Avatar } from "../Avatar";
+import { canManageTasks } from "../permissions";
 import { Bell, MessageCircle, Plus, Sparkles, ArrowRightLeft, Zap, UserCheck, CalendarClock, type LucideIcon } from "lucide-react";
 
 const COLUMNS: { key: TaskColumn; label: string }[] = [
@@ -82,7 +83,7 @@ export default function TaskBoardPage({
   const [myTasksOnly, setMyTasksOnly] = useState(false);
   const columnRefs = useRef<Partial<Record<TaskColumn, HTMLDivElement>>>({});
 
-  const canManage = actingAccount.role === "MANAGER" || actingAccount.role === "ADMIN";
+  const canManage = canManageTasks(actingAccount);
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   function load() {

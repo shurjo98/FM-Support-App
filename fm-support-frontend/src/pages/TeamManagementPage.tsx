@@ -7,15 +7,19 @@ import {
   uploadAvatar,
   UnauthorizedError,
 } from "../api";
-import type { InternalAccountLite, InternalRole } from "../types";
+import type { InternalAccountLite } from "../types";
 import { Avatar } from "../Avatar";
+import { RoleBadges } from "../RoleBadges";
 
-const ROLES: InternalRole[] = ["TECHNICIAN", "MANAGER", "ADMIN"];
-
-// Business function(s) a person covers — separate from Role (which is the
-// permission level above). Multi-select since someone often wears more than
-// one hat, e.g. Stock Maintenance + After-Sales Support.
-const DEPARTMENTS = [
+// Role *is* the designation — one multi-select field instead of two. A
+// curated list covering both permission levels and the business functions a
+// sales & distribution company typically has, plus the option to type in
+// anything else. Someone can hold several at once (e.g. Technician +
+// Marketing, or Stock Maintenance + After-Sales Support).
+const PRESET_ROLES = [
+  "Technician",
+  "Manager",
+  "Admin",
   "Sales",
   "Commercial",
   "Marketing",
@@ -29,20 +33,6 @@ const DEPARTMENTS = [
   "Human Resources",
   "Procurement",
 ];
-
-// Existing names follow a "First Name (Designation)" convention, e.g.
-// "Hares (Senior Mechanic)" — split/combine so the form can edit the two
-// parts separately without changing how names are stored or displayed.
-function splitNameTitle(name: string): { name: string; title: string } {
-  const match = name.match(/^(.*?)\s*\((.*)\)\s*$/);
-  return match ? { name: match[1] ?? "", title: match[2] ?? "" } : { name, title: "" };
-}
-
-function combineNameTitle(name: string, title: string): string {
-  const trimmedName = name.trim();
-  const trimmedTitle = title.trim();
-  return trimmedTitle ? `${trimmedName} (${trimmedTitle})` : trimmedName;
-}
 
 export default function TeamManagementPage({
   token,
@@ -85,7 +75,7 @@ export default function TeamManagementPage({
     <div>
       <div className="kanban-toolbar">
         <p className="empty" style={{ margin: 0 }}>
-          Add or remove team members, change their name, designation, role, department(s), or photo.
+          Add or remove team members, change their name, role(s), or photo.
         </p>
         <button className="int-button" onClick={() => setShowAdd(true)}>
           + Add member
@@ -103,14 +93,9 @@ export default function TeamManagementPage({
                   <div className="team-roster-skills">{account.skills.join(" · ")}</div>
                 )}
               </div>
-              <div className="team-roster-departments">
-                {(account.departments ?? []).map((d) => (
-                  <span key={d} className="dept-badge">
-                    {d}
-                  </span>
-                ))}
-              </div>
-              <span className={`int-role-badge int-role-${account.role.toLowerCase()}`}>{account.role}</span>
+              <span className="role-badges-list team-roster-roles">
+                <RoleBadges roles={account.roles} />
+              </span>
               <div className="team-roster-actions">
                 <button className="int-button-secondary" onClick={() => setEditing(account)}>
                   Edit
@@ -165,23 +150,42 @@ function MemberModal({
   onClose: () => void;
   onSaved: (account: InternalAccountLite) => void;
 }) {
-  const split = existing ? splitNameTitle(existing.name) : { name: "", title: "" };
-  const [name, setName] = useState(split.name);
-  const [title, setTitle] = useState(split.title);
+  const [name, setName] = useState(existing?.name ?? "");
   const [accountId, setAccountId] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<InternalRole>(existing?.role ?? "TECHNICIAN");
+  const [roles, setRoles] = useState<string[]>(existing?.roles ?? []);
+  const [customRoleText, setCustomRoleText] = useState("");
   const [skillsText, setSkillsText] = useState(existing?.skills?.join(", ") ?? "");
-  const [departments, setDepartments] = useState<string[]>(existing?.departments ?? []);
   const [photo, setPhoto] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isEdit = Boolean(existing);
 
+  function toggleRole(role: string) {
+    setRoles((prev) =>
+      prev.some((r) => r.toLowerCase() === role.toLowerCase())
+        ? prev.filter((r) => r.toLowerCase() !== role.toLowerCase())
+        : [...prev, role]
+    );
+  }
+
+  function addCustomRole() {
+    const value = customRoleText.trim();
+    if (!value) return;
+    if (!roles.some((r) => r.toLowerCase() === value.toLowerCase())) {
+      setRoles((prev) => [...prev, value]);
+    }
+    setCustomRoleText("");
+  }
+
+  // Preset chips first, then any custom roles already on this person that
+  // aren't part of the preset list — so they stay visible/removable.
+  const extraRoles = roles.filter((r) => !PRESET_ROLES.some((p) => p.toLowerCase() === r.toLowerCase()));
+  const chipOptions = [...PRESET_ROLES, ...extraRoles];
+
   async function handleSubmit() {
-    const fullName = combineNameTitle(name, title);
-    if (!fullName.trim()) return;
+    if (!name.trim() || roles.length === 0) return;
     if (!isEdit && (!accountId.trim() || !password.trim())) return;
 
     const skills = skillsText
@@ -195,22 +199,20 @@ function MemberModal({
       let account: InternalAccountLite;
       if (isEdit && existing) {
         account = await updateInternalAccount(token, existing.id, {
-          name: fullName,
-          role,
+          name: name.trim(),
+          roles,
           skills,
-          departments,
           ...(accountId.trim() ? { accountId: accountId.trim() } : {}),
           ...(password.trim() ? { password: password.trim() } : {}),
           actingAccountId,
         });
       } else {
         account = await createInternalAccount(token, {
-          name: fullName,
+          name: name.trim(),
           accountId: accountId.trim(),
           password: password.trim(),
-          role,
+          roles,
           skills,
-          departments,
           actingAccountId,
         });
       }
@@ -236,7 +238,7 @@ function MemberModal({
         <h2 className="int-modal-title">{isEdit ? "Edit team member" : "Add a team member"}</h2>
         <div className="int-modal-fields">
           <div className="team-profile-row" style={{ marginBottom: 4 }}>
-            <Avatar name={fullPreviewName(name, title)} avatarUrl={existing?.avatarUrl} size={56} />
+            <Avatar name={name || "?"} avatarUrl={existing?.avatarUrl} size={56} />
             <label className="int-button-secondary team-avatar-upload">
               {photo ? photo.name : "Choose photo"}
               <input
@@ -252,15 +254,42 @@ function MemberModal({
             Name
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Rashed" />
           </label>
-          <label>
-            Designation (optional)
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Senior Mechanic, Marketing, Manager"
-            />
-          </label>
+
+          <div>
+            <span className="assignee-picker-assists-label">
+              Role(s) — pick any that apply, or type your own below. Someone can hold more than one (e.g.
+              Technician + Marketing).
+            </span>
+            <div className="assist-chip-list">
+              {chipOptions.map((r) => {
+                const active = roles.some((x) => x.toLowerCase() === r.toLowerCase());
+                return (
+                  <label key={r} className={`assist-chip ${active ? "active" : ""}`}>
+                    <input type="checkbox" checked={active} onChange={() => toggleRole(r)} hidden />
+                    <span>{r}</span>
+                  </label>
+                );
+              })}
+            </div>
+            <div className="custom-role-add">
+              <input
+                type="text"
+                value={customRoleText}
+                onChange={(e) => setCustomRoleText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addCustomRole();
+                  }
+                }}
+                placeholder="Type a custom role and press Enter"
+              />
+              <button type="button" className="int-button-secondary" onClick={addCustomRole} disabled={!customRoleText.trim()}>
+                Add
+              </button>
+            </div>
+          </div>
+
           <label>
             Skills (comma-separated, optional)
             <input
@@ -269,39 +298,6 @@ function MemberModal({
               onChange={(e) => setSkillsText(e.target.value)}
               placeholder="e.g. electrical, customer comms, stitching"
             />
-          </label>
-          <div>
-            <span className="assignee-picker-assists-label">
-              Department(s) — someone can cover more than one (e.g. Stock Maintenance + After-Sales Support)
-            </span>
-            <div className="assist-chip-list">
-              {DEPARTMENTS.map((d) => {
-                const active = departments.includes(d);
-                return (
-                  <label key={d} className={`assist-chip ${active ? "active" : ""}`}>
-                    <input
-                      type="checkbox"
-                      checked={active}
-                      onChange={() =>
-                        setDepartments((prev) => (prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]))
-                      }
-                      hidden
-                    />
-                    <span>{d}</span>
-                  </label>
-                );
-              })}
-            </div>
-          </div>
-          <label>
-            Role
-            <select value={role} onChange={(e) => setRole(e.target.value as InternalRole)}>
-              {ROLES.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
           </label>
           <label>
             Login ID {isEdit && <span style={{ fontWeight: 400, color: "#9ca3af" }}>(leave blank to keep current)</span>}
@@ -327,7 +323,7 @@ function MemberModal({
           <button
             className="int-button"
             onClick={handleSubmit}
-            disabled={submitting || !name.trim() || (!isEdit && (!accountId.trim() || !password.trim()))}
+            disabled={submitting || !name.trim() || roles.length === 0 || (!isEdit && (!accountId.trim() || !password.trim()))}
           >
             {submitting ? "Saving..." : isEdit ? "Save changes" : "Add member"}
           </button>
@@ -335,8 +331,4 @@ function MemberModal({
       </div>
     </div>
   );
-}
-
-function fullPreviewName(name: string, title: string): string {
-  return combineNameTitle(name || "?", title) || "?";
 }

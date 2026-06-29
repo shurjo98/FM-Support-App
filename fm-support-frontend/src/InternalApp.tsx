@@ -10,6 +10,7 @@ import TeamHubPage from "./pages/TeamHubPage";
 import TeamManagementPage from "./pages/TeamManagementPage";
 import InternalLayout, { type InternalTab } from "./InternalLayout";
 import type { InternalAccountLite } from "./types";
+import { isFmAdmin } from "./permissions";
 
 const TOKEN_KEY = "fm_internal_token";
 const NAME_KEY = "fm_internal_name";
@@ -96,7 +97,7 @@ export default function InternalApp() {
           onUnauthorized={handleLogout}
         />
       )}
-      {tab === "team" && actingAccount.role === "ADMIN" && (
+      {tab === "team" && isFmAdmin(actingAccount) && (
         <TeamManagementPage token={token} actingAccount={actingAccount} onUnauthorized={handleLogout} />
       )}
       {tab === "notifications" && <NotificationsPage token={token} onUnauthorized={handleLogout} />}

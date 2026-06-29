@@ -23,19 +23,26 @@ async function technicianName(technicianId?: string | null): Promise<string | nu
   return account?.name ?? technicianId;
 }
 
+// Role *is* the designation now (one multi-valued field, picked from a
+// curated list or typed in manually) — "Admin"/"Manager"/"Technician"
+// among someone's roles (case-insensitive, since custom entries are free
+// text) grant the matching permission level.
+function hasRole(roles: string[], role: string): boolean {
+  return roles.some((r) => r.toUpperCase() === role.toUpperCase());
+}
+
 async function canManageTasks(accountId?: string): Promise<boolean> {
   if (!accountId) return false;
   const account = await prisma.internalAccount.findUnique({ where: { id: accountId } });
-  return account?.role === "MANAGER" || account?.role === "ADMIN";
+  if (!account) return false;
+  return hasRole(account.roles, "MANAGER") || hasRole(account.roles, "ADMIN");
 }
 
 async function isAdmin(accountId?: string): Promise<boolean> {
   if (!accountId) return false;
   const account = await prisma.internalAccount.findUnique({ where: { id: accountId } });
-  return account?.role === "ADMIN";
+  return account ? hasRole(account.roles, "ADMIN") : false;
 }
-
-const VALID_ROLES = ["TECHNICIAN", "MANAGER", "ADMIN"];
 
 function slugify(accountId: string): string {
   return accountId.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -49,31 +56,30 @@ router.get("/accounts", async (req, res) => {
     accounts.map((a) => ({
       id: a.id,
       name: a.name,
-      role: a.role,
+      roles: a.roles,
       avatarUrl: a.avatarUrl,
       skills: a.skills,
-      departments: a.departments,
     }))
   );
 });
 
 // POST /dashboard/accounts -> add a new team member (FM Admin only).
 router.post("/accounts", async (req, res) => {
-  const { name, accountId, password, role, skills, departments, actingAccountId } = req.body as {
+  const { name, accountId, password, roles, skills, actingAccountId } = req.body as {
     name: string;
     accountId: string;
     password: string;
-    role: string;
+    roles: string[];
     skills?: string[];
-    departments?: string[];
     actingAccountId: string;
   };
 
   if (!(await isAdmin(actingAccountId))) {
     return res.status(403).json({ error: "Only an FM Admin can add team members." });
   }
-  if (!name?.trim() || !accountId?.trim() || !password?.trim() || !VALID_ROLES.includes(role)) {
-    return res.status(400).json({ error: "name, accountId, password, and a valid role are required" });
+  const cleanRoles = (roles ?? []).map((r) => r.trim()).filter(Boolean);
+  if (!name?.trim() || !accountId?.trim() || !password?.trim() || cleanRoles.length === 0) {
+    return res.status(400).json({ error: "name, accountId, password, and at least one role are required" });
   }
 
   const existing = await prisma.internalAccount.findUnique({ where: { accountId: accountId.trim() } });
@@ -92,32 +98,29 @@ router.post("/accounts", async (req, res) => {
       accountId: accountId.trim(),
       password: password.trim(),
       name: name.trim(),
-      role,
+      roles: cleanRoles,
       skills: (skills ?? []).map((s) => s.trim()).filter(Boolean),
-      departments: (departments ?? []).map((d) => d.trim()).filter(Boolean),
     },
   });
 
   res.status(201).json({
     id: created.id,
     name: created.name,
-    role: created.role,
+    roles: created.roles,
     avatarUrl: created.avatarUrl,
     skills: created.skills,
-    departments: created.departments,
   });
 });
 
-// PATCH /dashboard/accounts/:id -> edit a team member's name/login/role/password/skills/departments (FM Admin only).
+// PATCH /dashboard/accounts/:id -> edit a team member's name/login/roles/password/skills (FM Admin only).
 router.patch("/accounts/:id", async (req, res) => {
   const { id } = req.params;
-  const { name, accountId, password, role, skills, departments, actingAccountId } = req.body as {
+  const { name, accountId, password, roles, skills, actingAccountId } = req.body as {
     name?: string;
     accountId?: string;
     password?: string;
-    role?: string;
+    roles?: string[];
     skills?: string[];
-    departments?: string[];
     actingAccountId: string;
   };
 
@@ -128,8 +131,9 @@ router.patch("/accounts/:id", async (req, res) => {
   const account = await prisma.internalAccount.findUnique({ where: { id } });
   if (!account) return res.status(404).json({ error: "Account not found" });
 
-  if (role !== undefined && !VALID_ROLES.includes(role)) {
-    return res.status(400).json({ error: "Invalid role" });
+  const cleanRoles = roles?.map((r) => r.trim()).filter(Boolean);
+  if (cleanRoles !== undefined && cleanRoles.length === 0) {
+    return res.status(400).json({ error: "At least one role is required" });
   }
   if (accountId !== undefined && accountId.trim() !== account.accountId) {
     const existing = await prisma.internalAccount.findUnique({ where: { accountId: accountId.trim() } });
@@ -142,19 +146,17 @@ router.patch("/accounts/:id", async (req, res) => {
       ...(name !== undefined ? { name: name.trim() } : {}),
       ...(accountId !== undefined ? { accountId: accountId.trim() } : {}),
       ...(password !== undefined && password.trim() ? { password: password.trim() } : {}),
-      ...(role !== undefined ? { role } : {}),
+      ...(cleanRoles !== undefined ? { roles: cleanRoles } : {}),
       ...(skills !== undefined ? { skills: skills.map((s) => s.trim()).filter(Boolean) } : {}),
-      ...(departments !== undefined ? { departments: departments.map((d) => d.trim()).filter(Boolean) } : {}),
     },
   });
 
   res.json({
     id: updated.id,
     name: updated.name,
-    role: updated.role,
+    roles: updated.roles,
     avatarUrl: updated.avatarUrl,
     skills: updated.skills,
-    departments: updated.departments,
   });
 });
 
@@ -173,8 +175,9 @@ router.delete("/accounts/:id", async (req, res) => {
   const account = await prisma.internalAccount.findUnique({ where: { id } });
   if (!account) return res.status(404).json({ error: "Account not found" });
 
-  if (account.role === "ADMIN") {
-    const adminCount = await prisma.internalAccount.count({ where: { role: "ADMIN" } });
+  if (hasRole(account.roles, "ADMIN")) {
+    const accounts = await prisma.internalAccount.findMany();
+    const adminCount = accounts.filter((a) => hasRole(a.roles, "ADMIN")).length;
     if (adminCount <= 1) {
       return res.status(400).json({ error: "Can't remove the last remaining FM Admin." });
     }
@@ -210,10 +213,9 @@ router.post(
     res.status(201).json({
       id: updated.id,
       name: updated.name,
-      role: updated.role,
+      roles: updated.roles,
       avatarUrl: updated.avatarUrl,
       skills: updated.skills,
-      departments: updated.departments,
     });
   }
 );
@@ -734,14 +736,14 @@ router.patch("/tasks/:id", async (req, res) => {
 
   const eventsToCreate: ReturnType<typeof mkTaskEventData>[] = [];
   const data: Prisma.InternalTaskUpdateInput = {};
-  let movedByTechnician = false;
+  let movedByNonManager = false;
 
   if (column && column !== task.column) {
     data.column = column;
     eventsToCreate.push(
       mkTaskEventData("MOVED", `Moved from ${COLUMN_LABELS[task.column as TaskColumn]} to ${COLUMN_LABELS[column]}`, account.id, account.name)
     );
-    if (account.role === "TECHNICIAN") movedByTechnician = true;
+    if (!hasRole(account.roles, "MANAGER") && !hasRole(account.roles, "ADMIN")) movedByNonManager = true;
   }
 
   if (priority && priority !== task.priority) {
@@ -798,7 +800,7 @@ router.patch("/tasks/:id", async (req, res) => {
     include: taskInclude,
   });
 
-  if (movedByTechnician) {
+  if (movedByNonManager) {
     await notifyManagersOfMove(updated, account);
   }
 
