@@ -73,6 +73,7 @@ export interface InternalAccountLite {
   role: InternalRole;
   avatarUrl?: string | null;
   skills?: string[];
+  departments?: string[];
 }
 
 export interface TeamGoal {

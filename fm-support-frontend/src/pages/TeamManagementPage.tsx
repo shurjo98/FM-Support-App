@@ -12,6 +12,24 @@ import { Avatar } from "../Avatar";
 
 const ROLES: InternalRole[] = ["TECHNICIAN", "MANAGER", "ADMIN"];
 
+// Business function(s) a person covers — separate from Role (which is the
+// permission level above). Multi-select since someone often wears more than
+// one hat, e.g. Stock Maintenance + After-Sales Support.
+const DEPARTMENTS = [
+  "Sales",
+  "Commercial",
+  "Marketing",
+  "Branding",
+  "Digital Marketing",
+  "Stock Maintenance",
+  "After-Sales Support",
+  "Customer Service",
+  "Logistics & Distribution",
+  "Finance & Accounts",
+  "Human Resources",
+  "Procurement",
+];
+
 // Existing names follow a "First Name (Designation)" convention, e.g.
 // "Hares (Senior Mechanic)" — split/combine so the form can edit the two
 // parts separately without changing how names are stored or displayed.
@@ -67,7 +85,7 @@ export default function TeamManagementPage({
     <div>
       <div className="kanban-toolbar">
         <p className="empty" style={{ margin: 0 }}>
-          Add or remove team members, change their name, designation, role, or photo.
+          Add or remove team members, change their name, designation, role, department(s), or photo.
         </p>
         <button className="int-button" onClick={() => setShowAdd(true)}>
           + Add member
@@ -84,6 +102,13 @@ export default function TeamManagementPage({
                 {account.skills && account.skills.length > 0 && (
                   <div className="team-roster-skills">{account.skills.join(" · ")}</div>
                 )}
+              </div>
+              <div className="team-roster-departments">
+                {(account.departments ?? []).map((d) => (
+                  <span key={d} className="dept-badge">
+                    {d}
+                  </span>
+                ))}
               </div>
               <span className={`int-role-badge int-role-${account.role.toLowerCase()}`}>{account.role}</span>
               <div className="team-roster-actions">
@@ -147,6 +172,7 @@ function MemberModal({
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<InternalRole>(existing?.role ?? "TECHNICIAN");
   const [skillsText, setSkillsText] = useState(existing?.skills?.join(", ") ?? "");
+  const [departments, setDepartments] = useState<string[]>(existing?.departments ?? []);
   const [photo, setPhoto] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -172,6 +198,7 @@ function MemberModal({
           name: fullName,
           role,
           skills,
+          departments,
           ...(accountId.trim() ? { accountId: accountId.trim() } : {}),
           ...(password.trim() ? { password: password.trim() } : {}),
           actingAccountId,
@@ -183,6 +210,7 @@ function MemberModal({
           password: password.trim(),
           role,
           skills,
+          departments,
           actingAccountId,
         });
       }
@@ -242,6 +270,29 @@ function MemberModal({
               placeholder="e.g. electrical, customer comms, stitching"
             />
           </label>
+          <div>
+            <span className="assignee-picker-assists-label">
+              Department(s) — someone can cover more than one (e.g. Stock Maintenance + After-Sales Support)
+            </span>
+            <div className="assist-chip-list">
+              {DEPARTMENTS.map((d) => {
+                const active = departments.includes(d);
+                return (
+                  <label key={d} className={`assist-chip ${active ? "active" : ""}`}>
+                    <input
+                      type="checkbox"
+                      checked={active}
+                      onChange={() =>
+                        setDepartments((prev) => (prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]))
+                      }
+                      hidden
+                    />
+                    <span>{d}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
           <label>
             Role
             <select value={role} onChange={(e) => setRole(e.target.value as InternalRole)}>

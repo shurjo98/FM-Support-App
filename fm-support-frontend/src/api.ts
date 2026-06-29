@@ -85,7 +85,15 @@ export function fetchInternalAccounts(token: string): Promise<InternalAccountLit
 
 export function createInternalAccount(
   token: string,
-  payload: { name: string; accountId: string; password: string; role: InternalRole; skills?: string[]; actingAccountId: string }
+  payload: {
+    name: string;
+    accountId: string;
+    password: string;
+    role: InternalRole;
+    skills?: string[];
+    departments?: string[];
+    actingAccountId: string;
+  }
 ): Promise<InternalAccountLite> {
   return authedMutate<InternalAccountLite>("/dashboard/accounts", token, "POST", payload);
 }
@@ -93,7 +101,14 @@ export function createInternalAccount(
 export function updateInternalAccount(
   token: string,
   id: string,
-  payload: Partial<{ name: string; accountId: string; password: string; role: InternalRole; skills: string[] }> & {
+  payload: Partial<{
+    name: string;
+    accountId: string;
+    password: string;
+    role: InternalRole;
+    skills: string[];
+    departments: string[];
+  }> & {
     actingAccountId: string;
   }
 ): Promise<InternalAccountLite> {

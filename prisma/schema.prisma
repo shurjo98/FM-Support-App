@@ -92,6 +92,11 @@ model InternalAccount {
   role      String
   avatarUrl String?
   skills    String[] @default([])
+  // Business function(s) this person covers (Commercial, Branding, Stock
+  // Maintenance, After-Sales Support, etc.) — separate from `role`, which
+  // is the permission level (Technician/Manager/Admin). Multi-valued since
+  // one person often wears more than one hat (e.g. stock + after-sales).
+  departments String[] @default([])
 
   assignments TaskAssignment[]
 }

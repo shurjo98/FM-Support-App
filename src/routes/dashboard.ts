@@ -45,17 +45,27 @@ function slugify(accountId: string): string {
 // the "acting as" switcher and the task assignee picker.
 router.get("/accounts", async (req, res) => {
   const accounts = await prisma.internalAccount.findMany();
-  res.json(accounts.map((a) => ({ id: a.id, name: a.name, role: a.role, avatarUrl: a.avatarUrl, skills: a.skills })));
+  res.json(
+    accounts.map((a) => ({
+      id: a.id,
+      name: a.name,
+      role: a.role,
+      avatarUrl: a.avatarUrl,
+      skills: a.skills,
+      departments: a.departments,
+    }))
+  );
 });
 
 // POST /dashboard/accounts -> add a new team member (FM Admin only).
 router.post("/accounts", async (req, res) => {
-  const { name, accountId, password, role, skills, actingAccountId } = req.body as {
+  const { name, accountId, password, role, skills, departments, actingAccountId } = req.body as {
     name: string;
     accountId: string;
     password: string;
     role: string;
     skills?: string[];
+    departments?: string[];
     actingAccountId: string;
   };
 
@@ -84,21 +94,30 @@ router.post("/accounts", async (req, res) => {
       name: name.trim(),
       role,
       skills: (skills ?? []).map((s) => s.trim()).filter(Boolean),
+      departments: (departments ?? []).map((d) => d.trim()).filter(Boolean),
     },
   });
 
-  res.status(201).json({ id: created.id, name: created.name, role: created.role, avatarUrl: created.avatarUrl, skills: created.skills });
+  res.status(201).json({
+    id: created.id,
+    name: created.name,
+    role: created.role,
+    avatarUrl: created.avatarUrl,
+    skills: created.skills,
+    departments: created.departments,
+  });
 });
 
-// PATCH /dashboard/accounts/:id -> edit a team member's name/login/role/password/skills (FM Admin only).
+// PATCH /dashboard/accounts/:id -> edit a team member's name/login/role/password/skills/departments (FM Admin only).
 router.patch("/accounts/:id", async (req, res) => {
   const { id } = req.params;
-  const { name, accountId, password, role, skills, actingAccountId } = req.body as {
+  const { name, accountId, password, role, skills, departments, actingAccountId } = req.body as {
     name?: string;
     accountId?: string;
     password?: string;
     role?: string;
     skills?: string[];
+    departments?: string[];
     actingAccountId: string;
   };
 
@@ -125,10 +144,18 @@ router.patch("/accounts/:id", async (req, res) => {
       ...(password !== undefined && password.trim() ? { password: password.trim() } : {}),
       ...(role !== undefined ? { role } : {}),
       ...(skills !== undefined ? { skills: skills.map((s) => s.trim()).filter(Boolean) } : {}),
+      ...(departments !== undefined ? { departments: departments.map((d) => d.trim()).filter(Boolean) } : {}),
     },
   });
 
-  res.json({ id: updated.id, name: updated.name, role: updated.role, avatarUrl: updated.avatarUrl, skills: updated.skills });
+  res.json({
+    id: updated.id,
+    name: updated.name,
+    role: updated.role,
+    avatarUrl: updated.avatarUrl,
+    skills: updated.skills,
+    departments: updated.departments,
+  });
 });
 
 // DELETE /dashboard/accounts/:id -> remove a team member (FM Admin only).
@@ -180,7 +207,14 @@ router.post(
       data: { avatarUrl },
     });
 
-    res.status(201).json({ id: updated.id, name: updated.name, role: updated.role, avatarUrl: updated.avatarUrl, skills: updated.skills });
+    res.status(201).json({
+      id: updated.id,
+      name: updated.name,
+      role: updated.role,
+      avatarUrl: updated.avatarUrl,
+      skills: updated.skills,
+      departments: updated.departments,
+    });
   }
 );
 

@@ -35,7 +35,12 @@ export default function InternalAccountPicker({
             <button key={account.id} className="int-picker-option" onClick={() => onPick(account)}>
               <span className="int-picker-option-left">
                 <Avatar name={account.name} avatarUrl={account.avatarUrl} size={40} />
-                <span className="int-picker-option-name">{account.name}</span>
+                <span>
+                  <span className="int-picker-option-name">{account.name}</span>
+                  {account.departments && account.departments.length > 0 && (
+                    <div className="int-picker-option-departments">{account.departments.join(" · ")}</div>
+                  )}
+                </span>
               </span>
               <span className={`int-role-badge int-role-${account.role.toLowerCase()}`}>{account.role}</span>
             </button>
