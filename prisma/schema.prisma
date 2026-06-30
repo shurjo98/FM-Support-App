@@ -8,10 +8,11 @@ datasource db {
 }
 
 model Organization {
-  id       String  @id
-  name     String
-  location String?
-  groupId  String?
+  id        String  @id
+  name      String
+  location  String?
+  groupId   String?
+  portalPin String?
 
   machines         Machine[]
   machineInstances MachineInstance[]

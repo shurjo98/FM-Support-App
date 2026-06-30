@@ -25,6 +25,7 @@ export default defineConfig({
       "/audit": "http://localhost:4000",
       "/inventory": "http://localhost:4000",
       "/defects": "http://localhost:4000",
+      "/portal": "http://localhost:4000",
     },
   },
 });

@@ -348,6 +348,32 @@ export async function fetchCustomerUsers(): Promise<CustomerUser[]> {
   return res.json();
 }
 
+// ─── Portal auth ─────────────────────────────────────────────────────────────
+
+export interface PortalFactory {
+  id: string;
+  name: string;
+  location: string | null;
+  requiresPin: boolean;
+}
+
+export async function listPortalFactories(): Promise<PortalFactory[]> {
+  const res = await fetch("/portal/factories");
+  if (!res.ok) throw new Error(`Failed to load factories (${res.status})`);
+  return res.json();
+}
+
+export async function portalLogin(organizationId: string, pin?: string): Promise<CustomerUser> {
+  const res = await fetch("/portal/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ organizationId, pin }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `Login failed (${res.status})`);
+  return body;
+}
+
 export async function createTicket(payload: {
   serialNumber: string;
   createdByUserId: string;
