@@ -19,6 +19,7 @@ router.get("/", async (req, res) => {
     organizationId: u.organizationId,
     organizationName: u.organization?.name ?? u.organizationId,
     role: u.role,
+    groupId: u.organization?.groupId ?? null,
   }));
   res.json(rows);
 });

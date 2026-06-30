@@ -11,6 +11,7 @@ model Organization {
   id       String  @id
   name     String
   location String?
+  groupId  String?
 
   machines         Machine[]
   machineInstances MachineInstance[]
@@ -18,6 +19,9 @@ model Organization {
   purchases        Purchase[]
   reorderRequests  ReorderRequest[]
   notifications    NotificationLogEntry[]
+  auditItems       AuditItem[]
+  sparePartStocks  SparePartStock[]
+  defectLogs       DefectLog[]
 }
 
 model Machine {
@@ -69,6 +73,7 @@ model MachineInstance {
   // Maintenance tracking — applies to any machine, FM catalog or otherwise.
   lastServicedAt        DateTime?
   serviceIntervalMonths Int?
+  warrantyExpiresAt     DateTime?
 }
 
 model User {
@@ -109,6 +114,7 @@ model SparePart {
 
   purchases Purchase[]
   reorders  ReorderRequest[]
+  stocks    SparePartStock[]
 }
 
 model Purchase {
@@ -354,4 +360,47 @@ model CachedAnswer {
   issueType String
   text      String
   createdAt DateTime @default(now())
+}
+
+// One row per checklist question per organisation.
+// Seeded automatically on first visit; auto-filled items are re-evaluated on load.
+model AuditItem {
+  id             String   @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  category       String
+  question       String
+  status         String   @default("NOT_DONE") // NOT_DONE | IN_PROGRESS | DONE | NA
+  notes          String?
+  documentUrl    String?
+  autoFilled     Boolean  @default(false)
+  updatedAt      DateTime @updatedAt
+}
+
+// Spare-parts stock the factory keeps on-site.
+model SparePartStock {
+  id             String    @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  name           String
+  sparePartId    String?
+  sparePart      SparePart? @relation(fields: [sparePartId], references: [id])
+  quantity       Int       @default(0)
+  minThreshold   Int       @default(2)
+  unit           String    @default("pcs")
+  updatedAt      DateTime  @updatedAt
+}
+
+// End-of-shift quality defect entries linked to a machine serial number.
+model DefectLog {
+  id              String   @id
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  serialNumber    String?
+  machineName     String?
+  defectType      String   // SKIP_STITCH | BROKEN_STITCH | NEEDLE_HOLE | PUCKERING | TENSION | OTHER
+  count           Int
+  shift           String   // MORNING | EVENING | NIGHT
+  loggedAt        DateTime @default(now())
+  loggedByUserId  String?
 }

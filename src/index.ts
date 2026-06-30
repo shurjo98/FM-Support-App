@@ -19,6 +19,10 @@ import sparePartsRouter from "./routes/spareparts";
 import contentRouter from "./routes/content";
 import pushRouter from "./routes/push";
 import filesRouter from "./routes/files";
+import analyticsRouter from "./routes/analytics";
+import auditRouter from "./routes/audit";
+import inventoryRouter from "./routes/inventory";
+import defectsRouter from "./routes/defects";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -48,6 +52,10 @@ app.use("/spareparts", sparePartsRouter);
 app.use("/content", contentRouter);
 app.use("/push", pushRouter);
 app.use("/files", filesRouter);
+app.use("/analytics", analyticsRouter);
+app.use("/audit", auditRouter);
+app.use("/inventory", inventoryRouter);
+app.use("/defects", defectsRouter);
 
 // Serve the built frontend (npm run build) so the whole app is reachable
 // from a single URL/port — needed for hosting on Render etc. In local dev,

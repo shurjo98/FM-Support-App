@@ -396,6 +396,21 @@
   cursor: pointer;
 }
 
+.cust-input {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.cust-input:focus {
+  border-color: #4fb3e8;
+  box-shadow: 0 0 0 2px rgba(79, 179, 232, 0.2);
+}
+
 /* ---- machine picker grid ---- */
 
 .cust-machine-grid {

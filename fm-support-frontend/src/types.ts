@@ -224,6 +224,7 @@ export interface CustomerUser {
   organizationId: string;
   organizationName: string;
   role: UserRole;
+  groupId: string | null;
 }
 
 export interface CreateTicketResponse {

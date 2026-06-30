@@ -11,6 +11,12 @@ import SparePartsPage from "./SparePartsPage";
 import GarmentGuidePage from "./GarmentGuidePage";
 import TicketHistoryPage from "./TicketHistoryPage";
 import PurchaseHistoryPage from "./PurchaseHistoryPage";
+import InsightsPage from "./InsightsPage";
+import AuditPage from "./AuditPage";
+import InventoryPage from "./InventoryPage";
+import DefectLogPage from "./DefectLogPage";
+import RoboticsPage from "./RoboticsPage";
+import GroupDashboardPage from "./GroupDashboardPage";
 import SettingsPage from "./SettingsPage";
 import { LanguageProvider } from "./i18n";
 import type { CustomerUser } from "../types";
@@ -45,6 +51,7 @@ function CustomerAppInner() {
       onNavigate={setSection}
       userName={user.name}
       organizationName={user.organizationName}
+      hasGroup={user.groupId != null}
       onLogout={handleLogout}
     >
       {section === "overview" && <OverviewPage user={user} onNavigate={setSection} />}
@@ -56,6 +63,12 @@ function CustomerAppInner() {
       {section === "garments" && <GarmentGuidePage user={user} />}
       {section === "tickets" && <TicketHistoryPage user={user} />}
       {section === "purchases" && <PurchaseHistoryPage user={user} />}
+      {section === "insights" && <InsightsPage user={user} />}
+      {section === "audit" && <AuditPage user={user} />}
+      {section === "inventory" && <InventoryPage user={user} />}
+      {section === "defects" && <DefectLogPage user={user} />}
+      {section === "robotics" && <RoboticsPage user={user} />}
+      {section === "group" && <GroupDashboardPage user={user} />}
       {section === "settings" && <SettingsPage user={user} onSwitchAccount={handleLogout} />}
     </CustomerLayout>
   );

@@ -13,6 +13,12 @@ import {
   Settings,
   LogOut,
   Menu,
+  TrendingUp,
+  ClipboardCheck,
+  Package,
+  AlertOctagon,
+  Cpu,
+  Building2,
   type LucideIcon,
 } from "lucide-react";
 import { useLang, type TranslationKey } from "./i18n";
@@ -28,18 +34,30 @@ export type CustomerSection =
   | "garments"
   | "tickets"
   | "purchases"
+  | "insights"
+  | "audit"
+  | "inventory"
+  | "defects"
+  | "robotics"
+  | "group"
   | "settings";
 
-const NAV_ITEMS: { key: CustomerSection; labelKey: TranslationKey; icon: LucideIcon }[] = [
-  { key: "overview", labelKey: "nav.overview", icon: LayoutDashboard },
-  { key: "equipment", labelKey: "nav.equipment", icon: Boxes },
-  { key: "sewing", labelKey: "nav.sewing", icon: Scissors },
-  { key: "automated", labelKey: "nav.automated", icon: Bot },
-  { key: "needles", labelKey: "nav.needles", icon: PenTool },
+const NAV_ITEMS: { key: CustomerSection; labelKey: TranslationKey; icon: LucideIcon; group?: boolean }[] = [
+  { key: "overview",   labelKey: "nav.overview",   icon: LayoutDashboard },
+  { key: "equipment",  labelKey: "nav.equipment",  icon: Boxes },
+  { key: "sewing",     labelKey: "nav.sewing",     icon: Scissors },
+  { key: "automated",  labelKey: "nav.automated",  icon: Bot },
+  { key: "needles",    labelKey: "nav.needles",    icon: PenTool },
   { key: "spareparts", labelKey: "nav.spareparts", icon: Wrench },
-  { key: "garments", labelKey: "nav.garments", icon: Shirt },
-  { key: "tickets", labelKey: "nav.tickets", icon: History },
-  { key: "purchases", labelKey: "nav.purchases", icon: Receipt },
+  { key: "garments",   labelKey: "nav.garments",   icon: Shirt },
+  { key: "tickets",    labelKey: "nav.tickets",    icon: History },
+  { key: "purchases",  labelKey: "nav.purchases",  icon: Receipt },
+  { key: "insights",   labelKey: "nav.insights",   icon: TrendingUp },
+  { key: "audit",      labelKey: "nav.audit",      icon: ClipboardCheck },
+  { key: "inventory",  labelKey: "nav.inventory",  icon: Package },
+  { key: "defects",    labelKey: "nav.defects",    icon: AlertOctagon },
+  { key: "robotics",   labelKey: "nav.robotics",   icon: Cpu },
+  { key: "group",      labelKey: "nav.group",      icon: Building2, group: true },
 ];
 
 export default function CustomerLayout({
@@ -47,6 +65,7 @@ export default function CustomerLayout({
   onNavigate,
   userName,
   organizationName,
+  hasGroup,
   onLogout,
   children,
 }: {
@@ -54,6 +73,7 @@ export default function CustomerLayout({
   onNavigate: (section: CustomerSection) => void;
   userName: string;
   organizationName: string;
+  hasGroup: boolean;
   onLogout: () => void;
   children: ReactNode;
 }) {
@@ -87,7 +107,7 @@ export default function CustomerLayout({
         </a>
 
         <nav className="cust-nav">
-          {NAV_ITEMS.map((item) => (
+          {NAV_ITEMS.filter((item) => !item.group || hasGroup).map((item) => (
             <button
               key={item.key}
               className={`cust-nav-item ${active === item.key ? "active" : ""}`}
@@ -164,6 +184,10 @@ export default function CustomerLayout({
         <button className={active === "purchases" ? "active" : ""} onClick={() => navigate("purchases")}>
           <Receipt size={20} strokeWidth={2} />
           <span>{t("nav.purchases")}</span>
+        </button>
+        <button className={active === "insights" ? "active" : ""} onClick={() => navigate("insights")}>
+          <TrendingUp size={20} strokeWidth={2} />
+          <span>{t("nav.insights")}</span>
         </button>
         <button className={menuOpen ? "active" : ""} onClick={() => setMenuOpen(true)}>
           <Menu size={20} strokeWidth={2} />

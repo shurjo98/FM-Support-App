@@ -506,3 +506,185 @@ export async function createReorder(payload: {
   if (!res.ok) throw new Error(body.error ?? `Failed to submit reorder (${res.status})`);
   return body;
 }
+
+// ─── Analytics ────────────────────────────────────────────────────────────────
+
+export interface AnalyticsOverview {
+  thisMonthDowntimeHours: number;
+  avgResolutionHours: number;
+  openTickets: number;
+  inProgressTickets: number;
+  totalTickets: number;
+  fleet: { total: number; ok: number; due_soon: number; overdue: number; unscheduled: number };
+  needleSpendThisMonth: number;
+  needleSpendLastMonth: number;
+  topMachines: { serialNumber: string; label: string; hours: number; count: number }[];
+}
+
+export interface AnalyticsFleetMachine {
+  id: string;
+  serialNumber: string;
+  displayName: string;
+  displayBrand: string;
+  displayCategory: string | null;
+  productLine: string | null;
+  location: string | null;
+  lastServicedAt: string | null;
+  serviceIntervalMonths: number | null;
+  nextServiceDue: string | null;
+  serviceStatus: "ok" | "due_soon" | "overdue" | "unscheduled";
+  isCatalogMachine: boolean;
+}
+
+export interface AnalyticsNeedleMonth {
+  month: string;
+  quantity: number;
+  spend: number;
+  items: string[];
+}
+
+export async function fetchAnalyticsOverview(organizationId: string): Promise<AnalyticsOverview> {
+  const res = await fetch(`/analytics/overview?organizationId=${encodeURIComponent(organizationId)}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to load analytics");
+  return body;
+}
+
+export async function fetchAnalyticsFleet(organizationId: string): Promise<AnalyticsFleetMachine[]> {
+  const res = await fetch(`/analytics/fleet?organizationId=${encodeURIComponent(organizationId)}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to load fleet data");
+  return body;
+}
+
+export async function fetchAnalyticsNeedles(
+  organizationId: string
+): Promise<{ months: AnalyticsNeedleMonth[]; last5Avg: number; isAnomaly: boolean }> {
+  const res = await fetch(`/analytics/needles?organizationId=${encodeURIComponent(organizationId)}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to load needle data");
+  return body;
+}
+
+export function compliancePdfUrl(organizationId: string): string {
+  return `/analytics/compliance.pdf?organizationId=${encodeURIComponent(organizationId)}`;
+}
+
+export async function fetchAnalyticsGroup(groupId: string): Promise<{
+  groupId: string;
+  factories: {
+    id: string; name: string; location: string | null;
+    openTickets: number; inProgressTickets: number; totalTickets: number;
+    thisMonthDowntimeHours: number;
+    fleet: { total: number; ok: number; due_soon: number; overdue: number; unscheduled: number };
+    needleSpendThisMonth: number;
+  }[];
+}> {
+  const res = await fetch(`/analytics/group?groupId=${encodeURIComponent(groupId)}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to load group data");
+  return body;
+}
+
+// ─── Audit ────────────────────────────────────────────────────────────────────
+
+export interface AuditItemRow {
+  id: string; organizationId: string; category: string; question: string;
+  status: "NOT_DONE" | "IN_PROGRESS" | "DONE" | "NA";
+  notes: string | null; documentUrl: string | null; autoFilled: boolean; updatedAt: string;
+}
+
+export async function fetchAudit(organizationId: string): Promise<{ items: AuditItemRow[]; total: number; done: number; pct: number }> {
+  const res = await fetch(`/audit?organizationId=${encodeURIComponent(organizationId)}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to load audit");
+  return body;
+}
+
+export async function updateAuditItem(id: string, patch: { status?: string; notes?: string }): Promise<AuditItemRow> {
+  const res = await fetch(`/audit/${encodeURIComponent(id)}`, {
+    method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(patch),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to update item");
+  return body;
+}
+
+export async function uploadAuditDocument(id: string, file: File): Promise<AuditItemRow> {
+  const res = await fetch(`/audit/${encodeURIComponent(id)}/document`, {
+    method: "POST", headers: { "Content-Type": file.type }, body: await file.arrayBuffer(),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to upload document");
+  return body;
+}
+
+// ─── Inventory ────────────────────────────────────────────────────────────────
+
+export interface StockItem {
+  id: string; name: string; sparePartId: string | null;
+  quantity: number; minThreshold: number; unit: string; low: boolean; updatedAt: string;
+}
+
+export async function fetchInventory(organizationId: string): Promise<{ items: StockItem[]; lowCount: number }> {
+  const res = await fetch(`/inventory?organizationId=${encodeURIComponent(organizationId)}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to load inventory");
+  return body;
+}
+
+export async function addStockItem(payload: { organizationId: string; name: string; quantity?: number; minThreshold?: number; unit?: string }): Promise<StockItem> {
+  const res = await fetch("/inventory", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to add item");
+  return body;
+}
+
+export async function updateStockItem(id: string, patch: { name?: string; quantity?: number; minThreshold?: number; unit?: string }): Promise<StockItem> {
+  const res = await fetch(`/inventory/${encodeURIComponent(id)}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(patch) });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to update item");
+  return body;
+}
+
+export async function useStockItem(id: string, qty: number): Promise<StockItem> {
+  const res = await fetch(`/inventory/${encodeURIComponent(id)}/use`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ qty }) });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to use item");
+  return body;
+}
+
+export async function deleteStockItem(id: string): Promise<void> {
+  await fetch(`/inventory/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
+// ─── Defects ──────────────────────────────────────────────────────────────────
+
+export interface DefectLogEntry {
+  id: string; organizationId: string; serialNumber: string | null; machineName: string | null;
+  defectType: string; count: number; shift: string; loggedAt: string;
+}
+
+export interface DefectSummary {
+  logs: DefectLogEntry[];
+  machineSummary: { serialNumber: string; machineName: string; total: number; byType: Record<string, number> }[];
+  anomalies: string[];
+  totalDefects: number;
+}
+
+export async function fetchDefects(organizationId: string, days = 30): Promise<DefectSummary> {
+  const res = await fetch(`/defects?organizationId=${encodeURIComponent(organizationId)}&days=${days}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to load defects");
+  return body;
+}
+
+export async function logDefect(payload: {
+  organizationId: string; serialNumber?: string; machineName?: string;
+  defectType: string; count: number; shift: string; loggedByUserId?: string;
+}): Promise<DefectLogEntry> {
+  const res = await fetch("/defects", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to log defect");
+  return body;
+}

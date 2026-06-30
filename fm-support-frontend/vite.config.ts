@@ -21,6 +21,10 @@ export default defineConfig({
       "/content": "http://localhost:4000",
       "/push": "http://localhost:4000",
       "/files": "http://localhost:4000",
+      "/analytics": "http://localhost:4000",
+      "/audit": "http://localhost:4000",
+      "/inventory": "http://localhost:4000",
+      "/defects": "http://localhost:4000",
     },
   },
 });
