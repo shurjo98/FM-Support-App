@@ -130,7 +130,7 @@ export default function GroupDashboardPage({ user }: { user: CustomerUser }) {
                       </div>
                       <div style={{ fontSize: 11, color: "#9ca3af" }}>
                         <StatusDot color="#16a34a" />{f.fleet.ok} ok
-                        {f.fleet.due_soon > 0 && <><StatusDot color="#d97706" style={{ marginLeft: 4 }} />{f.fleet.due_soon} due</>}
+                        {f.fleet.due_soon > 0 && <><span style={{ marginLeft: 4 }} /><StatusDot color="#d97706" />{f.fleet.due_soon} due</>}
                         {f.fleet.overdue > 0 && <><StatusDot color="#dc2626" />{f.fleet.overdue} overdue</>}
                       </div>
                     </td>
