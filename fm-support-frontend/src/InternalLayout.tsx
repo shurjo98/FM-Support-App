@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { ArrowLeft, Factory, Users, Kanban, Newspaper, Target, Bell, LogOut, Menu, RefreshCw, ShieldCheck, type LucideIcon } from "lucide-react";
+import { ArrowLeft, Factory, Users, Kanban, Newspaper, Target, Bell, LogOut, Menu, RefreshCw, ShieldCheck, ExternalLink, type LucideIcon } from "lucide-react";
 import type { InternalAccountLite } from "./types";
 import { Avatar } from "./Avatar";
 import { RoleBadges } from "./RoleBadges";
@@ -77,6 +77,12 @@ export default function InternalLayout({
         </nav>
 
         <div className="int-sidebar-footer">
+          <a className="int-nav-item" href="/customer" style={{ textDecoration: "none" }}>
+            <span className="int-nav-icon">
+              <ExternalLink size={18} strokeWidth={2} />
+            </span>
+            Customer Portal
+          </a>
           <button className="int-nav-item" onClick={onLogout}>
             <span className="int-nav-icon">
               <LogOut size={18} strokeWidth={2} />

@@ -6,9 +6,11 @@ import { useLang } from "./i18n";
 export default function AccountPickerPage({ onPick }: { onPick: (user: CustomerUser) => void }) {
   const { t, lang, setLang } = useLang();
   const [factories, setFactories] = useState<PortalFactory[]>([]);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [fetching, setFetching] = useState(true);
   const [selected, setSelected] = useState<PortalFactory | null>(null);
   const [pin, setPin] = useState(["", "", "", ""]);
-  const [error, setError] = useState<string | null>(null);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const ref0 = useRef<HTMLInputElement>(null);
   const ref1 = useRef<HTMLInputElement>(null);
@@ -16,18 +18,25 @@ export default function AccountPickerPage({ onPick }: { onPick: (user: CustomerU
   const ref3 = useRef<HTMLInputElement>(null);
   const inputRefs = [ref0, ref1, ref2, ref3];
 
-  useEffect(() => {
-    listPortalFactories().then(setFactories).catch(() => null);
-  }, []);
+  function load() {
+    setFetching(true);
+    setFetchError(null);
+    listPortalFactories()
+      .then(setFactories)
+      .catch((e) => setFetchError(e.message ?? "Could not load factory list"))
+      .finally(() => setFetching(false));
+  }
+
+  useEffect(load, []);
 
   async function handleLogin(factory: PortalFactory, pinValue: string) {
     setLoading(true);
-    setError(null);
+    setLoginError(null);
     try {
       const user = await portalLogin(factory.id, pinValue || undefined);
       onPick(user);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      setLoginError(err instanceof Error ? err.message : "Login failed");
       setPin(["", "", "", ""]);
       setTimeout(() => ref0.current?.focus(), 50);
     } finally {
@@ -38,7 +47,7 @@ export default function AccountPickerPage({ onPick }: { onPick: (user: CustomerU
   function selectFactory(f: PortalFactory) {
     setSelected(f);
     setPin(["", "", "", ""]);
-    setError(null);
+    setLoginError(null);
     if (!f.requiresPin) {
       handleLogin(f, "");
     } else {
@@ -51,7 +60,7 @@ export default function AccountPickerPage({ onPick }: { onPick: (user: CustomerU
     const next = [...pin];
     next[idx] = val;
     setPin(next);
-    setError(null);
+    setLoginError(null);
     if (val && idx < 3) inputRefs[idx + 1]?.current?.focus();
     if (next.every((d) => d !== "")) handleLogin(selected!, next.join(""));
   }
@@ -77,30 +86,54 @@ export default function AccountPickerPage({ onPick }: { onPick: (user: CustomerU
 
       {!selected ? (
         <>
-          <p style={{ opacity: 0.6, fontSize: 13, marginBottom: 20, textAlign: "center" }}>Select your factory to sign in</p>
-          <div className="cust-picker-grid">
-            {factories.map((f) => (
-              <button
-                key={f.id}
-                className="cust-card cust-card-clickable cust-picker-card"
-                onClick={() => selectFactory(f)}
-                disabled={loading}
-              >
-                <div style={{ fontSize: 28, marginBottom: 6 }}>🏭</div>
-                <div className="cust-picker-card-name">{f.name}</div>
-                {f.location && <div className="cust-picker-card-org">{f.location}</div>}
-                {f.requiresPin && (
-                  <div style={{ marginTop: 8, fontSize: 11, color: "#4fb3e8" }}>🔒 PIN required</div>
-                )}
-              </button>
-            ))}
-          </div>
+          {fetching && (
+            <p style={{ opacity: 0.5, fontSize: 14, textAlign: "center" }}>Loading factories…</p>
+          )}
+
+          {fetchError && (
+            <div style={{ textAlign: "center" }}>
+              <div className="cust-error" style={{ marginBottom: 12 }}>{fetchError}</div>
+              <button className="cust-button" onClick={load}>Retry</button>
+            </div>
+          )}
+
+          {!fetching && !fetchError && factories.length === 0 && (
+            <p style={{ opacity: 0.5, fontSize: 14, textAlign: "center" }}>
+              No factories found. Contact FM Corporation to set up your account.
+            </p>
+          )}
+
+          {!fetching && factories.length > 0 && (
+            <>
+              <p style={{ opacity: 0.6, fontSize: 13, marginBottom: 20, textAlign: "center" }}>
+                Select your factory to sign in
+              </p>
+              <div className="cust-picker-grid">
+                {factories.map((f) => (
+                  <button
+                    key={f.id}
+                    className="cust-card cust-card-clickable cust-picker-card"
+                    onClick={() => selectFactory(f)}
+                    disabled={loading}
+                  >
+                    <div style={{ fontSize: 28, marginBottom: 6 }}>🏭</div>
+                    <div className="cust-picker-card-name">{f.name}</div>
+                    {f.location && <div className="cust-picker-card-org">{f.location}</div>}
+                    {f.requiresPin && (
+                      <div style={{ marginTop: 8, fontSize: 11, color: "#4fb3e8" }}>🔒 PIN required</div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+
           {loading && <p style={{ opacity: 0.6, fontSize: 13, marginTop: 16 }}>Signing in…</p>}
         </>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20, width: "100%", maxWidth: 320 }}>
           <button
-            onClick={() => { setSelected(null); setError(null); setLoading(false); }}
+            onClick={() => { setSelected(null); setLoginError(null); setLoading(false); }}
             style={{ background: "none", border: "none", color: "#9ca3af", cursor: "pointer", fontSize: 13, alignSelf: "flex-start" }}
           >
             ← Back
@@ -130,14 +163,14 @@ export default function AccountPickerPage({ onPick }: { onPick: (user: CustomerU
                     style={{
                       width: 52, height: 60, textAlign: "center", fontSize: 26, fontWeight: 700,
                       borderRadius: 10,
-                      border: `2px solid ${error ? "#dc2626" : d ? "#4fb3e8" : "rgba(148,163,184,0.3)"}`,
+                      border: `2px solid ${loginError ? "#dc2626" : d ? "#4fb3e8" : "rgba(148,163,184,0.3)"}`,
                       background: "rgba(255,255,255,0.07)", color: "white",
                       outline: "none", caretColor: "transparent",
                     }}
                   />
                 ))}
               </div>
-              {error && <div style={{ color: "#dc2626", fontSize: 13, fontWeight: 600 }}>{error}</div>}
+              {loginError && <div style={{ color: "#dc2626", fontSize: 13, fontWeight: 600 }}>{loginError}</div>}
               {loading && <div style={{ color: "#9ca3af", fontSize: 13 }}>Verifying PIN…</div>}
             </>
           )}
@@ -145,8 +178,8 @@ export default function AccountPickerPage({ onPick }: { onPick: (user: CustomerU
           {!selected.requiresPin && loading && (
             <div style={{ color: "#9ca3af", fontSize: 13 }}>Signing in…</div>
           )}
-          {!selected.requiresPin && error && (
-            <div style={{ color: "#dc2626", fontSize: 13 }}>{error}</div>
+          {!selected.requiresPin && loginError && (
+            <div style={{ color: "#dc2626", fontSize: 13 }}>{loginError}</div>
           )}
         </div>
       )}
