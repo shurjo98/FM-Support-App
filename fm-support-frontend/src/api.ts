@@ -6,6 +6,7 @@ import type {
   CustomerUser,
   DashboardResponse,
   EquipmentItem,
+  FactoryAccount,
   GarmentRecommendation,
   InternalAccountLite,
   InternalNotification,
@@ -182,6 +183,7 @@ export function createTask(
     assistIds?: string[];
     column?: TaskColumn;
     dueDate?: string | null;
+    organizationId?: string | null;
     actingAccountId: string;
   }
 ): Promise<InternalTask> {
@@ -199,6 +201,7 @@ export function updateTask(
     title?: string;
     description?: string;
     dueDate?: string | null;
+    organizationId?: string | null;
     actingAccountId: string;
   }
 ): Promise<InternalTask> {
@@ -350,28 +353,42 @@ export async function fetchCustomerUsers(): Promise<CustomerUser[]> {
 
 // ─── Portal auth ─────────────────────────────────────────────────────────────
 
-export interface PortalFactory {
-  id: string;
-  name: string;
-  location: string | null;
-  requiresPin: boolean;
-}
-
-export async function listPortalFactories(): Promise<PortalFactory[]> {
-  const res = await fetch("/portal/factories");
-  if (!res.ok) throw new Error(`Failed to load factories (${res.status})`);
-  return res.json();
-}
-
-export async function portalLogin(organizationId: string, pin?: string): Promise<CustomerUser> {
+export async function portalLogin(userId: string, password: string): Promise<CustomerUser> {
   const res = await fetch("/portal/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ organizationId, pin }),
+    body: JSON.stringify({ userId, password }),
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(body.error ?? `Login failed (${res.status})`);
   return body;
+}
+
+// ─── Factories admin (internal) ─────────────────────────────────────────────
+
+export function fetchOrganizations(token: string): Promise<FactoryAccount[]> {
+  return authedGet<FactoryAccount[]>("/organizations", token);
+}
+
+export function createOrganization(
+  token: string,
+  payload: { name: string; location?: string; region?: string; actingAccountId: string }
+): Promise<FactoryAccount> {
+  return authedMutate<FactoryAccount>("/organizations", token, "POST", payload);
+}
+
+export function updateOrganization(
+  token: string,
+  id: string,
+  payload: Partial<{
+    name: string;
+    location: string;
+    region: string;
+    portalUserId: string;
+    portalPassword: string;
+  }> & { actingAccountId: string }
+): Promise<FactoryAccount> {
+  return authedMutate<FactoryAccount>(`/organizations/${encodeURIComponent(id)}`, token, "PATCH", payload);
 }
 
 export async function createTicket(payload: {

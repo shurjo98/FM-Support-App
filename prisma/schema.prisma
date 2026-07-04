@@ -12,7 +12,10 @@ model Organization {
   name      String
   location  String?
   groupId   String?
-  portalPin String?
+  portalPin String? // dead column, kept in place — replaced by portalUserId/portalPassword below
+  region         String?
+  portalUserId   String? @unique
+  portalPassword String?
 
   machines         Machine[]
   machineInstances MachineInstance[]
@@ -23,6 +26,7 @@ model Organization {
   auditItems       AuditItem[]
   sparePartStocks  SparePartStock[]
   defectLogs       DefectLog[]
+  tasks            InternalTask[]
 }
 
 model Machine {
@@ -223,6 +227,8 @@ model InternalTask {
   dueDate            String?
   createdByAccountId String
   relatedTicketId    String?
+  organizationId     String?
+  organization       Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 

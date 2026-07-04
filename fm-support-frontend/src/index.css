@@ -859,6 +859,18 @@ h1 {
   margin-bottom: 8px;
 }
 
+.kanban-factory-badge {
+  display: inline-block;
+  color: #9ca3af;
+  background: rgba(148, 163, 184, 0.15);
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  margin-left: 6px;
+}
+
 .kanban-card-title {
   font-size: 0.85rem;
   font-weight: 600;
@@ -1121,6 +1133,14 @@ h1 {
   color: #374151;
   font-weight: 500;
   cursor: pointer;
+}
+
+.kanban-search-input {
+  padding: 7px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  width: 200px;
 }
 
 .kanban-due {

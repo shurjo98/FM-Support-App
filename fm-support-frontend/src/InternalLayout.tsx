@@ -1,11 +1,11 @@
 import { useState, type ReactNode } from "react";
-import { ArrowLeft, Factory, Users, Kanban, Newspaper, Target, Bell, LogOut, Menu, RefreshCw, ShieldCheck, ExternalLink, type LucideIcon } from "lucide-react";
+import { ArrowLeft, Factory, Building2, Users, Kanban, Newspaper, Target, Bell, LogOut, Menu, RefreshCw, ShieldCheck, ExternalLink, type LucideIcon } from "lucide-react";
 import type { InternalAccountLite } from "./types";
 import { Avatar } from "./Avatar";
 import { RoleBadges } from "./RoleBadges";
 import { isFmAdmin } from "./permissions";
 
-export type InternalTab = "dashboard" | "assignments" | "tasks" | "content" | "teamhub" | "team" | "notifications";
+export type InternalTab = "dashboard" | "assignments" | "tasks" | "content" | "teamhub" | "team" | "factories" | "notifications";
 
 const NAV_ITEMS: { key: InternalTab; label: string; icon: LucideIcon; adminOnly?: boolean }[] = [
   { key: "dashboard", label: "By Factory", icon: Factory },
@@ -14,6 +14,7 @@ const NAV_ITEMS: { key: InternalTab; label: string; icon: LucideIcon; adminOnly?
   { key: "content", label: "Content Studio", icon: Newspaper },
   { key: "teamhub", label: "Team Hub", icon: Target },
   { key: "team", label: "Team Management", icon: ShieldCheck, adminOnly: true },
+  { key: "factories", label: "Factories", icon: Building2 },
   { key: "notifications", label: "Notifications", icon: Bell },
 ];
 

@@ -3,17 +3,17 @@
  * Run: npx ts-node prisma/seed-pilot.ts
  *
  * Idempotent — safe to run multiple times (upserts everything).
- * PIN is set to 1234 for this pilot factory.
+ * Portal login is user id "evergreen" / password "evergreen123" for this pilot factory.
  */
 
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
-const ORG_ID   = "org-evergreen-001";
-const IE_ID    = "user-ie-evergreen-001";
-const PIN      = "1234";
+const ORG_ID           = "org-evergreen-001";
+const IE_ID            = "user-ie-evergreen-001";
+const PORTAL_USER_ID   = "evergreen";
+const PORTAL_PASSWORD  = "evergreen123";
 
 const MACHINE_DEFS = [
   { id: "m-jk8500d", name: "JK-8500D High Speed Lockstitch", model: "JK-8500D", productLine: "Sewing Machines", category: "Lockstitch" },
@@ -141,14 +141,16 @@ async function main() {
   // 1. Organization
   await prisma.organization.upsert({
     where: { id: ORG_ID },
-    update: { name: "Evergreen Garments Ltd", location: "Ashulia, Dhaka" },
-    create: { id: ORG_ID, name: "Evergreen Garments Ltd", location: "Ashulia, Dhaka" },
+    update: { name: "Evergreen Garments Ltd", location: "Ashulia, Dhaka", region: "Ashulia" },
+    create: { id: ORG_ID, name: "Evergreen Garments Ltd", location: "Ashulia, Dhaka", region: "Ashulia" },
   });
 
-  // 2. Set PIN
-  const hashed = await bcrypt.hash(PIN, 10);
-  await prisma.organization.update({ where: { id: ORG_ID }, data: { portalPin: hashed } });
-  console.log(`  ✓ PIN set to ${PIN}`);
+  // 2. Set portal login credentials
+  await prisma.organization.update({
+    where: { id: ORG_ID },
+    data: { portalUserId: PORTAL_USER_ID, portalPassword: PORTAL_PASSWORD },
+  });
+  console.log(`  ✓ Portal login: ${PORTAL_USER_ID} / ${PORTAL_PASSWORD}`);
 
   // 3. IE user
   await prisma.user.upsert({
@@ -284,7 +286,7 @@ async function main() {
 
   console.log("\n✅ Pilot seed complete!");
   console.log(`   Factory: Evergreen Garments Ltd (Ashulia, Dhaka)`);
-  console.log(`   Portal PIN: ${PIN}`);
+  console.log(`   Portal login: ${PORTAL_USER_ID} / ${PORTAL_PASSWORD}`);
   console.log(`   IE User: Ruhul Amin`);
   console.log(`   Machines: ${INSTANCES.length} (Line A: 12, Line B: 10)`);
 }

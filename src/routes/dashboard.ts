@@ -530,7 +530,7 @@ router.get("/notifications", async (req, res) => {
   res.json(rows);
 });
 
-const taskInclude = { events: true, comments: true, assignments: { include: { account: true } } };
+const taskInclude = { events: true, comments: true, assignments: { include: { account: true } }, organization: true };
 type TaskWithRelations = Prisma.InternalTaskGetPayload<{ include: typeof taskInclude }>;
 
 // Lead first (the "striker"), then assists, in the order they were added.
@@ -539,11 +539,13 @@ function sortAssignees<T extends { role: string }>(assignments: T[]): T[] {
 }
 
 async function enrichTask(t: TaskWithRelations) {
-  const { assignments, ...rest } = t;
+  const { assignments, organization, ...rest } = t;
   const creator = await prisma.internalAccount.findUnique({ where: { id: t.createdByAccountId } });
 
   return {
     ...rest,
+    organizationName: organization?.name ?? null,
+    region: organization?.region ?? null,
     assignees: sortAssignees(assignments).map((a) => ({
       accountId: a.accountId,
       name: a.account.name,
@@ -658,7 +660,7 @@ router.get("/tasks", async (req, res) => {
 // people can add their own tasks — editing another task's details (priority,
 // assignee, etc.) is still manager/admin only, see PATCH below.
 router.post("/tasks", async (req, res) => {
-  const { title, description, priority, leadId, assistIds, column, dueDate, actingAccountId } = req.body as {
+  const { title, description, priority, leadId, assistIds, column, dueDate, organizationId, actingAccountId } = req.body as {
     title: string;
     description?: string;
     priority?: TaskPriority;
@@ -666,6 +668,7 @@ router.post("/tasks", async (req, res) => {
     assistIds?: string[];
     column?: TaskColumn;
     dueDate?: string | null;
+    organizationId?: string | null;
     actingAccountId: string;
   };
 
@@ -686,6 +689,7 @@ router.post("/tasks", async (req, res) => {
       column: column ?? "BACKLOG",
       priority: priority ?? "MEDIUM",
       dueDate: dueDate ?? null,
+      organizationId: organizationId || null,
       createdByAccountId: actingAccountId,
       events: { create: [mkTaskEventData("CREATED", "Task created", author.id, author.name)] },
       ...(assignmentsToCreate.length ? { assignments: { create: assignmentsToCreate } } : {}),
@@ -710,7 +714,7 @@ router.post("/tasks", async (req, res) => {
 // technician moves a task, the manager/admin get an in-app notification.
 router.patch("/tasks/:id", async (req, res) => {
   const { id } = req.params;
-  const { column, priority, leadId, assistIds, title, description, dueDate, actingAccountId } = req.body as {
+  const { column, priority, leadId, assistIds, title, description, dueDate, organizationId, actingAccountId } = req.body as {
     column?: TaskColumn;
     priority?: TaskPriority;
     leadId?: string | null;
@@ -718,6 +722,7 @@ router.patch("/tasks/:id", async (req, res) => {
     title?: string;
     description?: string;
     dueDate?: string | null;
+    organizationId?: string | null;
     actingAccountId: string;
   };
 
@@ -728,14 +733,20 @@ router.patch("/tasks/:id", async (req, res) => {
   if (!task) return res.status(404).json({ error: "Task not found" });
 
   const editingAssignees = leadId !== undefined || assistIds !== undefined;
-  const editingDetails = priority !== undefined || editingAssignees || title !== undefined || description !== undefined || dueDate !== undefined;
+  const editingDetails =
+    priority !== undefined ||
+    editingAssignees ||
+    title !== undefined ||
+    description !== undefined ||
+    dueDate !== undefined ||
+    organizationId !== undefined;
 
   if (editingDetails && !(await canManageTasks(actingAccountId))) {
     return res.status(403).json({ error: "Only a manager or admin can edit task details." });
   }
 
   const eventsToCreate: ReturnType<typeof mkTaskEventData>[] = [];
-  const data: Prisma.InternalTaskUpdateInput = {};
+  const data: Prisma.InternalTaskUncheckedUpdateInput = {};
   let movedByNonManager = false;
 
   if (column && column !== task.column) {
@@ -792,6 +803,7 @@ router.patch("/tasks/:id", async (req, res) => {
 
   if (title?.trim()) data.title = title.trim();
   if (description !== undefined) data.description = description;
+  if (organizationId !== undefined) data.organizationId = organizationId || null;
   if (eventsToCreate.length) data.events = { create: eventsToCreate };
 
   const updated = await prisma.internalTask.update({

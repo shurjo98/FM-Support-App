@@ -4,13 +4,15 @@ import {
   createTask,
   deleteTask,
   fetchInternalAccounts,
+  fetchOrganizations,
   fetchTaskNotifications,
   fetchTasks,
   markAllTaskNotificationsRead,
   updateTask,
   UnauthorizedError,
 } from "../api";
-import type { InternalAccountLite, InternalNotification, InternalTask, TaskColumn, TaskEventType, TaskPriority } from "../types";
+import type { FactoryAccount, InternalAccountLite, InternalNotification, InternalTask, TaskColumn, TaskEventType, TaskPriority } from "../types";
+import { REGIONS } from "../types";
 import { Avatar } from "../Avatar";
 import { canManageTasks } from "../permissions";
 import { Bell, MessageCircle, Plus, Sparkles, ArrowRightLeft, Zap, UserCheck, CalendarClock, type LucideIcon } from "lucide-react";
@@ -74,6 +76,7 @@ export default function TaskBoardPage({
 }) {
   const [tasks, setTasks] = useState<InternalTask[] | null>(null);
   const [accounts, setAccounts] = useState<InternalAccountLite[]>([]);
+  const [organizations, setOrganizations] = useState<FactoryAccount[]>([]);
   const [notifications, setNotifications] = useState<InternalNotification[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [drag, setDrag] = useState<DragState | null>(null);
@@ -81,16 +84,19 @@ export default function TaskBoardPage({
   const [showNewTask, setShowNewTask] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [myTasksOnly, setMyTasksOnly] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [regionFilter, setRegionFilter] = useState("");
   const columnRefs = useRef<Partial<Record<TaskColumn, HTMLDivElement>>>({});
 
   const canManage = canManageTasks(actingAccount);
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   function load() {
-    Promise.all([fetchTasks(token), fetchInternalAccounts(token)])
-      .then(([t, a]) => {
+    Promise.all([fetchTasks(token), fetchInternalAccounts(token), fetchOrganizations(token)])
+      .then(([t, a, o]) => {
         setTasks(t);
         setAccounts(a);
+        setOrganizations(o);
       })
       .catch((err) => {
         if (err instanceof UnauthorizedError) return onUnauthorized();
@@ -210,9 +216,12 @@ export default function TaskBoardPage({
   if (error) return <div className="page-error">{error}</div>;
   if (!tasks) return <div className="page-loading">Loading task board...</div>;
 
-  const visibleTasks = myTasksOnly
-    ? tasks.filter((t) => t.assignees.some((a) => a.accountId === actingAccount.id))
-    : tasks;
+  const visibleTasks = tasks.filter((t) => {
+    if (myTasksOnly && !t.assignees.some((a) => a.accountId === actingAccount.id)) return false;
+    if (searchQuery.trim() && !(t.organizationName ?? "").toLowerCase().includes(searchQuery.trim().toLowerCase())) return false;
+    if (regionFilter && t.region !== regionFilter) return false;
+    return true;
+  });
 
   return (
     <div className="kanban-page">
@@ -223,6 +232,21 @@ export default function TaskBoardPage({
             : "Drag cards between columns, or click one to leave a comment."}
         </p>
         <div className="kanban-toolbar-actions">
+          <input
+            type="text"
+            className="kanban-search-input"
+            placeholder="Search factory (e.g. Delmas Factory)"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <select value={regionFilter} onChange={(e) => setRegionFilter(e.target.value)}>
+            <option value="">All regions</option>
+            {REGIONS.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
           <label className="kanban-my-tasks">
             <input type="checkbox" checked={myTasksOnly} onChange={(e) => setMyTasksOnly(e.target.checked)} />
             My tasks
@@ -290,6 +314,9 @@ export default function TaskBoardPage({
                     <span className="kanban-priority-badge" style={{ backgroundColor: PRIORITY_COLORS[task.priority] }}>
                       {task.priority}
                     </span>
+                    {task.organizationName && (
+                      <span className="kanban-factory-badge">{task.organizationName}</span>
+                    )}
                     <div className="kanban-card-title">{task.title}</div>
                     {task.dueDate && (
                       <div className={`kanban-due ${isOverdue(task) ? "overdue" : ""}`}>
@@ -350,6 +377,7 @@ export default function TaskBoardPage({
         <TaskDetailModal
           task={detailTask}
           accounts={accounts}
+          organizations={organizations}
           canManage={canManage}
           token={token}
           actingAccount={actingAccount}
@@ -362,6 +390,7 @@ export default function TaskBoardPage({
       {showNewTask && (
         <NewTaskModal
           accounts={accounts}
+          organizations={organizations}
           token={token}
           actingAccountId={actingAccount.id}
           onClose={() => setShowNewTask(false)}
@@ -378,6 +407,7 @@ export default function TaskBoardPage({
 function TaskDetailModal({
   task,
   accounts,
+  organizations,
   canManage,
   token,
   actingAccount,
@@ -387,6 +417,7 @@ function TaskDetailModal({
 }: {
   task: InternalTask;
   accounts: InternalAccountLite[];
+  organizations: FactoryAccount[];
   canManage: boolean;
   token: string;
   actingAccount: InternalAccountLite;
@@ -405,6 +436,7 @@ function TaskDetailModal({
     leadId?: string | null;
     assistIds?: string[];
     dueDate?: string | null;
+    organizationId?: string | null;
   }) {
     setSaving(true);
     setError(null);
@@ -500,6 +532,22 @@ function TaskDetailModal({
                 />
               </label>
 
+              <label>
+                Factory
+                <select
+                  value={task.organizationId ?? ""}
+                  onChange={(e) => patch({ organizationId: e.target.value || null })}
+                  disabled={saving}
+                >
+                  <option value="">No factory</option>
+                  {organizations.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {o.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
               <button className="int-button-danger" onClick={() => onDelete(task.id)}>
                 Delete task
               </button>
@@ -509,6 +557,11 @@ function TaskDetailModal({
               <div>
                 <strong>Priority:</strong> {task.priority}
               </div>
+              {task.organizationName && (
+                <div>
+                  <strong>Factory:</strong> {task.organizationName}
+                </div>
+              )}
               <div>
                 <strong>Lead:</strong> {task.assignees.find((a) => a.role === "LEAD")?.name ?? "Unassigned"}
               </div>
@@ -577,12 +630,14 @@ function TaskDetailModal({
 
 function NewTaskModal({
   accounts,
+  organizations,
   token,
   actingAccountId,
   onClose,
   onCreated,
 }: {
   accounts: InternalAccountLite[];
+  organizations: FactoryAccount[];
   token: string;
   actingAccountId: string;
   onClose: () => void;
@@ -595,6 +650,7 @@ function NewTaskModal({
   const [assistIds, setAssistIds] = useState<string[]>([]);
   const [column, setColumn] = useState<TaskColumn>("BACKLOG");
   const [dueDate, setDueDate] = useState("");
+  const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -611,6 +667,7 @@ function NewTaskModal({
         assistIds,
         column,
         dueDate: dueDate || null,
+        organizationId,
         actingAccountId,
       });
       onCreated(task);
@@ -662,6 +719,17 @@ function NewTaskModal({
               setAssistIds((prev) => (prev.includes(accountId) ? prev.filter((id) => id !== accountId) : [...prev, accountId]))
             }
           />
+          <label>
+            Factory (optional)
+            <select value={organizationId ?? ""} onChange={(e) => setOrganizationId(e.target.value || null)}>
+              <option value="">No factory</option>
+              {organizations.map((o) => (
+                <option key={o.id} value={o.id}>
+                  {o.name}
+                </option>
+              ))}
+            </select>
+          </label>
           <label>
             Due date
             <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />

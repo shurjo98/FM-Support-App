@@ -132,10 +132,26 @@ export interface InternalTask {
   createdByAccountId: string;
   createdByName: string;
   relatedTicketId?: string;
+  organizationId?: string | null;
+  organizationName?: string | null;
+  region?: string | null;
   events: TaskEvent[];
   comments: TaskComment[];
   createdAt: string;
   updatedAt: string;
+}
+
+// Fixed list of factory regions used for filtering across the internal dashboard.
+export const REGIONS = ["Dhaka", "Cumilla", "Chittagong", "Ashulia", "Gazipur", "Narayongonj"] as const;
+export type Region = (typeof REGIONS)[number];
+
+export interface FactoryAccount {
+  id: string;
+  name: string;
+  location: string | null;
+  region: Region | null;
+  portalUserId: string | null;
+  hasCredentials: boolean;
 }
 
 export interface InternalNotification {

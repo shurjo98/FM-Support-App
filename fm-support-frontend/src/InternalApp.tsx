@@ -8,6 +8,7 @@ import TaskBoardPage from "./pages/TaskBoardPage";
 import ContentStudioPage from "./pages/ContentStudioPage";
 import TeamHubPage from "./pages/TeamHubPage";
 import TeamManagementPage from "./pages/TeamManagementPage";
+import FactoriesPage from "./pages/FactoriesPage";
 import InternalLayout, { type InternalTab } from "./InternalLayout";
 import type { InternalAccountLite } from "./types";
 import { isFmAdmin } from "./permissions";
@@ -99,6 +100,9 @@ export default function InternalApp() {
       )}
       {tab === "team" && isFmAdmin(actingAccount) && (
         <TeamManagementPage token={token} actingAccount={actingAccount} onUnauthorized={handleLogout} />
+      )}
+      {tab === "factories" && (
+        <FactoriesPage token={token} actingAccount={actingAccount} onUnauthorized={handleLogout} />
       )}
       {tab === "notifications" && <NotificationsPage token={token} onUnauthorized={handleLogout} />}
     </InternalLayout>

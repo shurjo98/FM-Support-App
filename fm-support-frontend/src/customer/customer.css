@@ -357,7 +357,8 @@
 
 .cust-form select,
 .cust-form textarea,
-.cust-form input[type="text"] {
+.cust-form input[type="text"],
+.cust-form input[type="password"] {
   display: block;
   width: 100%;
   margin-top: 6px;
