@@ -3,7 +3,7 @@
  * Run: npx ts-node prisma/seed-pilot.ts
  *
  * Idempotent — safe to run multiple times (upserts everything).
- * Portal login is user id "evergreen" / password "evergreen123" for this pilot factory.
+ * Portal login is user id "FM" / password "1111" for this pilot factory.
  */
 
 import { PrismaClient } from "@prisma/client";
@@ -12,8 +12,8 @@ const prisma = new PrismaClient();
 
 const ORG_ID           = "org-evergreen-001";
 const IE_ID            = "user-ie-evergreen-001";
-const PORTAL_USER_ID   = "evergreen";
-const PORTAL_PASSWORD  = "evergreen123";
+const PORTAL_USER_ID   = "FM";
+const PORTAL_PASSWORD  = "1111";
 
 const MACHINE_DEFS = [
   { id: "m-jk8500d", name: "JK-8500D High Speed Lockstitch", model: "JK-8500D", productLine: "Sewing Machines", category: "Lockstitch" },
