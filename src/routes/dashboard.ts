@@ -650,9 +650,19 @@ async function notifyAccount(
   await sendPushToAccount(recipientAccountId, { title: "FM Support", body: message });
 }
 
-// GET /dashboard/tasks -> the team Kanban board, everyone can view it
+// GET /dashboard/tasks -> the team Kanban board, everyone can view it.
+// Completed tasks older than 14 days are hidden by default to keep the board
+// clean — pass ?includeArchived=true to see the full history.
 router.get("/tasks", async (req, res) => {
-  const tasks = await prisma.internalTask.findMany({ include: taskInclude, orderBy: { createdAt: "asc" } });
+  const includeArchived = req.query.includeArchived === "true";
+  const archiveCutoff = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+  const tasks = await prisma.internalTask.findMany({
+    include: taskInclude,
+    where: includeArchived
+      ? undefined
+      : { NOT: { AND: [{ column: "COMPLETED" }, { updatedAt: { lt: archiveCutoff } }] } },
+    orderBy: { createdAt: "asc" },
+  });
   res.json(await Promise.all(tasks.map(enrichTask)));
 });
 

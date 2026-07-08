@@ -773,26 +773,38 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
+  padding: 14px 18px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 
 .kanban-board {
   display: grid;
-  grid-template-columns: repeat(4, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(4, minmax(230px, 1fr));
+  gap: 14px;
   overflow-x: auto;
 }
 
+/* per-column accent colors */
 .kanban-column {
-  background: #eef0f3;
+  background: #f8f9fb;
   border-radius: 14px;
   padding: 14px;
-  min-height: 200px;
+  min-height: 240px;
   transition: background-color 0.15s ease;
+  border: 1px solid #e5e7eb;
 }
 
+.kanban-column:nth-child(1) { border-top: 3px solid #9ca3af; }
+.kanban-column:nth-child(2) { border-top: 3px solid #f59e0b; }
+.kanban-column:nth-child(3) { border-top: 3px solid #3b82f6; }
+.kanban-column:nth-child(4) { border-top: 3px solid #10b981; }
+
 .kanban-column.drag-over {
-  background: #dbeafe;
+  background: #eff6ff;
   outline: 2px dashed #1890d8;
   outline-offset: -2px;
 }
@@ -801,25 +813,31 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: #374151;
   margin-bottom: 12px;
-  padding: 0 4px;
+  padding: 0 2px;
 }
 
 .kanban-column-count {
   background: white;
+  border: 1px solid #e5e7eb;
   border-radius: 999px;
   padding: 1px 9px;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 600;
   color: #6b7280;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .kanban-column-body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   min-height: 60px;
 }
 
@@ -831,57 +849,90 @@ h1 {
 .kanban-card {
   background: white;
   border-radius: 10px;
-  padding: 12px 14px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 12px 13px 12px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   cursor: grab;
   touch-action: none;
   user-select: none;
+  border: 1px solid #f3f4f6;
+  border-left: 3px solid transparent;
+  transition: box-shadow 0.12s, transform 0.12s;
 }
 
+.kanban-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
+}
+
+/* left border reflects priority */
+.kanban-card[data-priority="URGENT"] { border-left-color: #dc2626; }
+.kanban-card[data-priority="HIGH"]   { border-left-color: #d97706; }
+.kanban-card[data-priority="MEDIUM"] { border-left-color: #2563eb; }
+.kanban-card[data-priority="LOW"]    { border-left-color: #9ca3af; }
+
 .kanban-card.dragging {
-  opacity: 0.35;
+  opacity: 0.3;
 }
 
 .kanban-card-ghost {
   z-index: 999;
   cursor: grabbing;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
-  transform: rotate(-2deg);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22);
+  transform: rotate(-1.5deg) scale(1.02);
 }
 
 .kanban-priority-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   color: white;
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  padding: 2px 8px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 7px;
   border-radius: 999px;
-  margin-bottom: 8px;
+  margin-bottom: 7px;
 }
 
 .kanban-factory-badge {
-  display: inline-block;
-  color: #9ca3af;
-  background: rgba(148, 163, 184, 0.15);
+  display: inline-flex;
+  align-items: center;
+  color: #1890d8;
+  background: #eff6ff;
   font-size: 0.65rem;
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 999px;
-  margin-bottom: 8px;
-  margin-left: 6px;
+  margin-bottom: 7px;
+  margin-left: 5px;
+}
+
+.kanban-region-badge {
+  display: inline-flex;
+  align-items: center;
+  color: #6b7280;
+  background: #f3f4f6;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 999px;
+  margin-bottom: 7px;
+  margin-left: 4px;
 }
 
 .kanban-card-title {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 600;
   margin-bottom: 10px;
-  line-height: 1.35;
+  line-height: 1.4;
+  color: #111827;
 }
 
 .kanban-card-footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  margin-top: 2px;
 }
 
 .kanban-avatar {
@@ -914,7 +965,7 @@ h1 {
 
 .kanban-assignee.lead {
   z-index: 1;
-  box-shadow: 0 0 0 1px #fbbf24;
+  box-shadow: 0 0 0 1.5px #fbbf24;
   border-radius: 999px;
 }
 

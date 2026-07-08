@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import {
   addTaskComment,
+  createOrganization,
   createTask,
   deleteTask,
   fetchInternalAccounts,
@@ -15,7 +16,7 @@ import type { FactoryAccount, InternalAccountLite, InternalNotification, Interna
 import { REGIONS } from "../types";
 import { Avatar } from "../Avatar";
 import { canManageTasks } from "../permissions";
-import { Bell, MessageCircle, Plus, Sparkles, ArrowRightLeft, Zap, UserCheck, CalendarClock, type LucideIcon } from "lucide-react";
+import { Archive, Bell, Building2, MessageCircle, Plus, Sparkles, ArrowRightLeft, Zap, UserCheck, CalendarClock, type LucideIcon } from "lucide-react";
 
 const COLUMNS: { key: TaskColumn; label: string }[] = [
   { key: "BACKLOG", label: "Backlog" },
@@ -82,8 +83,10 @@ export default function TaskBoardPage({
   const [drag, setDrag] = useState<DragState | null>(null);
   const [detailTask, setDetailTask] = useState<InternalTask | null>(null);
   const [showNewTask, setShowNewTask] = useState(false);
+  const [showAddFactory, setShowAddFactory] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [myTasksOnly, setMyTasksOnly] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [regionFilter, setRegionFilter] = useState("");
   const columnRefs = useRef<Partial<Record<TaskColumn, HTMLDivElement>>>({});
@@ -92,7 +95,7 @@ export default function TaskBoardPage({
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   function load() {
-    Promise.all([fetchTasks(token), fetchInternalAccounts(token), fetchOrganizations(token)])
+    Promise.all([fetchTasks(token, showArchived), fetchInternalAccounts(token), fetchOrganizations(token)])
       .then(([t, a, o]) => {
         setTasks(t);
         setAccounts(a);
@@ -110,7 +113,7 @@ export default function TaskBoardPage({
       .catch(() => {});
   }
 
-  useEffect(load, [token]);
+  useEffect(load, [token, showArchived]);
   useEffect(loadNotifications, [token, actingAccount.id]);
 
   // Auto-refresh: pick up task moves, assignments, and comments made by
@@ -226,31 +229,39 @@ export default function TaskBoardPage({
   return (
     <div className="kanban-page">
       <div className="kanban-toolbar">
-        <p className="empty">
-          {canManage
-            ? "Anyone can drag cards between columns. Click a card to comment, or edit priority/assignee here."
-            : "Drag cards between columns, or click one to leave a comment."}
-        </p>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <h2 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700 }}>Task Board</h2>
+          <span style={{ fontSize: "0.75rem", color: "#6b7280", background: "#f3f4f6", borderRadius: 999, padding: "2px 10px" }}>
+            {tasks?.filter(t => t.column !== "COMPLETED").length ?? 0} active
+          </span>
+        </div>
         <div className="kanban-toolbar-actions">
           <input
             type="text"
             className="kanban-search-input"
-            placeholder="Search factory (e.g. Delmas Factory)"
+            placeholder="Search factory…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <select value={regionFilter} onChange={(e) => setRegionFilter(e.target.value)}>
+          <select value={regionFilter} onChange={(e) => setRegionFilter(e.target.value)} className="kanban-search-input" style={{ width: "auto" }}>
             <option value="">All regions</option>
             {REGIONS.map((r) => (
-              <option key={r} value={r}>
-                {r}
-              </option>
+              <option key={r} value={r}>{r}</option>
             ))}
           </select>
           <label className="kanban-my-tasks">
             <input type="checkbox" checked={myTasksOnly} onChange={(e) => setMyTasksOnly(e.target.checked)} />
-            My tasks
+            Mine
           </label>
+          <button
+            className={showArchived ? "int-button" : "int-button-secondary"}
+            onClick={() => setShowArchived((v) => !v)}
+            title="Show completed tasks older than 14 days"
+            style={{ display: "flex", alignItems: "center", gap: 6 }}
+          >
+            <Archive size={14} strokeWidth={2} />
+            {showArchived ? "Hide archived" : "Archived"}
+          </button>
           <div className="int-bell-wrap">
             <button className="int-bell" onClick={() => setShowNotifications((s) => !s)}>
               <Bell size={18} strokeWidth={2} />
@@ -275,7 +286,11 @@ export default function TaskBoardPage({
               </div>
             )}
           </div>
-          <button className="int-button" onClick={() => setShowNewTask(true)}>
+          <button className="int-button-secondary" onClick={() => setShowAddFactory(true)} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <Building2 size={14} strokeWidth={2} />
+            Add Factory
+          </button>
+          <button className="int-button" onClick={() => setShowNewTask(true)} style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <Plus size={16} strokeWidth={2.5} />
             New Task
           </button>
@@ -306,6 +321,7 @@ export default function TaskBoardPage({
                   <div
                     key={task.id}
                     className={`kanban-card ${drag?.taskId === task.id && drag.isDragging ? "dragging" : ""}`}
+                    data-priority={task.priority}
                     onPointerDown={(e) => handlePointerDown(e, task)}
                     onPointerMove={handlePointerMove}
                     onPointerUp={(e) => handlePointerUp(e, task)}
@@ -316,6 +332,9 @@ export default function TaskBoardPage({
                     </span>
                     {task.organizationName && (
                       <span className="kanban-factory-badge">{task.organizationName}</span>
+                    )}
+                    {task.region && (
+                      <span className="kanban-region-badge">{task.region}</span>
                     )}
                     <div className="kanban-card-title">{task.title}</div>
                     {task.dueDate && (
@@ -397,6 +416,17 @@ export default function TaskBoardPage({
           onCreated={(task) => {
             setTasks((prev) => (prev ? [...prev, task] : [task]));
             setShowNewTask(false);
+          }}
+        />
+      )}
+
+      {showAddFactory && (
+        <AddFactoryModal
+          token={token}
+          onClose={() => setShowAddFactory(false)}
+          onCreated={(org) => {
+            setOrganizations((prev) => [...prev, org]);
+            setShowAddFactory(false);
           }}
         />
       )}
@@ -749,6 +779,68 @@ function NewTaskModal({
 
           <button className="int-button" onClick={handleSubmit} disabled={submitting || !title.trim()}>
             {submitting ? "Creating..." : "Create task"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AddFactoryModal({
+  token,
+  onClose,
+  onCreated,
+}: {
+  token: string;
+  onClose: () => void;
+  onCreated: (org: FactoryAccount) => void;
+}) {
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
+  const [region, setRegion] = useState<string>("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit() {
+    if (!name.trim()) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const org = await createOrganization(token, { name: name.trim(), location: location.trim() || undefined, region: region || undefined });
+      onCreated(org);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create factory");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div className="int-modal-overlay" onClick={onClose}>
+      <div className="int-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="int-modal-close" onClick={onClose}>✕</button>
+        <h2 className="int-modal-title">Add Factory</h2>
+        <div className="int-modal-fields">
+          <label>
+            Factory name
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Evergreen Garments Ltd" autoFocus />
+          </label>
+          <label>
+            Location (optional)
+            <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Ashulia, Dhaka" />
+          </label>
+          <label>
+            Region
+            <select value={region} onChange={(e) => setRegion(e.target.value)}>
+              <option value="">Select region</option>
+              {REGIONS.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+          </label>
+          {error && <div className="login-error">{error}</div>}
+          <button className="int-button" onClick={handleSubmit} disabled={submitting || !name.trim()}>
+            {submitting ? "Adding..." : "Add factory"}
           </button>
         </div>
       </div>

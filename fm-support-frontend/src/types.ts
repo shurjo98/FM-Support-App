@@ -142,7 +142,7 @@ export interface InternalTask {
 }
 
 // Fixed list of factory regions used for filtering across the internal dashboard.
-export const REGIONS = ["Dhaka", "Cumilla", "Chittagong", "Ashulia", "Gazipur", "Narayongonj"] as const;
+export const REGIONS = ["Dhaka", "Cumilla", "Chittagong", "Ashulia", "Gazipur", "Narayanganj"] as const;
 export type Region = (typeof REGIONS)[number];
 
 export interface FactoryAccount {

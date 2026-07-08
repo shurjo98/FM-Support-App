@@ -5,7 +5,7 @@ import { requireInternalAuth } from "../middleware/requireInternalAuth";
 const router = Router();
 router.use(requireInternalAuth);
 
-export const REGIONS = ["Dhaka", "Cumilla", "Chittagong", "Ashulia", "Gazipur", "Narayongonj"] as const;
+export const REGIONS = ["Dhaka", "Cumilla", "Chittagong", "Ashulia", "Gazipur", "Narayanganj"] as const;
 
 function hasRole(roles: string[], role: string): boolean {
   return roles.some((r) => r.toUpperCase() === role.toUpperCase());
@@ -37,18 +37,15 @@ router.get("/", async (_req, res) => {
   );
 });
 
-// POST /organizations -> create a factory (Manager/Admin only).
+// POST /organizations -> create a factory (any authenticated team member).
 router.post("/", async (req, res) => {
-  const { name, location, region, actingAccountId } = req.body as {
+  const { name, location, region } = req.body as {
     name?: string;
     location?: string;
     region?: string;
     actingAccountId?: string;
   };
 
-  if (!(await canManageTasks(actingAccountId))) {
-    return res.status(403).json({ error: "Only a Manager or Admin can add factories." });
-  }
   if (!name?.trim()) return res.status(400).json({ error: "name is required" });
   if (region && !REGIONS.includes(region as (typeof REGIONS)[number])) {
     return res.status(400).json({ error: `region must be one of: ${REGIONS.join(", ")}` });

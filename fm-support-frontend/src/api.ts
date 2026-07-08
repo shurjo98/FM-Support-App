@@ -169,8 +169,9 @@ export function deleteTeamGoal(token: string, id: string, actingAccountId: strin
   );
 }
 
-export function fetchTasks(token: string): Promise<InternalTask[]> {
-  return authedGet<InternalTask[]>("/dashboard/tasks", token);
+export function fetchTasks(token: string, includeArchived = false): Promise<InternalTask[]> {
+  const url = includeArchived ? "/dashboard/tasks?includeArchived=true" : "/dashboard/tasks";
+  return authedGet<InternalTask[]>(url, token);
 }
 
 export function createTask(
@@ -372,7 +373,7 @@ export function fetchOrganizations(token: string): Promise<FactoryAccount[]> {
 
 export function createOrganization(
   token: string,
-  payload: { name: string; location?: string; region?: string; actingAccountId: string }
+  payload: { name: string; location?: string; region?: string; actingAccountId?: string }
 ): Promise<FactoryAccount> {
   return authedMutate<FactoryAccount>("/organizations", token, "POST", payload);
 }
