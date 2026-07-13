@@ -17,6 +17,13 @@ model Organization {
   portalUserId   String? @unique
   portalPassword String?
 
+  contactPerson String?
+  contactPhone  String?
+  machineCount  Int?
+  workerCount   Int?
+  buyerBrands   String?
+  notes         String?
+
   machines         Machine[]
   machineInstances MachineInstance[]
   users            User[]

@@ -798,6 +798,12 @@ function AddFactoryModal({
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [region, setRegion] = useState<string>("");
+  const [contactPerson, setContactPerson] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [machineCount, setMachineCount] = useState<string>("");
+  const [workerCount, setWorkerCount] = useState<string>("");
+  const [buyerBrands, setBuyerBrands] = useState("");
+  const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -806,7 +812,17 @@ function AddFactoryModal({
     setSubmitting(true);
     setError(null);
     try {
-      const org = await createOrganization(token, { name: name.trim(), location: location.trim() || undefined, region: region || undefined });
+      const org = await createOrganization(token, {
+        name: name.trim(),
+        location: location.trim() || undefined,
+        region: region || undefined,
+        contactPerson: contactPerson.trim() || undefined,
+        contactPhone: contactPhone.trim() || undefined,
+        machineCount: machineCount ? parseInt(machineCount) : undefined,
+        workerCount: workerCount ? parseInt(workerCount) : undefined,
+        buyerBrands: buyerBrands.trim() || undefined,
+        notes: notes.trim() || undefined,
+      });
       onCreated(org);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create factory");
@@ -817,27 +833,53 @@ function AddFactoryModal({
 
   return (
     <div className="int-modal-overlay" onClick={onClose}>
-      <div className="int-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="int-modal int-modal-wide" onClick={(e) => e.stopPropagation()}>
         <button className="int-modal-close" onClick={onClose}>✕</button>
         <h2 className="int-modal-title">Add Factory</h2>
         <div className="int-modal-fields">
-          <label>
-            Factory name
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Evergreen Garments Ltd" autoFocus />
-          </label>
-          <label>
-            Location (optional)
-            <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Ashulia, Dhaka" />
-          </label>
-          <label>
-            Region
-            <select value={region} onChange={(e) => setRegion(e.target.value)}>
-              <option value="">Select region</option>
-              {REGIONS.map((r) => (
-                <option key={r} value={r}>{r}</option>
-              ))}
-            </select>
-          </label>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <label style={{ gridColumn: "1 / -1" }}>
+              Factory name <span style={{ color: "#dc2626" }}>*</span>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Evergreen Garments Ltd" autoFocus />
+            </label>
+            <label>
+              Location
+              <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Ashulia, Dhaka" />
+            </label>
+            <label>
+              Region
+              <select value={region} onChange={(e) => setRegion(e.target.value)}>
+                <option value="">Select region</option>
+                {REGIONS.map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Contact person (IE / Manager)
+              <input type="text" value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} placeholder="e.g. Ruhul Amin" />
+            </label>
+            <label>
+              Contact phone
+              <input type="text" value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} placeholder="e.g. +8801711000000" />
+            </label>
+            <label>
+              Number of sewing machines
+              <input type="number" min={0} value={machineCount} onChange={(e) => setMachineCount(e.target.value)} placeholder="e.g. 120" />
+            </label>
+            <label>
+              Number of workers
+              <input type="number" min={0} value={workerCount} onChange={(e) => setWorkerCount(e.target.value)} placeholder="e.g. 450" />
+            </label>
+            <label style={{ gridColumn: "1 / -1" }}>
+              Buyer brands (comma-separated)
+              <input type="text" value={buyerBrands} onChange={(e) => setBuyerBrands(e.target.value)} placeholder="e.g. H&M, Primark, Zara" />
+            </label>
+            <label style={{ gridColumn: "1 / -1" }}>
+              Internal notes
+              <textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. Long-term client, prefers WhatsApp contact" />
+            </label>
+          </div>
           {error && <div className="login-error">{error}</div>}
           <button className="int-button" onClick={handleSubmit} disabled={submitting || !name.trim()}>
             {submitting ? "Adding..." : "Add factory"}

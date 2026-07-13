@@ -18,31 +18,56 @@ async function canManageTasks(accountId?: string): Promise<boolean> {
   return hasRole(account.roles, "MANAGER") || hasRole(account.roles, "ADMIN");
 }
 
+const ORG_SELECT = {
+  id: true, name: true, location: true, region: true,
+  portalUserId: true, portalPassword: true,
+  contactPerson: true, contactPhone: true,
+  machineCount: true, workerCount: true,
+  buyerBrands: true, notes: true,
+} as const;
+
+function toPublic(o: {
+  id: string; name: string; location: string | null; region: string | null;
+  portalUserId: string | null; portalPassword: string | null;
+  contactPerson: string | null; contactPhone: string | null;
+  machineCount: number | null; workerCount: number | null;
+  buyerBrands: string | null; notes: string | null;
+}) {
+  return {
+    id: o.id,
+    name: o.name,
+    location: o.location,
+    region: o.region,
+    portalUserId: o.portalUserId,
+    hasCredentials: !!o.portalPassword,
+    contactPerson: o.contactPerson,
+    contactPhone: o.contactPhone,
+    machineCount: o.machineCount,
+    workerCount: o.workerCount,
+    buyerBrands: o.buyerBrands,
+    notes: o.notes,
+  };
+}
+
 // GET /organizations -> factory list for the New Task picker and Factories admin page.
 // Open to any authenticated internal user; never returns portalPassword.
 router.get("/", async (_req, res) => {
-  const orgs = await prisma.organization.findMany({
-    select: { id: true, name: true, location: true, region: true, portalUserId: true, portalPassword: true },
-    orderBy: { name: "asc" },
-  });
-  res.json(
-    orgs.map((o) => ({
-      id: o.id,
-      name: o.name,
-      location: o.location,
-      region: o.region,
-      portalUserId: o.portalUserId,
-      hasCredentials: !!o.portalPassword,
-    }))
-  );
+  const orgs = await prisma.organization.findMany({ select: ORG_SELECT, orderBy: { name: "asc" } });
+  res.json(orgs.map(toPublic));
 });
 
 // POST /organizations -> create a factory (any authenticated team member).
 router.post("/", async (req, res) => {
-  const { name, location, region } = req.body as {
+  const { name, location, region, contactPerson, contactPhone, machineCount, workerCount, buyerBrands, notes } = req.body as {
     name?: string;
     location?: string;
     region?: string;
+    contactPerson?: string;
+    contactPhone?: string;
+    machineCount?: number;
+    workerCount?: number;
+    buyerBrands?: string;
+    notes?: string;
     actingAccountId?: string;
   };
 
@@ -57,29 +82,38 @@ router.post("/", async (req, res) => {
       name: name.trim(),
       location: location?.trim() || null,
       region: region || null,
+      contactPerson: contactPerson?.trim() || null,
+      contactPhone: contactPhone?.trim() || null,
+      machineCount: machineCount ?? null,
+      workerCount: workerCount ?? null,
+      buyerBrands: buyerBrands?.trim() || null,
+      notes: notes?.trim() || null,
     },
+    select: ORG_SELECT,
   });
 
-  res.status(201).json({
-    id: created.id,
-    name: created.name,
-    location: created.location,
-    region: created.region,
-    portalUserId: created.portalUserId,
-    hasCredentials: !!created.portalPassword,
-  });
+  res.status(201).json(toPublic(created));
 });
 
-// PATCH /organizations/:id -> edit name/location/region and/or set portal login credentials
-// (Manager/Admin only).
+// PATCH /organizations/:id -> edit factory fields and/or portal login credentials (Manager/Admin only).
 router.patch("/:id", async (req, res) => {
   const { id } = req.params;
-  const { name, location, region, portalUserId, portalPassword, actingAccountId } = req.body as {
+  const {
+    name, location, region, portalUserId, portalPassword,
+    contactPerson, contactPhone, machineCount, workerCount, buyerBrands, notes,
+    actingAccountId,
+  } = req.body as {
     name?: string;
     location?: string;
     region?: string;
     portalUserId?: string;
     portalPassword?: string;
+    contactPerson?: string;
+    contactPhone?: string;
+    machineCount?: number | null;
+    workerCount?: number | null;
+    buyerBrands?: string;
+    notes?: string;
     actingAccountId?: string;
   };
 
@@ -109,17 +143,17 @@ router.patch("/:id", async (req, res) => {
       ...(region !== undefined ? { region: region || null } : {}),
       ...(portalUserId?.trim() ? { portalUserId: portalUserId.trim() } : {}),
       ...(portalPassword?.trim() ? { portalPassword: portalPassword.trim() } : {}),
+      ...(contactPerson !== undefined ? { contactPerson: contactPerson?.trim() || null } : {}),
+      ...(contactPhone !== undefined ? { contactPhone: contactPhone?.trim() || null } : {}),
+      ...(machineCount !== undefined ? { machineCount: machineCount ?? null } : {}),
+      ...(workerCount !== undefined ? { workerCount: workerCount ?? null } : {}),
+      ...(buyerBrands !== undefined ? { buyerBrands: buyerBrands?.trim() || null } : {}),
+      ...(notes !== undefined ? { notes: notes?.trim() || null } : {}),
     },
+    select: ORG_SELECT,
   });
 
-  res.json({
-    id: updated.id,
-    name: updated.name,
-    location: updated.location,
-    region: updated.region,
-    portalUserId: updated.portalUserId,
-    hasCredentials: !!updated.portalPassword,
-  });
+  res.json(toPublic(updated));
 });
 
 export default router;

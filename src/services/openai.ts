@@ -2,6 +2,31 @@
 import OpenAI from "openai";
 import { toFile } from "openai/uploads";
 
+// Blocks queries that are clearly unrelated to sewing machines, factory
+// maintenance, needles, or the FM Support software — prevents customers from
+// running up token bills on off-topic chat.
+const ON_TOPIC_KEYWORDS = [
+  "machine", "মেশিন", "sewing", "সেলাই", "needle", "সূই", "সুই", "thread", "সুতা",
+  "stitch", "সেলাই", "bobbin", "বোবিন", "tension", "টেনশন", "looper", "লুপার",
+  "presser", "প্রেসার", "feed dog", "ফিড ডগ", "hook", "হুক", "belt", "বেল্ট",
+  "motor", "মোটর", "overlock", "ওভারলক", "lockstitch", "লকস্টিচ", "interlock",
+  "template", "টেমপ্লেট", "welting", "ওয়েল্টিং", "serger", "fabric", "কাপড়",
+  "denim", "ডেনিম", "garment", "গার্মেন্ট", "factory", "ফ্যাক্টরি", "service",
+  "সার্ভিস", "repair", "মেরামত", "maintenance", "error", "ইরর", "fault", "সমস্যা",
+  "issue", "ticket", "purchase", "needle", "spare", "part", "inventory", "stock",
+  "audit", "equipment", "inventory", "reorder", "settings", "profile", "account",
+  "Jack", "জ্যাক", "Groz", "Beckert", "A4", "A5", "A6", "A8", "A60", "C5", "C6",
+  "C7", "C8", "K10", "M9", "T3", "J6", "FM", "stitching", "সেলাই",
+];
+
+function isOffTopic(query: string): boolean {
+  const q = query.toLowerCase();
+  return !ON_TOPIC_KEYWORDS.some((kw) => q.includes(kw.toLowerCase()));
+}
+
+const OFF_TOPIC_REPLY_EN = "I can only help with sewing machine maintenance, factory equipment, needles, spare parts, and FM Support portal features. Please ask a question related to those topics.";
+const OFF_TOPIC_REPLY_BN = "আমি শুধুমাত্র সেলাই মেশিন রক্ষণাবেক্ষণ, কারখানার যন্ত্রপাতি, সুই, স্পেয়ার পার্টস এবং FM Support পোর্টাল বিষয়ে সাহায্য করতে পারি। অনুগ্রহ করে এই বিষয়গুলো সম্পর্কে প্রশ্ন করুন।";
+
 // Real OpenAI calls are switched off for now (no product-trained model yet —
 // ticket suggestions already use canned responses in aiService.ts). Flip
 // OPENAI_DEMO_MODE to "false" and set OPENAI_API_KEY once a real key/model
@@ -56,6 +81,15 @@ export async function diagnoseText(params: {
 }): Promise<AiDiagnosis> {
   const { question, machineModel, serialNumber } = params;
 
+  if (isOffTopic(question) && !machineModel) {
+    return {
+      likelyCauses: [],
+      quickChecks: [],
+      whenToCallTechnician: [],
+      safetyNote: OFF_TOPIC_REPLY_EN,
+    };
+  }
+
   if (!isOpenAiEnabled()) {
     return fallbackDiagnosis(question);
   }
@@ -96,7 +130,7 @@ export async function diagnoseText(params: {
       {
         role: "system",
         content:
-          "You are a senior industrial sewing machine service engineer in Bangladesh. Always respond in Bangla (বাংলা). Output ONLY valid JSON that matches the schema. No markdown.",
+          "You are a senior industrial sewing machine service engineer in Bangladesh. You ONLY answer questions about sewing machines, overlock machines, template machines, needles, spare parts, and garment factory maintenance. If a question is not related to these topics, return empty likelyCauses/quickChecks/whenToCallTechnician and set safetyNote to explain you can only help with machine-related questions. Always respond in Bangla (বাংলা). Output ONLY valid JSON that matches the schema. No markdown.",
       },
       {
         role: "user",
@@ -171,6 +205,13 @@ function fallbackPortalQuery(query: string, lang: "en" | "bn"): PortalSearchResu
 export async function routePortalQuery(params: { query: string; lang: "en" | "bn" }): Promise<PortalSearchResult> {
   const { query, lang } = params;
 
+  if (isOffTopic(query)) {
+    return {
+      action: "answer",
+      message: lang === "bn" ? OFF_TOPIC_REPLY_BN : OFF_TOPIC_REPLY_EN,
+    };
+  }
+
   if (!isOpenAiEnabled()) {
     return fallbackPortalQuery(query, lang);
   }
@@ -206,7 +247,8 @@ ${PORTAL_SECTIONS}
 
 Rules:
 - If the customer clearly wants to go somewhere in the portal (e.g. "show me my purchases", "I need needles", "where are my tickets"), set action="navigate" and pick the closest matching section. Keep "message" short (one sentence) confirming where you're taking them.
-- If the customer is asking a troubleshooting/general question (e.g. "why does my machine skip stitches", "what needle for denim"), set action="answer" and put a helpful, concise (2-4 sentences) answer in "message". Do not set section in this case.
+- If the customer is asking a troubleshooting/general question about sewing machines, needles, spare parts, or factory maintenance (e.g. "why does my machine skip stitches", "what needle for denim"), set action="answer" and put a helpful, concise (2-4 sentences) answer in "message". Do not set section in this case.
+- If the customer asks about ANYTHING unrelated to sewing machines, garment factories, needles, spare parts, or this portal (e.g. sports, cooking, weather, politics, general chat), set action="answer" and message="${lang === "bn" ? OFF_TOPIC_REPLY_BN : OFF_TOPIC_REPLY_EN}". Do not engage with off-topic topics.
 - Respond in ${lang === "bn" ? "Bangla (বাংলা)" : "English"}.
 - Never invent ticket or order data you don't have; for account-specific questions, point them to the relevant section instead.`,
       },

@@ -47,6 +47,7 @@ export default function AccountPickerPage({ onPick }: { onPick: (user: CustomerU
             autoComplete="username"
             autoFocus
             disabled={loading}
+            placeholder="FM"
           />
         </label>
 
@@ -58,6 +59,7 @@ export default function AccountPickerPage({ onPick }: { onPick: (user: CustomerU
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
             disabled={loading}
+            placeholder="1111"
           />
         </label>
 

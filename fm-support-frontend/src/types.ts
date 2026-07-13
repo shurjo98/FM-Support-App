@@ -152,6 +152,12 @@ export interface FactoryAccount {
   region: Region | null;
   portalUserId: string | null;
   hasCredentials: boolean;
+  contactPerson: string | null;
+  contactPhone: string | null;
+  machineCount: number | null;
+  workerCount: number | null;
+  buyerBrands: string | null;
+  notes: string | null;
 }
 
 export interface InternalNotification {

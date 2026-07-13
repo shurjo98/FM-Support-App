@@ -373,7 +373,18 @@ export function fetchOrganizations(token: string): Promise<FactoryAccount[]> {
 
 export function createOrganization(
   token: string,
-  payload: { name: string; location?: string; region?: string; actingAccountId?: string }
+  payload: {
+    name: string;
+    location?: string;
+    region?: string;
+    contactPerson?: string;
+    contactPhone?: string;
+    machineCount?: number;
+    workerCount?: number;
+    buyerBrands?: string;
+    notes?: string;
+    actingAccountId?: string;
+  }
 ): Promise<FactoryAccount> {
   return authedMutate<FactoryAccount>("/organizations", token, "POST", payload);
 }
