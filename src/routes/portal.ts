@@ -3,6 +3,16 @@ import { prisma } from "../db";
 
 const router = Router();
 
+// TEMPORARY diagnostic route — remove after debugging the production
+// "FM"/"1111" login issue. Never exposes portalPassword values, only
+// whether a portalUserId is set and what it equals.
+router.get("/debug-orgs", async (_req, res) => {
+  const orgs = await prisma.organization.findMany({
+    select: { id: true, name: true, portalUserId: true },
+  });
+  res.json({ count: orgs.length, orgs });
+});
+
 // POST /portal/login — { userId } → CustomerUser
 // Password check removed for the pilot (see settings.demoNotice in the
 // frontend — this was always a stand-in account picker, not real customer
