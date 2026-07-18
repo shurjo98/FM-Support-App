@@ -13,3 +13,7 @@ export function canManageTasks(account: { roles: string[] }): boolean {
 export function isFmAdmin(account: { roles: string[] }): boolean {
   return hasRole(account, "ADMIN");
 }
+
+export function isGm(account: { roles: string[] }): boolean {
+  return hasRole(account, "GM");
+}

@@ -1,16 +1,28 @@
 import { useState, type ReactNode } from "react";
-import { ArrowLeft, Factory, Building2, Users, Kanban, Newspaper, Target, Bell, LogOut, Menu, RefreshCw, ShieldCheck, ExternalLink, type LucideIcon } from "lucide-react";
+import { ArrowLeft, Factory, Building2, Users, Kanban, Newspaper, Target, Bell, LogOut, Menu, RefreshCw, ShieldCheck, ExternalLink, ClipboardList, Inbox, type LucideIcon } from "lucide-react";
 import type { InternalAccountLite } from "./types";
 import { Avatar } from "./Avatar";
 import { RoleBadges } from "./RoleBadges";
-import { isFmAdmin } from "./permissions";
+import { isFmAdmin, isGm } from "./permissions";
 
-export type InternalTab = "dashboard" | "assignments" | "tasks" | "content" | "teamhub" | "team" | "factories" | "notifications";
+export type InternalTab =
+  | "dashboard"
+  | "assignments"
+  | "tasks"
+  | "content"
+  | "teamhub"
+  | "team"
+  | "factories"
+  | "notifications"
+  | "approvals"
+  | "gm-portal";
 
-const NAV_ITEMS: { key: InternalTab; label: string; icon: LucideIcon; adminOnly?: boolean }[] = [
+const NAV_ITEMS: { key: InternalTab; label: string; icon: LucideIcon; adminOnly?: boolean; gmOnly?: boolean }[] = [
   { key: "dashboard", label: "By Factory", icon: Factory },
   { key: "assignments", label: "Assignments", icon: Users },
   { key: "tasks", label: "Task Board", icon: Kanban },
+  { key: "approvals", label: "Approvals", icon: ClipboardList },
+  { key: "gm-portal", label: "GM Portal", icon: Inbox, gmOnly: true },
   { key: "content", label: "Content Studio", icon: Newspaper },
   { key: "teamhub", label: "Team Hub", icon: Target },
   { key: "team", label: "Team Management", icon: ShieldCheck, adminOnly: true },
@@ -34,7 +46,9 @@ export default function InternalLayout({
   children: ReactNode;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const visibleNavItems = NAV_ITEMS.filter((item) => !item.adminOnly || isFmAdmin(actingAccount));
+  const visibleNavItems = NAV_ITEMS.filter(
+    (item) => (!item.adminOnly || isFmAdmin(actingAccount)) && (!item.gmOnly || isGm(actingAccount))
+  );
 
   function navigate(tab: InternalTab) {
     onNavigate(tab);

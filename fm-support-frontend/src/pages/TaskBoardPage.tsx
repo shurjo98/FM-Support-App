@@ -16,7 +16,7 @@ import type { FactoryAccount, InternalAccountLite, InternalNotification, Interna
 import { REGIONS } from "../types";
 import { Avatar } from "../Avatar";
 import { canManageTasks } from "../permissions";
-import { Archive, Bell, Building2, MessageCircle, Plus, Sparkles, ArrowRightLeft, Zap, UserCheck, CalendarClock, type LucideIcon } from "lucide-react";
+import { Archive, Bell, Building2, MessageCircle, Plus, Sparkles, ArrowRightLeft, Zap, UserCheck, CalendarClock, SlidersHorizontal, type LucideIcon } from "lucide-react";
 
 const COLUMNS: { key: TaskColumn; label: string }[] = [
   { key: "BACKLOG", label: "Backlog" },
@@ -81,6 +81,11 @@ export default function TaskBoardPage({
   const [notifications, setNotifications] = useState<InternalNotification[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [drag, setDrag] = useState<DragState | null>(null);
+  // Mobile only: the 4-column kanban grid doesn't fit a phone width, so below
+  // the existing 880px breakpoint we show one column at a time via this tab
+  // strip instead — the drag-and-drop logic is untouched, hidden columns
+  // just report a zero-size rect and are never a valid drop target.
+  const [mobileColumn, setMobileColumn] = useState<TaskColumn>("BACKLOG");
   const [detailTask, setDetailTask] = useState<InternalTask | null>(null);
   const [showNewTask, setShowNewTask] = useState(false);
   const [showAddFactory, setShowAddFactory] = useState(false);
@@ -89,6 +94,9 @@ export default function TaskBoardPage({
   const [showArchived, setShowArchived] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [regionFilter, setRegionFilter] = useState("");
+  // Mobile only: search/region/mine/archived live behind this single toggle
+  // instead of cluttering the top bar — desktop always shows them inline.
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const columnRefs = useRef<Partial<Record<TaskColumn, HTMLDivElement>>>({});
 
   const canManage = canManageTasks(actingAccount);
@@ -226,6 +234,8 @@ export default function TaskBoardPage({
     return true;
   });
 
+  const activeFilterCount = [searchQuery.trim() !== "", regionFilter !== "", myTasksOnly, showArchived].filter(Boolean).length;
+
   return (
     <div className="kanban-page">
       <div className="kanban-toolbar">
@@ -236,32 +246,46 @@ export default function TaskBoardPage({
           </span>
         </div>
         <div className="kanban-toolbar-actions">
-          <input
-            type="text"
-            className="kanban-search-input"
-            placeholder="Search factory…"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <select value={regionFilter} onChange={(e) => setRegionFilter(e.target.value)} className="kanban-search-input" style={{ width: "auto" }}>
-            <option value="">All regions</option>
-            {REGIONS.map((r) => (
-              <option key={r} value={r}>{r}</option>
-            ))}
-          </select>
-          <label className="kanban-my-tasks">
-            <input type="checkbox" checked={myTasksOnly} onChange={(e) => setMyTasksOnly(e.target.checked)} />
-            Mine
-          </label>
           <button
-            className={showArchived ? "int-button" : "int-button-secondary"}
-            onClick={() => setShowArchived((v) => !v)}
-            title="Show completed tasks older than 14 days"
-            style={{ display: "flex", alignItems: "center", gap: 6 }}
+            className="kanban-filter-toggle"
+            onClick={() => setShowMobileFilters((v) => !v)}
+            aria-label="Filters"
           >
-            <Archive size={14} strokeWidth={2} />
-            {showArchived ? "Hide archived" : "Archived"}
+            <SlidersHorizontal size={16} strokeWidth={2} />
+            {activeFilterCount > 0 && <span className="kanban-filter-dot" />}
           </button>
+          <div className={`kanban-filter-panel ${showMobileFilters ? "open" : ""}`}>
+            <input
+              type="text"
+              className="kanban-search-input"
+              placeholder="Search factory…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <select value={regionFilter} onChange={(e) => setRegionFilter(e.target.value)} className="kanban-search-input" style={{ width: "auto" }}>
+              <option value="">All regions</option>
+              {REGIONS.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+            <label className="kanban-my-tasks">
+              <input type="checkbox" checked={myTasksOnly} onChange={(e) => setMyTasksOnly(e.target.checked)} />
+              Mine
+            </label>
+            <button
+              className={showArchived ? "int-button" : "int-button-secondary"}
+              onClick={() => setShowArchived((v) => !v)}
+              title="Show completed tasks older than 14 days"
+              style={{ display: "flex", alignItems: "center", gap: 6 }}
+            >
+              <Archive size={14} strokeWidth={2} />
+              {showArchived ? "Hide archived" : "Archived"}
+            </button>
+            <button className="int-button-secondary" onClick={() => setShowAddFactory(true)} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <Building2 size={14} strokeWidth={2} />
+              Add Factory
+            </button>
+          </div>
           <div className="int-bell-wrap">
             <button className="int-bell" onClick={() => setShowNotifications((s) => !s)}>
               <Bell size={18} strokeWidth={2} />
@@ -286,15 +310,26 @@ export default function TaskBoardPage({
               </div>
             )}
           </div>
-          <button className="int-button-secondary" onClick={() => setShowAddFactory(true)} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <Building2 size={14} strokeWidth={2} />
-            Add Factory
-          </button>
-          <button className="int-button" onClick={() => setShowNewTask(true)} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <button className="int-button" onClick={() => setShowNewTask(true)} aria-label="New Task" style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <Plus size={16} strokeWidth={2.5} />
-            New Task
+            <span className="btn-label">New Task</span>
           </button>
         </div>
+      </div>
+
+      <div className="kanban-mobile-tabs">
+        {COLUMNS.map((col) => (
+          <button
+            key={col.key}
+            className={col.key === mobileColumn ? "active" : ""}
+            onClick={() => setMobileColumn(col.key)}
+          >
+            {col.label}
+            <span className="kanban-column-count">
+              {visibleTasks.filter((t) => t.column === col.key).length}
+            </span>
+          </button>
+        ))}
       </div>
 
       <div className="kanban-board">
@@ -309,7 +344,7 @@ export default function TaskBoardPage({
               ref={(el) => {
                 if (el) columnRefs.current[col.key] = el;
               }}
-              className={`kanban-column ${drag?.isDragging && drag.overColumn === col.key ? "drag-over" : ""}`}
+              className={`kanban-column ${drag?.isDragging && drag.overColumn === col.key ? "drag-over" : ""} ${col.key === mobileColumn ? "mobile-active" : ""}`}
             >
               <div className="kanban-column-header">
                 <span>{col.label}</span>

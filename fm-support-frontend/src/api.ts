@@ -1,4 +1,6 @@
 import type {
+  ApprovalRequestLite,
+  ApprovalType,
   AssignmentsResponse,
   ContentCard,
   CreateTicketResponse,
@@ -741,5 +743,50 @@ export async function logDefect(payload: {
   const res = await fetch("/defects", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(body.error ?? "Failed to log defect");
+  return body;
+}
+
+// ─── GM approval workflows ────────────────────────────────────────────────────
+
+export function submitApproval(
+  token: string,
+  type: ApprovalType,
+  payload: Record<string, unknown> & { actingAccountId: string }
+): Promise<ApprovalRequestLite> {
+  return authedMutate<ApprovalRequestLite>(`/approvals/${type}`, token, "POST", payload);
+}
+
+export function fetchMyApprovals(token: string, accountId: string): Promise<ApprovalRequestLite[]> {
+  return authedGet<ApprovalRequestLite[]>(`/approvals/mine?accountId=${encodeURIComponent(accountId)}`, token);
+}
+
+export function fetchApprovalInbox(token: string, accountId: string): Promise<ApprovalRequestLite[]> {
+  return authedGet<ApprovalRequestLite[]>(`/approvals/inbox?accountId=${encodeURIComponent(accountId)}`, token);
+}
+
+export function decideApproval(
+  token: string,
+  type: ApprovalType,
+  id: string,
+  decision: "APPROVED" | "REJECTED",
+  note: string | undefined,
+  actingAccountId: string
+): Promise<ApprovalRequestLite> {
+  return authedMutate<ApprovalRequestLite>(`/approvals/${type}/${encodeURIComponent(id)}`, token, "PATCH", {
+    decision,
+    note,
+    actingAccountId,
+  });
+}
+
+export async function uploadWarrantyAttachment(token: string, claimId: string, file: File): Promise<ApprovalRequestLite> {
+  const res = await fetch(`/approvals/warranty/${encodeURIComponent(claimId)}/attachments`, {
+    method: "POST",
+    headers: { "Content-Type": file.type, Authorization: `Bearer ${token}` },
+    body: file,
+  });
+  if (res.status === 401) throw new UnauthorizedError("Session expired, please log in again.");
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? `Failed to upload attachment (${res.status})`);
   return body;
 }

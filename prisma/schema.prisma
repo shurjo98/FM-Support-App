@@ -34,6 +34,9 @@ model Organization {
   sparePartStocks  SparePartStock[]
   defectLogs       DefectLog[]
   tasks            InternalTask[]
+  discountApprovalRequests    DiscountApprovalRequest[]
+  hospitalityApprovalRequests HospitalityApprovalRequest[]
+  warrantyClaims              WarrantyClaim[]
 }
 
 model Machine {
@@ -53,6 +56,7 @@ model Machine {
   tickets   Ticket[]
   purchases Purchase[]
   reorders  ReorderRequest[]
+  warrantyClaims WarrantyClaim[]
 }
 
 model NeedleProduct {
@@ -417,4 +421,120 @@ model DefectLog {
   shift           String   // MORNING | EVENING | NIGHT
   loggedAt        DateTime @default(now())
   loggedByUserId  String?
+}
+
+// ============ GM approval workflows ============
+// Five distinct request types, all reviewed/signed off by whoever holds the
+// "GM" role in InternalAccount.roles. Deliberately five separate models
+// (matching how Ticket/ReorderRequest/InternalTask are each their own model
+// in this schema) rather than one polymorphic table — the shapes genuinely
+// differ (leave has dates, discount has an amount, warranty has attachments)
+// and nothing else in this schema uses a Json payload column.
+
+model DemoApprovalRequest {
+  id                    String    @id
+  requestedByAccountId  String
+  requestedByName       String
+  prospectCompany       String
+  contactPerson         String?
+  contactPhone          String?
+  machineOrProduct      String
+  proposedDate          String?
+  location              String?
+  purpose               String?
+  status                String    @default("PENDING") // PENDING | APPROVED | REJECTED
+  decisionNote          String?
+  decidedByAccountId    String?
+  decidedByName         String?
+  decidedAt             DateTime?
+  createdAt             DateTime  @default(now())
+}
+
+model LeaveRequest {
+  id                    String    @id
+  requestedByAccountId  String
+  requestedByName       String
+  leaveType             String // e.g. Annual | Sick | Casual | Other, free text
+  startDate             String
+  endDate               String
+  reason                String?
+  status                String    @default("PENDING")
+  decisionNote          String?
+  decidedByAccountId    String?
+  decidedByName         String?
+  decidedAt             DateTime?
+  createdAt             DateTime  @default(now())
+}
+
+model DiscountApprovalRequest {
+  id                    String    @id
+  requestedByAccountId  String
+  requestedByName       String
+  organizationId        String
+  organization          Organization @relation(fields: [organizationId], references: [id])
+  itemOrQuoteDescription String
+  originalAmount        Float
+  discountPercent       Float?
+  discountAmount        Float?
+  reason                String?
+  status                String    @default("PENDING")
+  decisionNote          String?
+  decidedByAccountId    String?
+  decidedByName         String?
+  decidedAt             DateTime?
+  createdAt             DateTime  @default(now())
+}
+
+// Hospitality & Entertainment (请客 / Qingke) — client dinners, gifts, etc.
+model HospitalityApprovalRequest {
+  id                    String    @id
+  requestedByAccountId  String
+  requestedByName       String
+  organizationId        String?
+  organization          Organization? @relation(fields: [organizationId], references: [id])
+  venue                 String?
+  eventDate             String?
+  amount                Float
+  attendees             String?
+  purpose               String?
+  status                String    @default("PENDING")
+  decisionNote          String?
+  decidedByAccountId    String?
+  decidedByName         String?
+  decidedAt             DateTime?
+  createdAt             DateTime  @default(now())
+}
+
+// Warranty & Repair (保修 / Baoxiu) claims — filed by internal staff on the
+// customer's behalf, with supporting photos/docs, gated on GM sign-off
+// before repair processing begins.
+model WarrantyClaim {
+  id                    String    @id
+  requestedByAccountId  String
+  requestedByName       String
+  organizationId        String
+  organization          Organization @relation(fields: [organizationId], references: [id])
+  machineId             String?
+  machine               Machine?  @relation(fields: [machineId], references: [id])
+  serialNumber          String?
+  customMachineName     String?
+  issueDescription      String
+  claimType             String // Warranty | Paid Repair
+  status                String    @default("PENDING")
+  decisionNote          String?
+  decidedByAccountId    String?
+  decidedByName         String?
+  decidedAt             DateTime?
+  createdAt             DateTime  @default(now())
+
+  attachments WarrantyClaimAttachment[]
+}
+
+model WarrantyClaimAttachment {
+  id              String        @id
+  warrantyClaimId String
+  warrantyClaim   WarrantyClaim @relation(fields: [warrantyClaimId], references: [id], onDelete: Cascade)
+  url             String
+  mimeType        String
+  uploadedAt      DateTime
 }

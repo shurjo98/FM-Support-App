@@ -9,9 +9,11 @@ import ContentStudioPage from "./pages/ContentStudioPage";
 import TeamHubPage from "./pages/TeamHubPage";
 import TeamManagementPage from "./pages/TeamManagementPage";
 import FactoriesPage from "./pages/FactoriesPage";
+import ApprovalsPage from "./pages/ApprovalsPage";
+import GmPortalPage from "./pages/GmPortalPage";
 import InternalLayout, { type InternalTab } from "./InternalLayout";
 import type { InternalAccountLite } from "./types";
-import { isFmAdmin } from "./permissions";
+import { isFmAdmin, isGm } from "./permissions";
 
 const TOKEN_KEY = "fm_internal_token";
 const NAME_KEY = "fm_internal_name";
@@ -105,6 +107,12 @@ export default function InternalApp() {
         <FactoriesPage token={token} actingAccount={actingAccount} onUnauthorized={handleLogout} />
       )}
       {tab === "notifications" && <NotificationsPage token={token} onUnauthorized={handleLogout} />}
+      {tab === "approvals" && (
+        <ApprovalsPage token={token} actingAccount={actingAccount} onUnauthorized={handleLogout} />
+      )}
+      {tab === "gm-portal" && isGm(actingAccount) && (
+        <GmPortalPage token={token} actingAccountId={actingAccount.id} onUnauthorized={handleLogout} />
+      )}
     </InternalLayout>
   );
 }

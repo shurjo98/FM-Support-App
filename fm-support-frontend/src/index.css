@@ -788,6 +788,48 @@ h1 {
   overflow-x: auto;
 }
 
+/* Column switcher shown only below the 880px breakpoint (see that media
+   query for the .kanban-board/.kanban-column overrides it drives). */
+.kanban-mobile-tabs {
+  display: none;
+  gap: 6px;
+  margin-bottom: 14px;
+  overflow-x: auto;
+}
+
+.kanban-mobile-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 0 auto;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #1f2933;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.kanban-mobile-tabs button.active {
+  border-color: #1890d8;
+  background: #eff6ff;
+  color: #1890d8;
+}
+
+.kanban-mobile-tabs .kanban-column-count {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-size: 0.7rem;
+}
+
+.kanban-mobile-tabs button.active .kanban-column-count {
+  background: rgba(24, 144, 216, 0.15);
+}
+
 /* per-column accent colors */
 .kanban-column {
   background: #f8f9fb;
@@ -1174,6 +1216,39 @@ h1 {
   display: flex;
   align-items: center;
   gap: 14px;
+}
+
+/* Desktop: the filter fields render inline as if there were no wrapper.
+   The mobile media query below turns this into a real collapsible panel. */
+.kanban-filter-panel {
+  display: contents;
+}
+
+/* Desktop: hidden — filters are always visible inline instead. */
+.kanban-filter-toggle {
+  display: none;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #374151;
+  cursor: pointer;
+}
+
+.kanban-filter-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #1890d8;
+  border: 1.5px solid white;
 }
 
 .kanban-my-tasks {
@@ -1650,21 +1725,151 @@ h1 {
   .content-studio,
   .dashboard,
   .assignments {
-    padding: 16px;
+    padding: 12px 12px 48px;
   }
 
   .kanban-toolbar {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
+    padding: 12px 14px;
   }
 
   .kanban-toolbar-actions {
     flex-wrap: wrap;
   }
 
+  /* Icons only for the primary row — labels reappear once the filter
+     panel is open, where there's room to spell things out. */
+  .kanban-filter-toggle {
+    display: inline-flex;
+    order: 1;
+  }
+
+  .int-bell-wrap {
+    order: 2;
+  }
+
+  .kanban-toolbar-actions > .int-button {
+    order: 3;
+    padding: 8px 10px;
+  }
+
+  .kanban-toolbar-actions > .int-button .btn-label {
+    display: none;
+  }
+
+  .kanban-filter-panel {
+    order: 4;
+    display: none;
+    width: 100%;
+  }
+
+  .kanban-filter-panel.open {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+  }
+
+  .kanban-filter-panel.open .kanban-search-input,
+  .kanban-filter-panel.open select {
+    width: 100%;
+  }
+
   .content-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* Segmented control, iOS-style: one pill container, active column gets
+     the raised "chip" so switching columns reads as flipping a tab, not
+     as scrolling past three other boards' worth of cards. */
+  .kanban-mobile-tabs {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    background: #eef0f3;
+    border-radius: 10px;
+    overflow-x: visible;
+  }
+
+  .kanban-mobile-tabs button {
+    flex: 1 1 0;
+    justify-content: center;
+    padding: 7px 4px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+  }
+
+  .kanban-mobile-tabs button.active {
+    background: white;
+    color: #111827;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  }
+
+  .kanban-board {
+    grid-template-columns: 1fr;
+    overflow-x: visible;
+  }
+
+  .kanban-column {
+    display: none;
+  }
+
+  .kanban-column.mobile-active {
+    display: block;
+    padding: 0;
+    min-height: 0;
+    background: transparent;
+    border: none;
+    border-top: none;
+  }
+
+  .kanban-column-header {
+    padding: 0 2px;
+    margin-bottom: 8px;
+  }
+
+  /* Cards become a flat list with hairline dividers instead of individually
+     shadowed tiles — less visual weight per row, so more of the board reads
+     at a glance and there's less to scroll through to reach the bottom. */
+  .kanban-column-body {
+    gap: 0;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .kanban-card {
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid #f0f1f3;
+    box-shadow: none;
+    padding: 12px 14px;
+  }
+
+  .kanban-column-body .kanban-card:last-child {
+    border-bottom: none;
+  }
+
+  .kanban-card:hover {
+    box-shadow: none;
+    transform: none;
+  }
+
+  .kanban-column-body:has(.kanban-empty) {
+    border-style: dashed;
+    background: transparent;
+  }
+
+  .kanban-empty {
+    padding: 20px 0;
   }
 }
 
@@ -1807,6 +2012,111 @@ h1 {
 .team-roster-actions {
   display: flex;
   gap: 8px;
+}
+
+/* ============ GM approval workflows ============ */
+
+.approval-type-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.approval-type-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1f2933;
+  cursor: pointer;
+  text-align: left;
+  transition: box-shadow 0.12s, transform 0.12s;
+}
+
+.approval-type-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.approval-type-card svg:first-child {
+  color: #1890d8;
+  flex-shrink: 0;
+}
+
+.approval-type-card-plus {
+  margin-left: auto;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.approval-status-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.approval-status-pill.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.approval-status-pill.approved {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.approval-status-pill.rejected {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.approval-list-date {
+  flex: none;
+  font-size: 0.72rem;
+  color: #9ca3af;
+}
+
+.approval-inbox-row {
+  width: 100%;
+  background: white;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.approval-inbox-row:hover {
+  border-color: #1890d8;
+}
+
+.approval-attachment-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.approval-attachment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1890d8;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
 }
 
 .leaderboard-row {

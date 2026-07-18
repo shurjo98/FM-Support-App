@@ -391,6 +391,91 @@ export interface GarmentRecommendation {
   processes?: GarmentProcess[];
 }
 
+// ─── GM approval workflows ───────────────────────────────────────────────────
+// Five request types, all reviewed/signed off by whoever holds the "GM" role
+// (see permissions.ts's isGm). Backend reshapes all 5 into this one shape
+// (src/routes/approvals.ts's serialize()) so list/detail UI can stay generic;
+// `detail` carries the type-specific fields.
+export type ApprovalType = "demo" | "leave" | "discount" | "qingke" | "warranty";
+export type ApprovalStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export interface DemoApprovalDetail {
+  prospectCompany: string;
+  contactPerson: string | null;
+  contactPhone: string | null;
+  machineOrProduct: string;
+  proposedDate: string | null;
+  location: string | null;
+  purpose: string | null;
+}
+
+export interface LeaveRequestDetail {
+  leaveType: string;
+  startDate: string;
+  endDate: string;
+  reason: string | null;
+}
+
+export interface DiscountApprovalDetail {
+  organizationId: string;
+  organizationName: string | null;
+  itemOrQuoteDescription: string;
+  originalAmount: number;
+  discountPercent: number | null;
+  discountAmount: number | null;
+  reason: string | null;
+}
+
+export interface HospitalityApprovalDetail {
+  organizationId: string | null;
+  organizationName: string | null;
+  venue: string | null;
+  eventDate: string | null;
+  amount: number;
+  attendees: string | null;
+  purpose: string | null;
+}
+
+export interface WarrantyClaimAttachment {
+  id: string;
+  url: string;
+  mimeType: string;
+  uploadedAt: string;
+}
+
+export interface WarrantyClaimDetail {
+  organizationId: string;
+  organizationName: string | null;
+  machineId: string | null;
+  serialNumber: string | null;
+  customMachineName: string | null;
+  issueDescription: string;
+  claimType: string;
+  attachments: WarrantyClaimAttachment[];
+}
+
+export type ApprovalDetail =
+  | DemoApprovalDetail
+  | LeaveRequestDetail
+  | DiscountApprovalDetail
+  | HospitalityApprovalDetail
+  | WarrantyClaimDetail;
+
+export interface ApprovalRequestLite {
+  id: string;
+  type: ApprovalType;
+  label: string;
+  status: ApprovalStatus;
+  requestedByAccountId: string;
+  requestedByName: string;
+  summary: string;
+  decisionNote: string | null;
+  decidedByName: string | null;
+  decidedAt: string | null;
+  createdAt: string;
+  detail: ApprovalDetail;
+}
+
 export interface ContentCard {
   id: string;
   title: string;

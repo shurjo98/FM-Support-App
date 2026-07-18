@@ -25,6 +25,7 @@ import inventoryRouter from "./routes/inventory";
 import defectsRouter from "./routes/defects";
 import portalRouter from "./routes/portal";
 import organizationsRouter from "./routes/organizations";
+import approvalsRouter from "./routes/approvals";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -60,6 +61,7 @@ app.use("/inventory", inventoryRouter);
 app.use("/defects", defectsRouter);
 app.use("/portal", portalRouter);
 app.use("/organizations", organizationsRouter);
+app.use("/approvals", approvalsRouter);
 
 // Serve the built frontend (npm run build) so the whole app is reachable
 // from a single URL/port — needed for hosting on Render etc. In local dev,
