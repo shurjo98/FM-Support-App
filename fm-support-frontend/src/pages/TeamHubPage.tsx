@@ -47,7 +47,7 @@ export default function TeamHubPage({
   const canManage = canManageTasks(actingAccount);
 
   function load() {
-    Promise.all([fetchInternalAccounts(token), fetchTasks(token), fetchTeamGoals(token)])
+    Promise.all([fetchInternalAccounts(token), fetchTasks(token, actingAccount.id), fetchTeamGoals(token)])
       .then(([a, t, g]) => {
         setAccounts(a);
         setGoals(g);

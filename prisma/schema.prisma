@@ -240,6 +240,11 @@ model InternalTask {
   relatedTicketId    String?
   organizationId     String?
   organization       Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  // Restricted tasks are hidden from the team board — only the creator,
+  // anyone in allowedAccountIds, and GM-role accounts can see them. Empty
+  // allowedAccountIds + restricted:true means "only the creator can see it."
+  restricted         Boolean  @default(false)
+  allowedAccountIds  String[] @default([])
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -293,6 +298,9 @@ model InternalNotification {
   // null = broadcast to managers/admins (e.g. "a technician moved a task");
   // set = aimed at one person (e.g. "you were assigned this task").
   recipientAccountId   String?
+  // True when this notification was triggered by an @mention rather than a
+  // generic task event — styled distinctly in the bell so it stands out.
+  isMention            Boolean  @default(false)
   read                 Boolean  @default(false)
   createdAt            DateTime @default(now())
 }

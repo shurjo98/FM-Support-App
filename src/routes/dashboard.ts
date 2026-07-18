@@ -609,6 +609,24 @@ function mkTaskEventData(type: string, description: string, authorAccountId: str
   };
 }
 
+// Matches "@Full Name" against the InternalAccount roster (case-insensitive,
+// word-boundary, longest names checked first so "Al" doesn't shadow-match
+// inside "Al Amin") — used to decide who gets pinged when someone writes an
+// @mention in a task description or comment.
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function parseMentions(text: string, accounts: { id: string; name: string }[]): string[] {
+  const found = new Set<string>();
+  const byNameLengthDesc = [...accounts].sort((a, b) => b.name.length - a.name.length);
+  for (const a of byNameLengthDesc) {
+    const re = new RegExp(`@${escapeRegExp(a.name)}\\b`, "i");
+    if (re.test(text)) found.add(a.id);
+  }
+  return [...found];
+}
+
 async function notifyManagersOfMove(task: { id: string; title: string; column: string }, mover: { id: string; name: string }) {
   await prisma.internalNotification.create({
     data: {
@@ -631,7 +649,8 @@ async function notifyAccount(
   recipientAccountId: string,
   message: string,
   taskId: string,
-  triggeredBy: { id: string; name: string }
+  triggeredBy: { id: string; name: string },
+  isMention = false
 ) {
   if (recipientAccountId === triggeredBy.id) return;
 
@@ -643,34 +662,53 @@ async function notifyAccount(
       triggeredByAccountId: triggeredBy.id,
       triggeredByName: triggeredBy.name,
       recipientAccountId,
+      isMention,
       read: false,
     },
   });
 
-  await sendPushToAccount(recipientAccountId, { title: "FM Support", body: message });
+  await sendPushToAccount(recipientAccountId, { title: isMention ? "You were mentioned" : "FM Support", body: message });
 }
 
-// GET /dashboard/tasks -> the team Kanban board, everyone can view it.
+// GET /dashboard/tasks -> the team Kanban board. Restricted tasks (see
+// InternalTask.restricted) are filtered out unless the requester is the
+// creator, is in allowedAccountIds, or holds the GM role — no actingAccountId
+// means no restricted tasks are shown, the safe default.
 // Completed tasks older than 14 days are hidden by default to keep the board
 // clean — pass ?includeArchived=true to see the full history.
 router.get("/tasks", async (req, res) => {
   const includeArchived = req.query.includeArchived === "true";
+  const { actingAccountId } = req.query as { actingAccountId?: string };
   const archiveCutoff = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
-  const tasks = await prisma.internalTask.findMany({
-    include: taskInclude,
-    where: includeArchived
-      ? undefined
-      : { NOT: { AND: [{ column: "COMPLETED" }, { updatedAt: { lt: archiveCutoff } }] } },
-    orderBy: { createdAt: "asc" },
-  });
-  res.json(await Promise.all(tasks.map(enrichTask)));
+
+  const [tasks, account] = await Promise.all([
+    prisma.internalTask.findMany({
+      include: taskInclude,
+      where: includeArchived
+        ? undefined
+        : { NOT: { AND: [{ column: "COMPLETED" }, { updatedAt: { lt: archiveCutoff } }] } },
+      orderBy: { createdAt: "asc" },
+    }),
+    actingAccountId ? prisma.internalAccount.findUnique({ where: { id: actingAccountId } }) : null,
+  ]);
+
+  const isGmUser = account ? hasRole(account.roles, "GM") : false;
+  const visible = tasks.filter(
+    (t) =>
+      !t.restricted ||
+      isGmUser ||
+      t.createdByAccountId === actingAccountId ||
+      (actingAccountId != null && t.allowedAccountIds.includes(actingAccountId))
+  );
+
+  res.json(await Promise.all(visible.map(enrichTask)));
 });
 
 // POST /dashboard/tasks -> create a task. Open to anyone on the team, so
 // people can add their own tasks — editing another task's details (priority,
 // assignee, etc.) is still manager/admin only, see PATCH below.
 router.post("/tasks", async (req, res) => {
-  const { title, description, priority, leadId, assistIds, column, dueDate, organizationId, actingAccountId } = req.body as {
+  const { title, description, priority, leadId, assistIds, column, dueDate, organizationId, restricted, allowedAccountIds, actingAccountId } = req.body as {
     title: string;
     description?: string;
     priority?: TaskPriority;
@@ -679,6 +717,8 @@ router.post("/tasks", async (req, res) => {
     column?: TaskColumn;
     dueDate?: string | null;
     organizationId?: string | null;
+    restricted?: boolean;
+    allowedAccountIds?: string[];
     actingAccountId: string;
   };
 
@@ -688,6 +728,10 @@ router.post("/tasks", async (req, res) => {
 
   const author = await prisma.internalAccount.findUnique({ where: { id: actingAccountId } });
   if (!author) return res.status(401).json({ error: "Unknown acting account." });
+
+  if (restricted && !(await canManageTasks(actingAccountId)) && !hasRole(author.roles, "GM")) {
+    return res.status(403).json({ error: "Only a manager, admin, or GM can restrict a task's visibility." });
+  }
 
   const assignmentsToCreate = buildAssignmentRows(leadId ?? null, assistIds ?? []);
 
@@ -701,6 +745,8 @@ router.post("/tasks", async (req, res) => {
       dueDate: dueDate ?? null,
       organizationId: organizationId || null,
       createdByAccountId: actingAccountId,
+      restricted: restricted ?? false,
+      allowedAccountIds: restricted ? allowedAccountIds ?? [] : [],
       events: { create: [mkTaskEventData("CREATED", "Task created", author.id, author.name)] },
       ...(assignmentsToCreate.length ? { assignments: { create: assignmentsToCreate } } : {}),
     },
@@ -716,6 +762,14 @@ router.post("/tasks", async (req, res) => {
     );
   }
 
+  if (description?.trim()) {
+    const roster = await prisma.internalAccount.findMany();
+    const mentionedIds = parseMentions(description, roster);
+    for (const accountId of mentionedIds) {
+      await notifyAccount(accountId, `${author.name} mentioned you in a new task: "${newTask.title}"`, newTask.id, author, true);
+    }
+  }
+
   res.status(201).json(await enrichTask(newTask));
 });
 
@@ -724,7 +778,7 @@ router.post("/tasks", async (req, res) => {
 // technician moves a task, the manager/admin get an in-app notification.
 router.patch("/tasks/:id", async (req, res) => {
   const { id } = req.params;
-  const { column, priority, leadId, assistIds, title, description, dueDate, organizationId, actingAccountId } = req.body as {
+  const { column, priority, leadId, assistIds, title, description, dueDate, organizationId, restricted, allowedAccountIds, actingAccountId } = req.body as {
     column?: TaskColumn;
     priority?: TaskPriority;
     leadId?: string | null;
@@ -733,6 +787,8 @@ router.patch("/tasks/:id", async (req, res) => {
     description?: string;
     dueDate?: string | null;
     organizationId?: string | null;
+    restricted?: boolean;
+    allowedAccountIds?: string[];
     actingAccountId: string;
   };
 
@@ -749,10 +805,12 @@ router.patch("/tasks/:id", async (req, res) => {
     title !== undefined ||
     description !== undefined ||
     dueDate !== undefined ||
-    organizationId !== undefined;
+    organizationId !== undefined ||
+    restricted !== undefined ||
+    allowedAccountIds !== undefined;
 
-  if (editingDetails && !(await canManageTasks(actingAccountId))) {
-    return res.status(403).json({ error: "Only a manager or admin can edit task details." });
+  if (editingDetails && !(await canManageTasks(actingAccountId)) && !hasRole(account.roles, "GM")) {
+    return res.status(403).json({ error: "Only a manager, admin, or GM can edit task details." });
   }
 
   const eventsToCreate: ReturnType<typeof mkTaskEventData>[] = [];
@@ -814,6 +872,12 @@ router.patch("/tasks/:id", async (req, res) => {
   if (title?.trim()) data.title = title.trim();
   if (description !== undefined) data.description = description;
   if (organizationId !== undefined) data.organizationId = organizationId || null;
+  if (restricted !== undefined) {
+    data.restricted = restricted;
+    data.allowedAccountIds = restricted ? allowedAccountIds ?? task.allowedAccountIds : [];
+  } else if (allowedAccountIds !== undefined) {
+    data.allowedAccountIds = allowedAccountIds;
+  }
   if (eventsToCreate.length) data.events = { create: eventsToCreate };
 
   const updated = await prisma.internalTask.update({
@@ -870,9 +934,19 @@ router.post("/tasks/:id/comments", async (req, res) => {
     include: taskInclude,
   });
 
-  const recipients = new Set([...task.assignments.map((a) => a.accountId), task.createdByAccountId].filter(Boolean));
+  const roster = await prisma.internalAccount.findMany();
+  const mentionedIds = new Set(parseMentions(text, roster));
+
+  // Mentioned people get the more specific "mentioned you" ping instead of
+  // (not in addition to) the generic "commented on" one below.
+  const recipients = new Set(
+    [...task.assignments.map((a) => a.accountId), task.createdByAccountId].filter((id): id is string => Boolean(id) && !mentionedIds.has(id))
+  );
   for (const recipientId of recipients) {
     await notifyAccount(recipientId, `${account.name} commented on "${task.title}": "${text.trim().slice(0, 80)}"`, task.id, account);
+  }
+  for (const mentionedId of mentionedIds) {
+    await notifyAccount(mentionedId, `${account.name} mentioned you in a comment on "${task.title}": "${text.trim().slice(0, 80)}"`, task.id, account, true);
   }
 
   res.status(201).json(await enrichTask(updated));

@@ -135,6 +135,10 @@ export interface InternalTask {
   organizationId?: string | null;
   organizationName?: string | null;
   region?: string | null;
+  // Restricted tasks are hidden from everyone except the creator, anyone in
+  // allowedAccountIds, and GM-role accounts — see permissions.ts's isGm.
+  restricted: boolean;
+  allowedAccountIds: string[];
   events: TaskEvent[];
   comments: TaskComment[];
   createdAt: string;
@@ -167,6 +171,7 @@ export interface InternalNotification {
   triggeredByAccountId: string;
   triggeredByName: string;
   recipientAccountId?: string | null;
+  isMention: boolean;
   read: boolean;
   createdAt: string;
 }

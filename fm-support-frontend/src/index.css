@@ -923,6 +923,25 @@ h1 {
   transform: rotate(-1.5deg) scale(1.02);
 }
 
+/* Restricted (private/sensitive) tasks — only shown to people who can
+   already see them, so this is purely "you can see this, and it's
+   restricted" signage, not a locked placeholder. */
+.kanban-card-restricted {
+  background: #faf5ff;
+  border-color: #e9d5ff;
+}
+
+.kanban-restricted-badge {
+  display: inline-flex;
+  align-items: center;
+  color: #7c3aed;
+  background: #f3e8ff;
+  padding: 2px 7px;
+  border-radius: 999px;
+  margin-bottom: 7px;
+  margin-left: 5px;
+}
+
 .kanban-priority-badge {
   display: inline-flex;
   align-items: center;
@@ -1044,6 +1063,119 @@ h1 {
   font-weight: 500;
   color: #4b5563;
   cursor: pointer;
+}
+
+/* ============ restricted-visibility toggle + iOS-style switch ============ */
+
+.restricted-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ios-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+}
+
+.ios-toggle {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 25px;
+  border-radius: 999px;
+  background: #d1d5db;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
+}
+
+.ios-toggle.on {
+  background: #7c3aed;
+}
+
+.ios-toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 21px;
+  height: 21px;
+  border-radius: 999px;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease;
+}
+
+.ios-toggle.on .ios-toggle-knob {
+  transform: translateX(17px);
+}
+
+.restricted-field-hint {
+  width: 100%;
+  margin: 2px 0 0;
+}
+
+.restricted-notice {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #7c3aed;
+  background: #f3e8ff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+/* ============ @mentions ============ */
+
+.mention-highlight {
+  color: #1890d8;
+  font-weight: 600;
+}
+
+.mention-field-wrap {
+  position: relative;
+}
+
+.mention-suggestions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 20;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.mention-suggestions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #1f2933;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mention-suggestions button:hover {
+  background: #f3f4f6;
 }
 
 .assist-chip.active {
@@ -1359,6 +1491,26 @@ h1 {
 
 .int-bell-item.unread {
   font-weight: 600;
+}
+
+/* Mentions get a Facebook-notification-style highlight so they stand out
+   from routine task-move/comment pings. */
+.int-bell-item.mention {
+  background: #eff6ff;
+  border-left: 3px solid #1890d8;
+  border-radius: 6px;
+  padding: 8px 8px 8px 10px;
+  margin: 2px 0;
+}
+
+.int-bell-mention-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #1890d8;
+  margin-bottom: 2px;
 }
 
 .int-bell-time {
@@ -1852,6 +2004,11 @@ h1 {
     border-bottom: 1px solid #f0f1f3;
     box-shadow: none;
     padding: 12px 14px;
+    /* Cards are tap-to-open on mobile (see TaskBoardPage's isMobile check) —
+       without this override, touch-action:none from the desktop drag-and-drop
+       styling swallows scroll gestures that start on a card. */
+    touch-action: auto;
+    cursor: pointer;
   }
 
   .kanban-column-body .kanban-card:last-child {

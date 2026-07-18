@@ -171,9 +171,10 @@ export function deleteTeamGoal(token: string, id: string, actingAccountId: strin
   );
 }
 
-export function fetchTasks(token: string, includeArchived = false): Promise<InternalTask[]> {
-  const url = includeArchived ? "/dashboard/tasks?includeArchived=true" : "/dashboard/tasks";
-  return authedGet<InternalTask[]>(url, token);
+export function fetchTasks(token: string, actingAccountId: string, includeArchived = false): Promise<InternalTask[]> {
+  const params = new URLSearchParams({ actingAccountId });
+  if (includeArchived) params.set("includeArchived", "true");
+  return authedGet<InternalTask[]>(`/dashboard/tasks?${params.toString()}`, token);
 }
 
 export function createTask(
@@ -187,6 +188,8 @@ export function createTask(
     column?: TaskColumn;
     dueDate?: string | null;
     organizationId?: string | null;
+    restricted?: boolean;
+    allowedAccountIds?: string[];
     actingAccountId: string;
   }
 ): Promise<InternalTask> {
@@ -205,6 +208,8 @@ export function updateTask(
     description?: string;
     dueDate?: string | null;
     organizationId?: string | null;
+    restricted?: boolean;
+    allowedAccountIds?: string[];
     actingAccountId: string;
   }
 ): Promise<InternalTask> {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type PointerEvent, type ReactNode } from "react";
 import {
   addTaskComment,
   createOrganization,
@@ -15,8 +15,178 @@ import {
 import type { FactoryAccount, InternalAccountLite, InternalNotification, InternalTask, TaskColumn, TaskEventType, TaskPriority } from "../types";
 import { REGIONS } from "../types";
 import { Avatar } from "../Avatar";
-import { canManageTasks } from "../permissions";
-import { Archive, Bell, Building2, MessageCircle, Plus, Sparkles, ArrowRightLeft, Zap, UserCheck, CalendarClock, SlidersHorizontal, type LucideIcon } from "lucide-react";
+import { canManageTasks, isGm } from "../permissions";
+import { Archive, Bell, Building2, Lock, MessageCircle, Plus, Sparkles, ArrowRightLeft, Zap, UserCheck, CalendarClock, SlidersHorizontal, type LucideIcon } from "lucide-react";
+
+// Highlights "@Full Name" substrings that match a known account — pure
+// display-time formatting, mirrors the backend's parseMentions() matching
+// (dashboard.ts) but doesn't need to agree exactly since this only affects
+// rendering, not who gets notified.
+function renderMentions(text: string, accounts: InternalAccountLite[]): ReactNode[] {
+  const names = [...accounts].sort((a, b) => b.name.length - a.name.length).map((a) => a.name);
+  if (names.length === 0) return [text];
+  const pattern = new RegExp(`@(${names.map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})\\b`, "gi");
+  const parts: ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+  while ((match = pattern.exec(text))) {
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
+    parts.push(
+      <span key={key++} className="mention-highlight">
+        @{match[1]}
+      </span>
+    );
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts;
+}
+
+// A text input/textarea that pops a small account-picker below the cursor
+// when the user types "@" — selecting one inserts "@Full Name " in place of
+// the partial token. Used for task descriptions and comments.
+function MentionAwareField({
+  value,
+  onChange,
+  accounts,
+  multiline,
+  placeholder,
+  rows,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  accounts: InternalAccountLite[];
+  multiline?: boolean;
+  placeholder?: string;
+  rows?: number;
+}) {
+  const [query, setQuery] = useState<string | null>(null);
+  const taRef = useRef<HTMLTextAreaElement>(null);
+  const inRef = useRef<HTMLInputElement>(null);
+
+  function detectMention(newValue: string, cursor: number) {
+    const uptoCursor = newValue.slice(0, cursor);
+    const match = uptoCursor.match(/@([A-Za-z\s]{0,30})$/);
+    setQuery(match ? match[1] ?? "" : null);
+  }
+
+  function handleChange(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) {
+    onChange(e.target.value);
+    detectMention(e.target.value, e.target.selectionStart ?? e.target.value.length);
+  }
+
+  function selectAccount(name: string) {
+    const el = multiline ? taRef.current : inRef.current;
+    const cursor = el?.selectionStart ?? value.length;
+    const uptoCursor = value.slice(0, cursor);
+    const replaced = uptoCursor.replace(/@([A-Za-z\s]{0,30})$/, `@${name} `);
+    onChange(replaced + value.slice(cursor));
+    setQuery(null);
+    requestAnimationFrame(() => el?.focus());
+  }
+
+  const matches = query !== null ? accounts.filter((a) => a.name.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 6) : [];
+
+  return (
+    <div className="mention-field-wrap">
+      {multiline ? (
+        <textarea
+          ref={taRef}
+          rows={rows ?? 3}
+          value={value}
+          placeholder={placeholder}
+          onChange={handleChange}
+          onBlur={() => setTimeout(() => setQuery(null), 150)}
+        />
+      ) : (
+        <input
+          ref={inRef}
+          type="text"
+          value={value}
+          placeholder={placeholder}
+          onChange={handleChange}
+          onBlur={() => setTimeout(() => setQuery(null), 150)}
+        />
+      )}
+      {matches.length > 0 && (
+        <div className="mention-suggestions">
+          {matches.map((a) => (
+            <button key={a.id} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => selectAccount(a.name)}>
+              <Avatar name={a.name} avatarUrl={a.avatarUrl} size={18} />
+              <span>{a.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Simple on/off pill switch (iOS-style) — used for the "restrict visibility"
+// toggle so setting task privacy reads as a single obvious tap.
+function IosToggle({ on, onToggle, label }: { on: boolean; onToggle: () => void; label: ReactNode }) {
+  return (
+    <div className="ios-toggle-row" onClick={onToggle} role="switch" aria-checked={on}>
+      <span>{label}</span>
+      <span className={`ios-toggle ${on ? "on" : ""}`}>
+        <span className="ios-toggle-knob" />
+      </span>
+    </div>
+  );
+}
+
+// Shared UI for setting who else besides the creator can see a restricted
+// task — used by both NewTaskModal and TaskDetailModal.
+function RestrictedVisibilityField({
+  restricted,
+  onToggleRestricted,
+  allowedAccountIds,
+  onToggleAllowed,
+  accounts,
+  excludeAccountId,
+  disabled,
+}: {
+  restricted: boolean;
+  onToggleRestricted: () => void;
+  allowedAccountIds: string[];
+  onToggleAllowed: (accountId: string) => void;
+  accounts: InternalAccountLite[];
+  excludeAccountId: string;
+  disabled?: boolean;
+}) {
+  return (
+    <div className="restricted-field">
+      <IosToggle
+        on={restricted}
+        onToggle={disabled ? () => {} : onToggleRestricted}
+        label={
+          <>
+            <Lock size={14} strokeWidth={2} style={{ verticalAlign: "-2px", marginRight: 6 }} />
+            Restrict who can see this
+          </>
+        }
+      />
+      {restricted && (
+        <div className="assist-chip-list">
+          {accounts
+            .filter((a) => a.id !== excludeAccountId)
+            .map((a) => {
+              const active = allowedAccountIds.includes(a.id);
+              return (
+                <label key={a.id} className={`assist-chip ${active ? "active" : ""}`}>
+                  <input type="checkbox" checked={active} onChange={() => onToggleAllowed(a.id)} disabled={disabled} hidden />
+                  <Avatar name={a.name} avatarUrl={a.avatarUrl} size={20} />
+                  <span>{a.name}</span>
+                </label>
+              );
+            })}
+          <p className="empty restricted-field-hint">Leave everyone unchecked to keep this visible to only you (and GM).</p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 const COLUMNS: { key: TaskColumn; label: string }[] = [
   { key: "BACKLOG", label: "Backlog" },
@@ -97,13 +267,28 @@ export default function TaskBoardPage({
   // Mobile only: search/region/mine/archived live behind this single toggle
   // instead of cluttering the top bar — desktop always shows them inline.
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  // Mobile only: dragging fights native scroll (touch-action:none swallows
+  // scroll gestures that start on a card), and cross-column drop barely works
+  // anyway since only one column is visible at a time. Below 880px, cards are
+  // tap-to-open instead — reassigning a column happens via the detail
+  // modal's Column dropdown.
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 880px)").matches);
   const columnRefs = useRef<Partial<Record<TaskColumn, HTMLDivElement>>>({});
 
-  const canManage = canManageTasks(actingAccount);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 880px)");
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // GM can edit/restrict tasks the same as a Manager/Admin even without
+  // holding either role — see the matching backend gate in dashboard.ts.
+  const canManage = canManageTasks(actingAccount) || isGm(actingAccount);
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   function load() {
-    Promise.all([fetchTasks(token, showArchived), fetchInternalAccounts(token), fetchOrganizations(token)])
+    Promise.all([fetchTasks(token, actingAccount.id, showArchived), fetchInternalAccounts(token), fetchOrganizations(token)])
       .then(([t, a, o]) => {
         setTasks(t);
         setAccounts(a);
@@ -121,7 +306,7 @@ export default function TaskBoardPage({
       .catch(() => {});
   }
 
-  useEffect(load, [token, showArchived]);
+  useEffect(load, [token, showArchived, actingAccount.id]);
   useEffect(loadNotifications, [token, actingAccount.id]);
 
   // Auto-refresh: pick up task moves, assignments, and comments made by
@@ -301,7 +486,8 @@ export default function TaskBoardPage({
                   <p className="empty">No notifications yet.</p>
                 ) : (
                   notifications.slice(0, 10).map((n) => (
-                    <div key={n.id} className={`int-bell-item ${n.read ? "" : "unread"}`}>
+                    <div key={n.id} className={`int-bell-item ${n.read ? "" : "unread"} ${n.isMention ? "mention" : ""}`}>
+                      {n.isMention && <span className="int-bell-mention-tag">@ Mentioned you</span>}
                       <div>{n.message}</div>
                       <div className="int-bell-time">{new Date(n.createdAt).toLocaleString()}</div>
                     </div>
@@ -355,16 +541,22 @@ export default function TaskBoardPage({
                 {colTasks.map((task) => (
                   <div
                     key={task.id}
-                    className={`kanban-card ${drag?.taskId === task.id && drag.isDragging ? "dragging" : ""}`}
+                    className={`kanban-card ${drag?.taskId === task.id && drag.isDragging ? "dragging" : ""} ${task.restricted ? "kanban-card-restricted" : ""}`}
                     data-priority={task.priority}
-                    onPointerDown={(e) => handlePointerDown(e, task)}
-                    onPointerMove={handlePointerMove}
-                    onPointerUp={(e) => handlePointerUp(e, task)}
-                    onPointerCancel={() => setDrag(null)}
+                    onPointerDown={isMobile ? undefined : (e) => handlePointerDown(e, task)}
+                    onPointerMove={isMobile ? undefined : handlePointerMove}
+                    onPointerUp={isMobile ? undefined : (e) => handlePointerUp(e, task)}
+                    onPointerCancel={isMobile ? undefined : () => setDrag(null)}
+                    onClick={isMobile ? () => setDetailTask(task) : undefined}
                   >
                     <span className="kanban-priority-badge" style={{ backgroundColor: PRIORITY_COLORS[task.priority] }}>
                       {task.priority}
                     </span>
+                    {task.restricted && (
+                      <span className="kanban-restricted-badge" title="Restricted visibility">
+                        <Lock size={11} strokeWidth={2.5} />
+                      </span>
+                    )}
                     {task.organizationName && (
                       <span className="kanban-factory-badge">{task.organizationName}</span>
                     )}
@@ -445,6 +637,7 @@ export default function TaskBoardPage({
         <NewTaskModal
           accounts={accounts}
           organizations={organizations}
+          canManage={canManage}
           token={token}
           actingAccountId={actingAccount.id}
           onClose={() => setShowNewTask(false)}
@@ -502,6 +695,8 @@ function TaskDetailModal({
     assistIds?: string[];
     dueDate?: string | null;
     organizationId?: string | null;
+    restricted?: boolean;
+    allowedAccountIds?: string[];
   }) {
     setSaving(true);
     setError(null);
@@ -540,7 +735,12 @@ function TaskDetailModal({
         </button>
 
         <h2 className="int-modal-title">{task.title}</h2>
-        {task.description && <p className="int-modal-description">{task.description}</p>}
+        {task.description && <p className="int-modal-description">{renderMentions(task.description, accounts)}</p>}
+        {task.restricted && (
+          <p className="restricted-notice">
+            <Lock size={13} strokeWidth={2} /> Restricted — only you and specifically allowed people can see this task.
+          </p>
+        )}
         {task.relatedTicketId && <p className="empty">Linked ticket: {task.relatedTicketId}</p>}
 
         <div className="int-modal-meta">
@@ -613,6 +813,21 @@ function TaskDetailModal({
                 </select>
               </label>
 
+              <RestrictedVisibilityField
+                restricted={task.restricted}
+                onToggleRestricted={() => patch({ restricted: !task.restricted, allowedAccountIds: task.allowedAccountIds })}
+                allowedAccountIds={task.allowedAccountIds}
+                onToggleAllowed={(accountId) => {
+                  const next = task.allowedAccountIds.includes(accountId)
+                    ? task.allowedAccountIds.filter((id) => id !== accountId)
+                    : [...task.allowedAccountIds, accountId];
+                  patch({ restricted: true, allowedAccountIds: next });
+                }}
+                accounts={accounts}
+                excludeAccountId={task.createdByAccountId}
+                disabled={saving}
+              />
+
               <button className="int-button-danger" onClick={() => onDelete(task.id)}>
                 Delete task
               </button>
@@ -670,7 +885,7 @@ function TaskDetailModal({
               <Avatar name={c.authorName} avatarUrl={accounts.find((a) => a.id === c.authorAccountId)?.avatarUrl} size={32} />
               <div>
                 <div className="int-comment-author">{c.authorName}</div>
-                <div>{c.text}</div>
+                <div>{renderMentions(c.text, accounts)}</div>
                 <div className="int-activity-meta">{new Date(c.createdAt).toLocaleString()}</div>
               </div>
             </div>
@@ -678,12 +893,7 @@ function TaskDetailModal({
         </div>
 
         <div className="int-comment-form">
-          <input
-            type="text"
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            placeholder="Add feedback or an update..."
-          />
+          <MentionAwareField value={commentText} onChange={setCommentText} accounts={accounts} placeholder="Add feedback or an update... (@ to mention someone)" />
           <button className="int-button" onClick={postComment} disabled={postingComment || !commentText.trim()}>
             {postingComment ? "Posting..." : "Post"}
           </button>
@@ -696,6 +906,7 @@ function TaskDetailModal({
 function NewTaskModal({
   accounts,
   organizations,
+  canManage,
   token,
   actingAccountId,
   onClose,
@@ -703,6 +914,7 @@ function NewTaskModal({
 }: {
   accounts: InternalAccountLite[];
   organizations: FactoryAccount[];
+  canManage: boolean;
   token: string;
   actingAccountId: string;
   onClose: () => void;
@@ -716,6 +928,8 @@ function NewTaskModal({
   const [column, setColumn] = useState<TaskColumn>("BACKLOG");
   const [dueDate, setDueDate] = useState("");
   const [organizationId, setOrganizationId] = useState<string | null>(null);
+  const [restricted, setRestricted] = useState(false);
+  const [allowedAccountIds, setAllowedAccountIds] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -733,6 +947,8 @@ function NewTaskModal({
         column,
         dueDate: dueDate || null,
         organizationId,
+        restricted: canManage ? restricted : undefined,
+        allowedAccountIds: canManage ? allowedAccountIds : undefined,
         actingAccountId,
       });
       onCreated(task);
@@ -763,7 +979,7 @@ function NewTaskModal({
           </label>
           <label>
             Description
-            <textarea rows={3} value={description} onChange={(e) => setDescription(e.target.value)} />
+            <MentionAwareField value={description} onChange={setDescription} accounts={accounts} multiline rows={3} placeholder="@ to mention someone" />
           </label>
           <label>
             Priority
@@ -809,6 +1025,19 @@ function NewTaskModal({
               ))}
             </select>
           </label>
+
+          {canManage && (
+            <RestrictedVisibilityField
+              restricted={restricted}
+              onToggleRestricted={() => setRestricted((v) => !v)}
+              allowedAccountIds={allowedAccountIds}
+              onToggleAllowed={(accountId) =>
+                setAllowedAccountIds((prev) => (prev.includes(accountId) ? prev.filter((id) => id !== accountId) : [...prev, accountId]))
+              }
+              accounts={accounts}
+              excludeAccountId={actingAccountId}
+            />
+          )}
 
           {error && <div className="login-error">{error}</div>}
 
