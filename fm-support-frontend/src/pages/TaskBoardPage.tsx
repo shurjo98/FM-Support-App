@@ -477,23 +477,26 @@ export default function TaskBoardPage({
               {unreadCount > 0 && <span className="int-bell-badge">{unreadCount}</span>}
             </button>
             {showNotifications && (
-              <div className="int-bell-dropdown">
-                <div className="int-bell-dropdown-header">
-                  <span>Notifications</span>
-                  <button onClick={handleMarkAllRead}>Mark all read</button>
+              <>
+                <div className="int-bell-backdrop" onClick={() => setShowNotifications(false)} />
+                <div className="int-bell-dropdown">
+                  <div className="int-bell-dropdown-header">
+                    <span>Notifications</span>
+                    <button onClick={handleMarkAllRead}>Mark all read</button>
+                  </div>
+                  {notifications.length === 0 ? (
+                    <p className="empty">No notifications yet.</p>
+                  ) : (
+                    notifications.slice(0, 10).map((n) => (
+                      <div key={n.id} className={`int-bell-item ${n.read ? "" : "unread"} ${n.isMention ? "mention" : ""}`}>
+                        {n.isMention && <span className="int-bell-mention-tag">@ Mentioned you</span>}
+                        <div>{n.message}</div>
+                        <div className="int-bell-time">{new Date(n.createdAt).toLocaleString()}</div>
+                      </div>
+                    ))
+                  )}
                 </div>
-                {notifications.length === 0 ? (
-                  <p className="empty">No notifications yet.</p>
-                ) : (
-                  notifications.slice(0, 10).map((n) => (
-                    <div key={n.id} className={`int-bell-item ${n.read ? "" : "unread"} ${n.isMention ? "mention" : ""}`}>
-                      {n.isMention && <span className="int-bell-mention-tag">@ Mentioned you</span>}
-                      <div>{n.message}</div>
-                      <div className="int-bell-time">{new Date(n.createdAt).toLocaleString()}</div>
-                    </div>
-                  ))
-                )}
-              </div>
+              </>
             )}
           </div>
           <button className="int-button" onClick={() => setShowNewTask(true)} aria-label="New Task" style={{ display: "flex", alignItems: "center", gap: 6 }}>

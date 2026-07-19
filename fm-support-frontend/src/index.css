@@ -1427,6 +1427,13 @@ h1 {
   position: relative;
 }
 
+/* Only shown (see the mobile media query) once the notification panel
+   becomes a fixed bottom sheet — desktop's anchored popover doesn't need a
+   backdrop. */
+.int-bell-backdrop {
+  display: none;
+}
+
 .int-bell {
   position: relative;
   border: 1px solid #d1d5db;
@@ -1902,6 +1909,31 @@ h1 {
     order: 2;
   }
 
+  /* The dropdown is right:0-anchored to the bell (correct on desktop, where
+     the bell sits at the far right of the toolbar). On mobile the bell now
+     sits left-of-center in the icon row, so that same right:0 anchor pushed
+     most of the 300px-wide panel off-screen to the left — confirmed on a
+     real iPhone. Detach it from the bell entirely and present it as a
+     bottom sheet instead, which also reads more like a native mobile panel. */
+  .int-bell-dropdown {
+    position: fixed;
+    top: auto;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-height: 70vh;
+    z-index: 60;
+  }
+
+  .int-bell-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 55;
+  }
+
   .kanban-toolbar-actions > .int-button {
     order: 3;
     padding: 8px 10px;
@@ -1950,12 +1982,23 @@ h1 {
 
   .kanban-mobile-tabs button {
     flex: 1 1 0;
+    /* Flex items refuse to shrink below their content's natural width
+       unless min-width is overridden — without this, a long label like
+       "In Progress" pushes the row wider than the screen and the last tab
+       (Completed) ends up off-screen. Confirmed on real iPhone/Android;
+       desktop responsive-mode testing didn't catch it. */
+    min-width: 0;
     justify-content: center;
-    padding: 7px 4px;
+    gap: 3px;
+    padding: 7px 2px;
     border-radius: 8px;
     border: none;
     background: transparent;
     color: #6b7280;
+    font-size: 0.68rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .kanban-mobile-tabs button.active {
