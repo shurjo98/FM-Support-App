@@ -24,6 +24,15 @@ model Organization {
   buyerBrands   String?
   notes         String?
 
+  // Hidden-cost-of-downtime assumptions, editable by anyone at the factory —
+  // null means "use the app's default" (see analytics.ts). Server-persisted
+  // so the number is consistent for every device/person at that factory,
+  // unlike the old per-browser localStorage calculator it replaces.
+  costPiecesPerHour     Float?
+  costPricePerPiece     Float?
+  costWorkersPerMachine Float?
+  costHourlyWage        Float?
+
   machines         Machine[]
   machineInstances MachineInstance[]
   users            User[]
@@ -37,6 +46,7 @@ model Organization {
   discountApprovalRequests    DiscountApprovalRequest[]
   hospitalityApprovalRequests HospitalityApprovalRequest[]
   warrantyClaims              WarrantyClaim[]
+  maintenanceTasks            MaintenanceTask[]
 }
 
 model Machine {
@@ -90,6 +100,12 @@ model MachineInstance {
   lastServicedAt        DateTime?
   serviceIntervalMonths Int?
   warrantyExpiresAt     DateTime?
+
+  // Recurring daily/weekly/monthly maintenance tasks (motor, oil, belt,
+  // etc.) — distinct from the single lastServicedAt/serviceIntervalMonths
+  // above, which is one overall "service visit" date, not a per-task
+  // schedule. See MaintenanceTask below.
+  maintenanceTasks MaintenanceTask[]
 }
 
 model User {
@@ -545,4 +561,39 @@ model WarrantyClaimAttachment {
   url             String
   mimeType        String
   uploadedAt      DateTime
+}
+
+// ============ Recurring machine maintenance ============
+// One row per (machine instance, task) — e.g. "Motor lubrication" on serial
+// XYZ, due monthly. Auto-seeded per instance from a static default catalog
+// (see maintenance.ts, same pattern as audit.ts's CHECKLIST/seedIfNeeded);
+// factories can also add their own custom tasks.
+model MaintenanceTask {
+  id                String   @id
+  organizationId    String
+  organization      Organization    @relation(fields: [organizationId], references: [id])
+  machineInstanceId String
+  machineInstance   MachineInstance @relation(fields: [machineInstanceId], references: [id], onDelete: Cascade)
+  name              String
+  category          String // Lubrication | Cleaning | Inspection | Electrical | Pneumatic
+  frequency         String // DAILY | WEEKLY | MONTHLY
+  lastCompletedAt   DateTime?
+  lastCompletedBy   String?
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  logs MaintenanceLog[]
+}
+
+// Append-only completion history — powers the report's compliance-over-time
+// numbers (on-time %), not just current status.
+model MaintenanceLog {
+  id                String          @id
+  maintenanceTaskId String
+  maintenanceTask   MaintenanceTask @relation(fields: [maintenanceTaskId], references: [id], onDelete: Cascade)
+  completedAt       DateTime
+  completedBy       String?
+  notes             String?
+  onTime            Boolean
 }

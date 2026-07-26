@@ -1,30 +1,20 @@
 import { useEffect, useState } from "react";
-import { AlertTriangle, CheckCircle2, Clock, Download, TrendingDown, TrendingUp, Wrench } from "lucide-react";
+import { AlertTriangle, ArrowRight, CheckCircle2, Clock, Download, TrendingDown, TrendingUp, Wrench } from "lucide-react";
 import {
   compliancePdfUrl,
   fetchAnalyticsFleet,
   fetchAnalyticsNeedles,
   fetchAnalyticsOverview,
+  fetchHiddenCost,
   type AnalyticsFleetMachine,
   type AnalyticsNeedleMonth,
   type AnalyticsOverview,
+  type HiddenCostSummary,
 } from "../api";
 import type { CustomerUser } from "../types";
+import type { CustomerSection } from "./CustomerLayout";
 
 type Tab = "overview" | "fleet" | "needles";
-
-const SETTINGS_KEY = "fm_insights_settings";
-
-function loadSettings() {
-  try {
-    return JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? "{}") as {
-      piecesPerHour?: number;
-      pricePerPiece?: number;
-    };
-  } catch {
-    return {};
-  }
-}
 
 // ─── Status badge helpers ─────────────────────────────────────────────────────
 
@@ -67,16 +57,20 @@ function formatMonth(key: string) {
 
 // ─── Sub-pages ────────────────────────────────────────────────────────────────
 
-function OverviewTab({ overview, organizationId }: { overview: AnalyticsOverview; organizationId: string }) {
-  const saved = loadSettings();
-  const [piecesPerHour, setPiecesPerHour] = useState(saved.piecesPerHour ?? 60);
-  const [pricePerPiece, setPricePerPiece] = useState(saved.pricePerPiece ?? 50);
+function OverviewTab({
+  overview,
+  organizationId,
+  onNavigate,
+}: {
+  overview: AnalyticsOverview;
+  organizationId: string;
+  onNavigate?: (section: CustomerSection) => void;
+}) {
+  const [hiddenCost, setHiddenCost] = useState<HiddenCostSummary | null>(null);
+  useEffect(() => {
+    fetchHiddenCost(organizationId).then(setHiddenCost).catch(() => {});
+  }, [organizationId]);
 
-  function saveSettings(pph: number, ppp: number) {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify({ piecesPerHour: pph, pricePerPiece: ppp }));
-  }
-
-  const estimatedLoss = Math.round(overview.thisMonthDowntimeHours * piecesPerHour * pricePerPiece);
   const needleDelta = overview.needleSpendLastMonth > 0
     ? Math.round(((overview.needleSpendThisMonth - overview.needleSpendLastMonth) / overview.needleSpendLastMonth) * 100)
     : null;
@@ -128,61 +122,44 @@ function OverviewTab({ overview, organizationId }: { overview: AnalyticsOverview
         </div>
       </div>
 
-      {/* Downtime cost calculator */}
+      {/* Hidden cost of downtime — full detail & editable assumptions live on the Maintenance & Cost page */}
       <div className="cust-card" style={{ marginTop: 20 }}>
-        <h3 className="cust-section-title" style={{ marginTop: 0 }}>Downtime Cost Estimate</h3>
-        <p className="cust-empty" style={{ marginBottom: 14 }}>
-          Enter your factory's production rate and average selling price to calculate the revenue lost
-          to machine downtime this month.
-        </p>
-        <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 16 }}>
-          <label style={{ flex: 1, minWidth: 160 }}>
-            <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 4 }}>Pieces per hour (per machine)</div>
-            <input
-              className="cust-input"
-              type="number"
-              min={1}
-              value={piecesPerHour}
-              onChange={(e) => {
-                const v = Number(e.target.value);
-                setPiecesPerHour(v);
-                saveSettings(v, pricePerPiece);
-              }}
-              style={{ width: "100%" }}
-            />
-          </label>
-          <label style={{ flex: 1, minWidth: 160 }}>
-            <div style={{ fontSize: 12, color: "#6b7280", marginBottom: 4 }}>Selling price per piece (৳)</div>
-            <input
-              className="cust-input"
-              type="number"
-              min={1}
-              value={pricePerPiece}
-              onChange={(e) => {
-                const v = Number(e.target.value);
-                setPricePerPiece(v);
-                saveSettings(piecesPerHour, v);
-              }}
-              style={{ width: "100%" }}
-            />
-          </label>
-        </div>
-        <div
-          style={{
-            background: estimatedLoss > 0 ? "#fef2f2" : "#f0fdf4",
-            border: `1px solid ${estimatedLoss > 0 ? "#fca5a5" : "#86efac"}`,
-            borderRadius: 10,
-            padding: "14px 18px",
-          }}
-        >
-          <div style={{ fontSize: 12, color: "#6b7280" }}>Estimated production loss this month</div>
-          <div style={{ fontSize: 28, fontWeight: 700, color: estimatedLoss > 0 ? "#dc2626" : "#16a34a" }}>
-            ৳{estimatedLoss.toLocaleString()}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
+          <div>
+            <h3 className="cust-section-title" style={{ margin: 0 }}>Hidden Cost of Downtime</h3>
+            <p className="cust-empty" style={{ margin: "4px 0 0" }}>
+              Lost production plus idle labor while machines sit broken.
+            </p>
           </div>
-          <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>
-            {overview.thisMonthDowntimeHours} hrs × {piecesPerHour} pcs/hr × ৳{pricePerPiece}/pc
-          </div>
+          {onNavigate && (
+            <button
+              className="cust-button-secondary"
+              onClick={() => onNavigate("maintenance")}
+              style={{ display: "flex", alignItems: "center", gap: 6 }}
+            >
+              View details <ArrowRight size={14} />
+            </button>
+          )}
         </div>
+        {hiddenCost && (
+          <div
+            style={{
+              background: hiddenCost.totalHiddenCost > 0 ? "#fef2f2" : "#f0fdf4",
+              border: `1px solid ${hiddenCost.totalHiddenCost > 0 ? "#fca5a5" : "#86efac"}`,
+              borderRadius: 10,
+              padding: "14px 18px",
+              marginTop: 14,
+            }}
+          >
+            <div style={{ fontSize: 12, color: "#6b7280" }}>Estimated total this month</div>
+            <div style={{ fontSize: 28, fontWeight: 700, color: hiddenCost.totalHiddenCost > 0 ? "#dc2626" : "#16a34a" }}>
+              ৳{hiddenCost.totalHiddenCost.toLocaleString()}
+            </div>
+            <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>
+              ৳{hiddenCost.lostProductionValue.toLocaleString()} lost production + ৳{hiddenCost.idleLaborCost.toLocaleString()} idle labor
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Fleet health breakdown */}
@@ -239,7 +216,11 @@ function OverviewTab({ overview, organizationId }: { overview: AnalyticsOverview
                   </td>
                   <td>{m.hours} hrs</td>
                   <td>{m.count}</td>
-                  <td>৳{Math.round(m.hours * piecesPerHour * pricePerPiece).toLocaleString()}</td>
+                  <td>
+                    {hiddenCost
+                      ? `৳${Math.round(m.hours * hiddenCost.settings.piecesPerHour * hiddenCost.settings.pricePerPiece).toLocaleString()}`
+                      : "—"}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -493,7 +474,7 @@ function NeedlesTab({ data }: { data: { months: AnalyticsNeedleMonth[]; last5Avg
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function InsightsPage({ user }: { user: CustomerUser }) {
+export default function InsightsPage({ user, onNavigate }: { user: CustomerUser; onNavigate?: (section: CustomerSection) => void }) {
   const [tab, setTab] = useState<Tab>("overview");
   const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
   const [fleet, setFleet] = useState<AnalyticsFleetMachine[] | null>(null);
@@ -561,7 +542,7 @@ export default function InsightsPage({ user }: { user: CustomerUser }) {
         ))}
       </div>
 
-      {tab === "overview" && <OverviewTab overview={overview} organizationId={user.organizationId} />}
+      {tab === "overview" && <OverviewTab overview={overview} organizationId={user.organizationId} onNavigate={onNavigate} />}
       {tab === "fleet" && <FleetTab fleet={fleet} organizationId={user.organizationId} />}
       {tab === "needles" && <NeedlesTab data={needles} />}
     </div>

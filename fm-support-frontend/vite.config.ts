@@ -28,6 +28,7 @@ export default defineConfig({
       "/portal": "http://localhost:4000",
       "/organizations": "http://localhost:4000",
       "/approvals": "http://localhost:4000",
+      "/maintenance": "http://localhost:4000",
     },
   },
 });

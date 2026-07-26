@@ -632,6 +632,126 @@ export function compliancePdfUrl(organizationId: string): string {
   return `/analytics/compliance.pdf?organizationId=${encodeURIComponent(organizationId)}`;
 }
 
+// ─── Hidden cost of downtime ────────────────────────────────────────────────
+
+export interface CostSettings {
+  piecesPerHour: number;
+  pricePerPiece: number;
+  workersPerMachine: number;
+  hourlyWage: number;
+}
+
+export interface HiddenCostSummary {
+  settings: CostSettings;
+  thisMonthDowntimeHours: number;
+  lostProductionValue: number;
+  idleLaborCost: number;
+  totalHiddenCost: number;
+  byMachine: { label: string; hours: number; lostProductionValue: number; idleLaborCost: number }[];
+}
+
+export async function fetchHiddenCost(organizationId: string): Promise<HiddenCostSummary> {
+  const res = await fetch(`/analytics/hidden-cost?organizationId=${encodeURIComponent(organizationId)}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to load hidden cost data");
+  return body;
+}
+
+export async function updateHiddenCostSettings(
+  organizationId: string,
+  settings: Partial<CostSettings>
+): Promise<{ settings: CostSettings }> {
+  const res = await fetch("/analytics/hidden-cost-settings", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ organizationId, ...settings }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to save settings");
+  return body;
+}
+
+export function maintenanceReportPdfUrl(organizationId: string): string {
+  return `/analytics/maintenance-report.pdf?organizationId=${encodeURIComponent(organizationId)}`;
+}
+
+// ─── Recurring maintenance ──────────────────────────────────────────────────
+
+export type MaintenanceFrequency = "DAILY" | "WEEKLY" | "MONTHLY";
+export type MaintenanceStatus = "ok" | "due_soon" | "overdue" | "never_done";
+
+export interface MaintenanceTaskRow {
+  id: string;
+  machineInstanceId: string;
+  machineLabel: string;
+  serialNumber: string;
+  name: string;
+  category: string;
+  frequency: MaintenanceFrequency;
+  lastCompletedAt: string | null;
+  lastCompletedBy: string | null;
+  notes: string | null;
+  status: MaintenanceStatus;
+  nextDue: string | null;
+}
+
+export interface MaintenanceLogRow {
+  id: string;
+  taskName: string;
+  serialNumber: string;
+  completedAt: string;
+  completedBy: string | null;
+  onTime: boolean;
+}
+
+export interface MaintenanceOverview {
+  tasks: MaintenanceTaskRow[];
+  counts: { overdue: number; due_soon: number; ok: number; never_done: number };
+  recentLogs: MaintenanceLogRow[];
+}
+
+export async function fetchMaintenance(organizationId: string): Promise<MaintenanceOverview> {
+  const res = await fetch(`/maintenance?organizationId=${encodeURIComponent(organizationId)}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to load maintenance data");
+  return body;
+}
+
+export async function completeMaintenanceTask(
+  taskId: string,
+  payload: { completedBy?: string; notes?: string }
+): Promise<MaintenanceTaskRow> {
+  const res = await fetch(`/maintenance/${encodeURIComponent(taskId)}/complete`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to mark task done");
+  return body;
+}
+
+export async function createMaintenanceTask(payload: {
+  organizationId: string;
+  machineInstanceId: string;
+  name: string;
+  category?: string;
+  frequency: MaintenanceFrequency;
+}): Promise<MaintenanceTaskRow> {
+  const res = await fetch("/maintenance", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to add task");
+  return body;
+}
+
+export async function deleteMaintenanceTask(taskId: string): Promise<void> {
+  await fetch(`/maintenance/${encodeURIComponent(taskId)}`, { method: "DELETE" });
+}
+
 export async function fetchAnalyticsGroup(groupId: string): Promise<{
   groupId: string;
   factories: {

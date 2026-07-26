@@ -14,6 +14,7 @@ import {
   LogOut,
   Menu,
   TrendingUp,
+  CalendarClock,
   ClipboardCheck,
   Package,
   AlertOctagon,
@@ -35,6 +36,7 @@ export type CustomerSection =
   | "tickets"
   | "purchases"
   | "insights"
+  | "maintenance"
   | "audit"
   | "inventory"
   | "defects"
@@ -53,6 +55,7 @@ const NAV_ITEMS: { key: CustomerSection; labelKey: TranslationKey; icon: LucideI
   { key: "tickets",    labelKey: "nav.tickets",    icon: History },
   { key: "purchases",  labelKey: "nav.purchases",  icon: Receipt },
   { key: "insights",   labelKey: "nav.insights",   icon: TrendingUp },
+  { key: "maintenance", labelKey: "nav.maintenance", icon: CalendarClock },
   { key: "audit",      labelKey: "nav.audit",      icon: ClipboardCheck },
   { key: "inventory",  labelKey: "nav.inventory",  icon: Package },
   { key: "defects",    labelKey: "nav.defects",    icon: AlertOctagon },

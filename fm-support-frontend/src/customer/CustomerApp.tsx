@@ -12,6 +12,7 @@ import GarmentGuidePage from "./GarmentGuidePage";
 import TicketHistoryPage from "./TicketHistoryPage";
 import PurchaseHistoryPage from "./PurchaseHistoryPage";
 import InsightsPage from "./InsightsPage";
+import MaintenancePage from "./MaintenancePage";
 import AuditPage from "./AuditPage";
 import InventoryPage from "./InventoryPage";
 import DefectLogPage from "./DefectLogPage";
@@ -63,7 +64,8 @@ function CustomerAppInner() {
       {section === "garments" && <GarmentGuidePage user={user} />}
       {section === "tickets" && <TicketHistoryPage user={user} />}
       {section === "purchases" && <PurchaseHistoryPage user={user} />}
-      {section === "insights" && <InsightsPage user={user} />}
+      {section === "insights" && <InsightsPage user={user} onNavigate={setSection} />}
+      {section === "maintenance" && <MaintenancePage user={user} />}
       {section === "audit" && <AuditPage user={user} />}
       {section === "inventory" && <InventoryPage user={user} />}
       {section === "defects" && <DefectLogPage user={user} />}

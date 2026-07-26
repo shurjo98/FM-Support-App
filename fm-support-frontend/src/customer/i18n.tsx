@@ -16,6 +16,7 @@ const dict = {
   "nav.tickets": { en: "Ticket History", bn: "টিকেট ইতিহাস" },
   "nav.purchases": { en: "Purchase History", bn: "ক্রয় ইতিহাস" },
   "nav.insights":   { en: "Factory Insights",    bn: "কারখানার বিশ্লেষণ" },
+  "nav.maintenance": { en: "Maintenance & Cost",  bn: "রক্ষণাবেক্ষণ ও খরচ" },
   "nav.audit":      { en: "Buyer Audit",         bn: "বায়ার অডিট" },
   "nav.inventory":  { en: "Spare Parts Stock",   bn: "স্পেয়ার পার্টস স্টক" },
   "nav.defects":    { en: "Defect Log",          bn: "ত্রুটি লগ" },

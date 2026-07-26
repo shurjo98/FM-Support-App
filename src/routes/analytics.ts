@@ -1,6 +1,7 @@
 // src/routes/analytics.ts
 import { Router } from "express";
 import { prisma } from "../db";
+import { maintenanceStatus } from "./maintenance";
 
 const router = Router();
 
@@ -36,6 +37,33 @@ function last6Months(): string[] {
     const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
     return monthKey(d);
   });
+}
+
+// ─── Hidden cost of downtime ─────────────────────────────────────────────────
+// "Hidden" = the part that isn't obvious from a repair ticket: lost
+// production (the machine wasn't making anything) plus idle labor (the
+// operator still got paid while it sat broken). Assumptions are editable
+// per-factory (see PATCH /hidden-cost-settings below); these are just the
+// starting defaults shown until an org sets its own.
+const DEFAULT_COST_SETTINGS = {
+  piecesPerHour: 60,
+  pricePerPiece: 50,
+  workersPerMachine: 1,
+  hourlyWage: 50,
+};
+
+function resolveCostSettings(org: {
+  costPiecesPerHour: number | null;
+  costPricePerPiece: number | null;
+  costWorkersPerMachine: number | null;
+  costHourlyWage: number | null;
+}) {
+  return {
+    piecesPerHour: org.costPiecesPerHour ?? DEFAULT_COST_SETTINGS.piecesPerHour,
+    pricePerPiece: org.costPricePerPiece ?? DEFAULT_COST_SETTINGS.pricePerPiece,
+    workersPerMachine: org.costWorkersPerMachine ?? DEFAULT_COST_SETTINGS.workersPerMachine,
+    hourlyWage: org.costHourlyWage ?? DEFAULT_COST_SETTINGS.hourlyWage,
+  };
 }
 
 // ─── GET /analytics/overview ─────────────────────────────────────────────────
@@ -130,6 +158,91 @@ router.get("/overview", async (req, res) => {
     needleSpendLastMonth: Math.round(needleSpendLastMonth),
     topMachines,
   });
+});
+
+// ─── GET /analytics/hidden-cost ──────────────────────────────────────────────
+
+router.get("/hidden-cost", async (req, res) => {
+  const { organizationId } = req.query as { organizationId?: string };
+  if (!organizationId) return res.status(400).json({ error: "organizationId required" });
+
+  const org = await prisma.organization.findUnique({ where: { id: organizationId } });
+  if (!org) return res.status(404).json({ error: "Organization not found" });
+
+  const settings = resolveCostSettings(org);
+
+  const now = new Date();
+  const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const orgUsers = await prisma.user.findMany({ where: { organizationId }, select: { id: true } });
+  const userIds = orgUsers.map((u) => u.id);
+  const tickets = await prisma.ticket.findMany({
+    where: { createdByUserId: { in: userIds } },
+    include: { events: true },
+  });
+
+  const byMachine: Record<string, { label: string; hours: number }> = {};
+  let thisMonthDowntimeHours = 0;
+
+  for (const ticket of tickets) {
+    if (ticket.status !== "COMPLETED") continue;
+    const resolvedAt = resolutionTime(ticket.events);
+    if (!resolvedAt || ticket.createdAt < firstOfMonth) continue;
+
+    const hours = (resolvedAt.getTime() - ticket.createdAt.getTime()) / (1000 * 60 * 60);
+    thisMonthDowntimeHours += hours;
+
+    const key = ticket.serialNumber ?? ticket.customMachineName ?? "Unknown";
+    if (!byMachine[key]) byMachine[key] = { label: ticket.customMachineName ?? ticket.serialNumber ?? "Unknown", hours: 0 };
+    byMachine[key].hours += hours;
+  }
+
+  function costFor(hours: number) {
+    const lostProductionValue = hours * settings.piecesPerHour * settings.pricePerPiece;
+    const idleLaborCost = hours * settings.workersPerMachine * settings.hourlyWage;
+    return { lostProductionValue: Math.round(lostProductionValue), idleLaborCost: Math.round(idleLaborCost) };
+  }
+
+  const totals = costFor(thisMonthDowntimeHours);
+
+  const byMachineBreakdown = Object.values(byMachine)
+    .map((m) => ({ label: m.label, hours: Math.round(m.hours * 10) / 10, ...costFor(m.hours) }))
+    .sort((a, b) => b.lostProductionValue + b.idleLaborCost - (a.lostProductionValue + a.idleLaborCost))
+    .slice(0, 5);
+
+  res.json({
+    settings,
+    thisMonthDowntimeHours: Math.round(thisMonthDowntimeHours * 10) / 10,
+    lostProductionValue: totals.lostProductionValue,
+    idleLaborCost: totals.idleLaborCost,
+    totalHiddenCost: totals.lostProductionValue + totals.idleLaborCost,
+    byMachine: byMachineBreakdown,
+  });
+});
+
+// ─── PATCH /analytics/hidden-cost-settings ───────────────────────────────────
+
+router.patch("/hidden-cost-settings", async (req, res) => {
+  const { organizationId, piecesPerHour, pricePerPiece, workersPerMachine, hourlyWage } = req.body as {
+    organizationId?: string;
+    piecesPerHour?: number;
+    pricePerPiece?: number;
+    workersPerMachine?: number;
+    hourlyWage?: number;
+  };
+  if (!organizationId) return res.status(400).json({ error: "organizationId required" });
+
+  const updated = await prisma.organization.update({
+    where: { id: organizationId },
+    data: {
+      ...(piecesPerHour != null ? { costPiecesPerHour: piecesPerHour } : {}),
+      ...(pricePerPiece != null ? { costPricePerPiece: pricePerPiece } : {}),
+      ...(workersPerMachine != null ? { costWorkersPerMachine: workersPerMachine } : {}),
+      ...(hourlyWage != null ? { costHourlyWage: hourlyWage } : {}),
+    },
+  });
+
+  res.json({ settings: resolveCostSettings(updated) });
 });
 
 // ─── GET /analytics/fleet ─────────────────────────────────────────────────────
@@ -348,6 +461,186 @@ router.get("/compliance.pdf", async (req, res) => {
   }
 
   // ── Footer ──
+  doc
+    .fillColor("#9ca3af")
+    .fontSize(8)
+    .font("Helvetica")
+    .text(
+      `This report was generated automatically by FM Factory Support Portal on ${new Date().toLocaleString("en-GB")}.`,
+      50,
+      doc.page.height - 50,
+      { align: "center", width: doc.page.width - 100 }
+    );
+
+  doc.end();
+});
+
+// ─── GET /analytics/maintenance-report.pdf ───────────────────────────────────
+// "Nicely written" = a short plain-English narrative composed from the real
+// numbers (template string, not an LLM call — free and instant like the
+// rest of this report family), then the hidden-cost breakdown and a
+// maintenance compliance table. Mirrors compliance.pdf's pdfkit conventions.
+
+router.get("/maintenance-report.pdf", async (req, res) => {
+  const { organizationId } = req.query as { organizationId?: string };
+  if (!organizationId) return res.status(400).json({ error: "organizationId required" });
+
+  const org = await prisma.organization.findUnique({ where: { id: organizationId } });
+  if (!org) return res.status(404).json({ error: "Organization not found" });
+
+  const settings = resolveCostSettings(org);
+
+  const now = new Date();
+  const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const orgUsers = await prisma.user.findMany({ where: { organizationId }, select: { id: true } });
+  const userIds = orgUsers.map((u) => u.id);
+  const tickets = await prisma.ticket.findMany({
+    where: { createdByUserId: { in: userIds } },
+    include: { events: true },
+  });
+
+  let thisMonthDowntimeHours = 0;
+  for (const ticket of tickets) {
+    if (ticket.status !== "COMPLETED") continue;
+    const resolvedAt = resolutionTime(ticket.events);
+    if (!resolvedAt || ticket.createdAt < firstOfMonth) continue;
+    thisMonthDowntimeHours += (resolvedAt.getTime() - ticket.createdAt.getTime()) / (1000 * 60 * 60);
+  }
+
+  const lostProductionValue = Math.round(thisMonthDowntimeHours * settings.piecesPerHour * settings.pricePerPiece);
+  const idleLaborCost = Math.round(thisMonthDowntimeHours * settings.workersPerMachine * settings.hourlyWage);
+  const totalHiddenCost = lostProductionValue + idleLaborCost;
+
+  const tasks = await prisma.maintenanceTask.findMany({
+    where: { organizationId },
+    include: { machineInstance: { include: { machine: true } } },
+    orderBy: [{ frequency: "asc" }, { name: "asc" }],
+  });
+  const taskRows = tasks.map((t) => ({ ...t, ...maintenanceStatus(t.lastCompletedAt, t.frequency) }));
+  const overdueRows = taskRows.filter((t) => t.status === "overdue");
+  const dueSoonRows = taskRows.filter((t) => t.status === "due_soon");
+
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const recentLogs = await prisma.maintenanceLog.findMany({
+    where: { maintenanceTask: { organizationId }, completedAt: { gte: thirtyDaysAgo } },
+  });
+  const onTimeCount = recentLogs.filter((l) => l.onTime).length;
+  const onTimePct = recentLogs.length > 0 ? Math.round((onTimeCount / recentLogs.length) * 100) : null;
+
+  const PDFDocument = require("pdfkit");
+  const doc = new PDFDocument({ margin: 50, size: "A4" });
+
+  const safeOrgName = org.name.replace(/[^a-zA-Z0-9]/g, "-");
+  const dateStr = new Date().toISOString().split("T")[0];
+
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", `attachment; filename="fm-maintenance-report-${safeOrgName}-${dateStr}.pdf"`);
+  doc.pipe(res);
+
+  const BRAND = "#1d4ed8";
+
+  doc.rect(0, 0, doc.page.width, 90).fill(BRAND);
+  doc.fillColor("white").fontSize(22).font("Helvetica-Bold").text("FM Corporation", 50, 24);
+  doc.fontSize(11).font("Helvetica").text("Hidden Cost & Maintenance Report", 50, 54);
+
+  doc.fillColor("#111").fontSize(11).font("Helvetica");
+  doc.text(`Factory: ${org.name}`, 50, 108);
+  doc.text(`Location: ${org.location ?? "—"}`, 50, 124);
+  doc.text(`Report date: ${new Date().toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" })}`, 50, 140);
+
+  // ── Narrative summary ──
+  doc.moveDown(3.2);
+  doc.fontSize(13).font("Helvetica-Bold").fillColor(BRAND).text("Summary");
+  doc.moveDown(0.4);
+
+  // pdfkit's standard fonts only support WinAnsi/Latin-1 — the ৳ glyph isn't
+  // in that set and silently corrupts the rest of the string it's in, so use
+  // "Tk" here specifically (the web UI still shows ৳ everywhere else, where
+  // the browser renders Unicode fine).
+  const narrativeParts = [
+    `This month, ${org.name} lost an estimated Tk ${lostProductionValue.toLocaleString()} in production value to ${Math.round(thisMonthDowntimeHours * 10) / 10} hours of machine downtime, plus an estimated Tk ${idleLaborCost.toLocaleString()} in idle labor costs — a total hidden cost of Tk ${totalHiddenCost.toLocaleString()}.`,
+    onTimePct != null
+      ? `Over the last 30 days, ${onTimeCount} of ${recentLogs.length} maintenance tasks (${onTimePct}%) were completed on time.`
+      : `No maintenance tasks have been logged as completed in the last 30 days.`,
+    overdueRows.length > 0
+      ? `${overdueRows.length} maintenance task${overdueRows.length !== 1 ? "s are" : " is"} currently overdue — see the table below.`
+      : `No maintenance tasks are currently overdue.`,
+  ];
+  doc.fontSize(10).font("Helvetica").fillColor("#111").text(narrativeParts.join(" "), { width: doc.page.width - 100, lineGap: 3 });
+
+  // ── Hidden cost breakdown ──
+  doc.moveDown(1.5);
+  doc.fontSize(13).font("Helvetica-Bold").fillColor(BRAND).text("Hidden Cost of Downtime This Month");
+  doc.moveDown(0.4);
+  doc.fontSize(10).font("Helvetica").fillColor("#111");
+  doc.text(`Lost production value:  Tk ${lostProductionValue.toLocaleString()}  (${Math.round(thisMonthDowntimeHours * 10) / 10} hrs x ${settings.piecesPerHour} pcs/hr x Tk ${settings.pricePerPiece}/pc)`, { indent: 16 });
+  doc.text(`Idle labor cost:  Tk ${idleLaborCost.toLocaleString()}  (${Math.round(thisMonthDowntimeHours * 10) / 10} hrs x ${settings.workersPerMachine} worker(s) x Tk ${settings.hourlyWage}/hr)`, { indent: 16 });
+  doc.font("Helvetica-Bold").text(`Total hidden cost:  Tk ${totalHiddenCost.toLocaleString()}`, { indent: 16 });
+
+  // ── Maintenance compliance summary ──
+  doc.moveDown(1.5);
+  doc.font("Helvetica-Bold").fontSize(13).fillColor(BRAND).text("Maintenance Compliance");
+  doc.moveDown(0.4);
+  doc.fontSize(10).font("Helvetica").fillColor("#111");
+  const counts = {
+    ok: taskRows.filter((t) => t.status === "ok").length,
+    due_soon: dueSoonRows.length,
+    overdue: overdueRows.length,
+    never_done: taskRows.filter((t) => t.status === "never_done").length,
+  };
+  doc.text(`Up to date:  ${counts.ok}`, { indent: 16 });
+  doc.text(`Due soon:  ${counts.due_soon}`, { indent: 16 });
+  doc.text(`Overdue:  ${counts.overdue}`, { indent: 16 });
+  doc.text(`Never completed:  ${counts.never_done}`, { indent: 16 });
+
+  // ── Overdue / due-soon task table ──
+  const flagged = [...overdueRows, ...dueSoonRows];
+  if (flagged.length > 0) {
+    doc.moveDown(1.5);
+    doc.font("Helvetica-Bold").fontSize(13).fillColor(BRAND).text("Tasks Needing Attention");
+    doc.moveDown(0.5);
+
+    const COL = { machine: 50, task: 190, freq: 380, status: 450 };
+    const ROW_H = 18;
+
+    doc.rect(45, doc.y, doc.page.width - 90, ROW_H).fill("#e8eef8");
+    const headerY = doc.y + 4;
+    doc
+      .fillColor(BRAND)
+      .fontSize(8)
+      .font("Helvetica-Bold")
+      .text("Machine", COL.machine, headerY)
+      .text("Task", COL.task, headerY)
+      .text("Frequency", COL.freq, headerY)
+      .text("Status", COL.status, headerY);
+    doc.moveDown(0.1);
+
+    let rowIdx = 0;
+    for (const t of flagged) {
+      if (rowIdx % 2 === 0) doc.rect(45, doc.y, doc.page.width - 90, ROW_H).fill("#f9fafb");
+      rowIdx++;
+      const rowY = doc.y + 4;
+      const displayName = t.machineInstance.machine?.name ?? t.machineInstance.customName ?? "Unknown";
+      const statusColor = t.status === "overdue" ? "#dc2626" : "#d97706";
+      doc
+        .fillColor("#111")
+        .fontSize(8)
+        .font("Helvetica")
+        .text(`${displayName} (${t.machineInstance.serialNumber})`, COL.machine, rowY, { width: 135 })
+        .text(t.name, COL.task, rowY, { width: 185 })
+        .text(t.frequency, COL.freq, rowY, { width: 65 })
+        .fillColor(statusColor)
+        .font("Helvetica-Bold")
+        .text(t.status === "overdue" ? "OVERDUE" : "DUE SOON", COL.status, rowY, { width: 90 });
+      doc.moveDown(0.1);
+
+      if (doc.y > doc.page.height - 80) {
+        doc.addPage();
+        doc.moveDown(0.5);
+      }
+    }
+  }
+
   doc
     .fillColor("#9ca3af")
     .fontSize(8)
