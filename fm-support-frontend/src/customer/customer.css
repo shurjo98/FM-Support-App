@@ -1,13 +1,22 @@
 :root {
-  /* Type scale — tuned so body copy stays readable on a phone without
-     everything else ballooning; headings step up more than body text does. */
-  --fs-xs: 0.75rem;
-  --fs-sm: 0.85rem;
-  --fs-base: 0.95rem;
-  --fs-md: 1.05rem;
-  --fs-lg: 1.25rem;
-  --fs-xl: 1.6rem;
-  --fs-2xl: 2rem;
+  /* Type scale — bumped up a full step across the board (previous scale read
+     as cramped/corporate) and paired with two deliberate typefaces instead
+     of the generic Roboto-everywhere before: --font-display (Fraunces, a
+     warm soulful serif) for headlines/numbers/anything that should carry
+     personality, --font-body (Plus Jakarta Sans, a friendly characterful
+     sans) for everything else. Both fall back to Noto Sans Bengali so
+     translated text gets a deliberately chosen face too, not a random
+     system default. */
+  --font-display: "Fraunces", "Noto Sans Bengali", serif;
+  --font-body: "Plus Jakarta Sans", "Noto Sans Bengali", sans-serif;
+
+  --fs-xs: 0.85rem;
+  --fs-sm: 0.95rem;
+  --fs-base: 1.05rem;
+  --fs-md: 1.2rem;
+  --fs-lg: 1.45rem;
+  --fs-xl: 1.9rem;
+  --fs-2xl: 2.5rem;
 
   /* Spacing scale */
   --sp-1: 4px;
@@ -57,7 +66,8 @@
   min-height: 100vh;
   background: var(--md-background);
   color: var(--md-on-surface);
-  font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
   display: flex;
   /* Belt-and-suspenders: a stray wide element shouldn't be able to force
      whole-page horizontal scroll on a phone — anything that needs its own
@@ -76,7 +86,7 @@
   background: rgba(250, 205, 205, 0.7);
   border: 1px solid var(--md-divider);
   border-radius: 24px;
-  padding: 18px;
+  padding: 20px;
   backdrop-filter: blur(16px);
   box-shadow: 0 4px 12px var(--md-shadow);
 }
@@ -98,7 +108,7 @@
 /* ---- sidebar ---- */
 
 .cust-sidebar {
-  width: 220px;
+  width: 230px;
   flex-shrink: 0;
   background: var(--md-surface-high);
   border-right: 1px solid var(--md-divider);
@@ -150,8 +160,8 @@
 }
 
 .cust-logo-badge {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 999px;
   background: radial-gradient(circle at 30% 30%, #ffffff, var(--md-surface) 70%);
   box-shadow: 0 0 0 1px var(--md-outline), 0 4px 10px var(--md-shadow);
@@ -169,13 +179,14 @@
 }
 
 .cust-logo-text {
-  font-size: 0.95rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
   font-weight: 600;
   line-height: 1.2;
 }
 
 .cust-logo-sub {
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   opacity: 0.6;
 }
 
@@ -206,12 +217,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 11px 12px;
   border-radius: 999px;
   border: none;
   background: transparent;
   color: var(--md-on-surface-variant);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   text-align: left;
   cursor: pointer;
   width: 100%;
@@ -250,12 +261,12 @@
 
 .cust-lang-toggle button {
   flex: 1;
-  padding: 6px 0;
+  padding: 7px 0;
   border-radius: 999px;
   border: 1px solid var(--md-divider);
   background: transparent;
   color: var(--md-on-surface-variant);
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: background 0.18s var(--md-ease), color 0.18s var(--md-ease), border-color 0.18s var(--md-ease);
 }
@@ -285,17 +296,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 28px;
+  padding: 18px 28px;
   border-bottom: 1px solid var(--md-divider);
 }
 
 .cust-topbar h1 {
   margin: 0;
-  font-size: 1.2rem;
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .cust-topbar-sub {
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   opacity: 0.6;
 }
 
@@ -303,14 +317,14 @@
   background: var(--md-warning-bg);
   border: 1px solid rgba(180, 83, 9, 0.3);
   color: var(--md-warning);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   padding: 14px 16px;
   border-radius: 16px;
 }
 
 .cust-profile {
   text-align: right;
-  font-size: 0.8rem;
+  font-size: 0.88rem;
 }
 
 .cust-profile-name {
@@ -337,14 +351,16 @@
 }
 
 .cust-stat-label {
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   opacity: 0.7;
   margin-bottom: 4px;
 }
 
 .cust-stat-value {
-  font-size: 1.6rem;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 600;
+  line-height: 1.15;
 }
 
 .cust-category-row {
@@ -367,7 +383,7 @@
 }
 
 .cust-category-card-name {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 600;
 }
 
@@ -376,7 +392,7 @@
 }
 
 .cust-garment-icon {
-  font-size: 2.4rem;
+  font-size: 2.7rem;
   margin-bottom: 8px;
 }
 
@@ -391,15 +407,15 @@
 
 .cust-process-name {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1.02rem;
   margin-bottom: 4px;
 }
 
 .cust-process-description {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   opacity: 0.75;
   margin-bottom: 10px;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .cust-chip-row {
@@ -437,17 +453,18 @@
 }
 
 .cust-chip-name {
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 600;
 }
 
 .cust-chip-sub {
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   opacity: 0.6;
 }
 
 .cust-section-title {
-  font-size: 1rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
   font-weight: 600;
   margin: 0 0 14px;
 }
@@ -456,7 +473,7 @@
   background: var(--md-error-bg);
   border: 1px solid rgba(185, 28, 28, 0.3);
   color: var(--md-error);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   padding: 10px 14px;
   border-radius: 14px;
   margin-bottom: 16px;
@@ -464,14 +481,14 @@
 
 .cust-empty {
   opacity: 0.6;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
 }
 
 /* ---- form ---- */
 
 .cust-form label {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   opacity: 0.8;
   margin-bottom: 16px;
 }
@@ -483,13 +500,13 @@
   display: block;
   width: 100%;
   margin-top: 6px;
-  padding: 11px 12px;
+  padding: 12px 12px;
   border-radius: 12px 12px 0 0;
   border: none;
   border-bottom: 2px solid var(--md-on-surface-faint);
   background: var(--md-surface-high);
   color: var(--md-on-surface);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-family: inherit;
   transition: border-color 0.18s var(--md-ease);
 }
@@ -503,12 +520,12 @@
 }
 
 .cust-button {
-  padding: 11px 22px;
+  padding: 12px 24px;
   border-radius: 999px;
   border: none;
   background: linear-gradient(135deg, var(--md-primary), var(--md-primary-hover));
   color: var(--md-on-primary);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.15s var(--md-ease), box-shadow 0.15s var(--md-ease);
@@ -528,12 +545,12 @@
 }
 
 .cust-button-secondary {
-  padding: 9px 18px;
+  padding: 10px 20px;
   border-radius: 999px;
   border: 1.5px solid var(--md-outline);
   background: transparent;
   color: var(--md-on-surface);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: background 0.15s var(--md-ease), transform 0.15s var(--md-ease);
 }
@@ -547,13 +564,13 @@
 }
 
 .cust-input {
-  padding: 9px 12px;
+  padding: 10px 12px;
   border-radius: 12px 12px 0 0;
   border: none;
   border-bottom: 2px solid var(--md-on-surface-faint);
   background: var(--md-surface-high);
   color: var(--md-on-surface);
-  font-size: 0.9rem;
+  font-size: 1rem;
   outline: none;
   transition: border-color 0.18s var(--md-ease);
 }
@@ -590,17 +607,17 @@
 }
 
 .cust-machine-option-name {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 600;
 }
 
 .cust-machine-option-model {
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   opacity: 0.6;
 }
 
 .cust-part-icon {
-  font-size: 2.2rem;
+  font-size: 2.5rem;
   text-align: center;
   margin-bottom: 8px;
 }
@@ -610,7 +627,7 @@
   width: 100%;
   margin-top: 10px;
   padding: 6px 0;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
 }
 
 /* ---- ai answer ---- */
@@ -618,13 +635,13 @@
 .cust-ai-answer {
   margin-top: 20px;
   white-space: pre-wrap;
-  font-size: 0.9rem;
-  line-height: 1.5;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .cust-ai-meta {
   margin-top: 12px;
-  font-size: 0.75rem;
+  font-size: 0.82rem;
   opacity: 0.6;
 }
 
@@ -633,20 +650,20 @@
 .cust-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
 }
 
 .cust-table th,
 .cust-table td {
   text-align: left;
-  padding: 10px 12px;
+  padding: 11px 12px;
   border-bottom: 1px solid var(--md-divider);
 }
 
 .cust-table th {
   opacity: 0.6;
   font-weight: 500;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
 }
 
@@ -654,7 +671,7 @@
   color: var(--md-on-surface);
   padding: 3px 10px;
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -669,7 +686,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
   text-align: center;
   padding: 24px;
 }
@@ -687,12 +705,14 @@
 }
 
 .cust-picker-card-name {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 4px;
 }
 
 .cust-picker-card-org {
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   opacity: 0.6;
 }
 
@@ -701,12 +721,12 @@
   align-items: center;
   gap: 6px;
   margin-top: 10px;
-  padding: 9px 18px;
+  padding: 10px 20px;
   border-radius: 999px;
   background: var(--md-primary);
   border: none;
   color: var(--md-on-primary);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
   transition: background 0.15s var(--md-ease), transform 0.15s var(--md-ease);
@@ -746,7 +766,7 @@
 }
 
 .cust-search-icon {
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   opacity: 0.7;
 }
 
@@ -756,17 +776,17 @@
   border: none;
   outline: none;
   color: var(--md-on-surface);
-  font-size: 0.88rem;
-  padding: 8px 0;
+  font-size: 0.98rem;
+  padding: 9px 0;
 }
 
 .cust-search-bar button {
-  padding: 9px 18px;
+  padding: 10px 20px;
   border-radius: 999px;
   border: none;
   background: linear-gradient(135deg, var(--md-primary), var(--md-primary-hover));
   color: var(--md-on-primary);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -784,13 +804,13 @@
 
 .cust-search-result {
   margin-top: 10px;
-  padding: 10px 16px;
+  padding: 12px 16px;
   border-radius: 16px;
   background: var(--md-surface-tint);
   border: 1px solid var(--md-outline);
   color: var(--md-on-surface);
-  font-size: 0.85rem;
-  line-height: 1.5;
+  font-size: 0.95rem;
+  line-height: 1.55;
 }
 
 .cust-search-result.error {
@@ -804,7 +824,7 @@
   border-radius: 16px;
   background: var(--md-surface);
   border: 1px dashed var(--md-divider);
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 
 .cust-search-hint-toggle {
@@ -834,12 +854,12 @@
 }
 
 .cust-search-chip {
-  padding: 6px 14px;
+  padding: 7px 15px;
   border-radius: 999px;
   border: 1px solid var(--md-outline);
   background: var(--md-surface-tint);
   color: var(--md-primary-strong);
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   cursor: pointer;
   transition: background 0.15s ease;
 }
@@ -850,7 +870,7 @@
 
 .cust-search-hint-note {
   opacity: 0.55;
-  font-size: 0.75rem;
+  font-size: 0.84rem;
 }
 
 /* ---- knowledge-base answer card ---- */
@@ -870,7 +890,7 @@
 .cust-kb-badge {
   padding: 3px 12px;
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.02em;
 }
@@ -889,7 +909,8 @@
 }
 
 .cust-kb-title {
-  font-size: 1rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
   font-weight: 600;
   line-height: 1.4;
   margin-bottom: 10px;
@@ -899,7 +920,7 @@
   background: var(--md-warning-bg);
   border: 1px solid rgba(180, 83, 9, 0.3);
   color: var(--md-warning);
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   padding: 8px 12px;
   border-radius: 12px;
   margin-bottom: 12px;
@@ -908,7 +929,7 @@
 .cust-kb-solution-label {
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   font-weight: 700;
   opacity: 0.55;
   margin-bottom: 6px;
@@ -917,8 +938,8 @@
 .cust-kb-steps {
   margin: 0 0 14px;
   padding-left: 20px;
-  font-size: 0.88rem;
-  line-height: 1.6;
+  font-size: 0.98rem;
+  line-height: 1.65;
 }
 
 .cust-kb-steps li {
@@ -936,7 +957,7 @@
 }
 
 .cust-kb-source {
-  font-size: 0.75rem;
+  font-size: 0.84rem;
   opacity: 0.55;
 }
 
@@ -946,7 +967,7 @@
   border: 1px solid var(--md-divider);
   background: transparent;
   color: var(--md-on-surface);
-  font-size: 0.75rem;
+  font-size: 0.84rem;
   cursor: pointer;
 }
 
@@ -961,7 +982,7 @@
 
 .cust-kb-translated-note {
   margin-top: 10px;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   opacity: 0.6;
   font-style: italic;
 }
@@ -996,15 +1017,15 @@
 }
 
 .cust-timeline-icon {
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .cust-timeline-desc {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
 }
 
 .cust-timeline-meta {
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   opacity: 0.55;
   margin-top: 2px;
 }
@@ -1017,13 +1038,13 @@
 
 .cust-timeline-form input {
   flex: 1;
-  padding: 9px 10px;
+  padding: 10px 10px;
   border-radius: 10px 10px 0 0;
   border: none;
   border-bottom: 2px solid var(--md-on-surface-faint);
   background: var(--md-surface-high);
   color: var(--md-on-surface);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   transition: border-color 0.18s var(--md-ease);
 }
 
@@ -1066,11 +1087,11 @@
   background: var(--md-surface-tint);
   border: none;
   color: var(--md-on-surface);
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
 }
 
 .cust-modal-gallery img {
@@ -1104,19 +1125,21 @@
 
 .cust-modal-title {
   margin: 4px 0 2px;
-  font-size: 1.1rem;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 600;
 }
 
 .cust-modal-subtitle {
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   opacity: 0.6;
   margin-bottom: 12px;
 }
 
 .cust-modal-description {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   opacity: 0.85;
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0 0 16px;
 }
 
@@ -1134,19 +1157,19 @@
 }
 
 .cust-reorder-control input {
-  width: 56px;
+  width: 60px;
   padding: 5px 6px;
   border-radius: 8px 8px 0 0;
   border: none;
   border-bottom: 2px solid var(--md-on-surface-faint);
   background: var(--md-surface-high);
   color: var(--md-on-surface);
-  font-size: 0.78rem;
+  font-size: 0.86rem;
 }
 
 .cust-reorder-done {
   color: var(--md-primary-strong);
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   font-weight: 600;
 }
 
@@ -1165,7 +1188,7 @@
 }
 
 .cust-settings-label {
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   opacity: 0.6;
 }
 
@@ -1236,16 +1259,17 @@
 
 .featured-card-eyebrow {
   color: #F8B2B2;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .featured-card-title {
+  font-family: var(--font-display);
   color: white;
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.4rem;
+  font-weight: 600;
   line-height: 1.25;
 }
 
@@ -1263,7 +1287,7 @@
   background: transparent;
   border: none;
   color: var(--md-on-surface);
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   cursor: pointer;
   padding: 4px 8px;
 }
@@ -1327,7 +1351,7 @@
   }
 
   .cust-topbar h1 {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
 
   .cust-profile {
@@ -1360,7 +1384,7 @@
     background: transparent;
     border: none;
     color: var(--md-on-surface-variant);
-    font-size: 0.65rem;
+    font-size: 0.72rem;
     padding: 6px 0;
     cursor: pointer;
   }
@@ -1405,7 +1429,7 @@
   /* .cust-stat-grid itself is already handled above (the horizontal
      scroll-snap row) — just the number size needs trimming here. */
   .cust-stat-value {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
   }
 
   /* Trim the machine-picker cards so the actual "describe your problem"
@@ -1429,12 +1453,12 @@
   }
 
   .cust-machine-option-model {
-    font-size: 0.65rem;
+    font-size: 0.72rem;
   }
 
   .cust-card-detail-btn {
     padding: 4px 8px;
-    font-size: 0.7rem;
+    font-size: 0.78rem;
   }
 }
 
@@ -1562,7 +1586,7 @@
 
 .story-view-eyebrow {
   color: var(--md-primary-strong);
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1571,15 +1595,16 @@
 
 .story-view-title {
   margin: 0 0 12px;
-  font-size: 1.5rem;
-  font-weight: 800;
-  line-height: 1.25;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 .story-view-body {
   margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.6;
+  font-size: 1.03rem;
+  line-height: 1.65;
   color: var(--md-on-surface-variant);
   white-space: pre-wrap;
 }
@@ -1643,18 +1668,19 @@
 }
 
 .equip-card-name {
-  font-weight: 700;
-  font-size: 0.95rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.08rem;
 }
 
 .equip-card-meta {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   opacity: 0.65;
   margin-top: 2px;
 }
 
 .equip-card-serial {
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   opacity: 0.5;
   margin-top: 2px;
 }
@@ -1664,7 +1690,7 @@
   align-items: center;
   gap: 6px;
   align-self: flex-start;
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 999px;
