@@ -27,6 +27,9 @@ import portalRouter from "./routes/portal";
 import organizationsRouter from "./routes/organizations";
 import approvalsRouter from "./routes/approvals";
 import maintenanceRouter from "./routes/maintenance";
+import productionRouter from "./routes/production";
+import sopsRouter from "./routes/sops";
+import kaizenRouter from "./routes/kaizen";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -64,6 +67,9 @@ app.use("/portal", portalRouter);
 app.use("/organizations", organizationsRouter);
 app.use("/approvals", approvalsRouter);
 app.use("/maintenance", maintenanceRouter);
+app.use("/production", productionRouter);
+app.use("/sops", sopsRouter);
+app.use("/kaizen", kaizenRouter);
 
 // Serve the built frontend (npm run build) so the whole app is reachable
 // from a single URL/port — needed for hosting on Render etc. In local dev,

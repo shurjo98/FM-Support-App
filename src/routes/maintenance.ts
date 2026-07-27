@@ -159,6 +159,13 @@ router.post("/:taskId/complete", async (req, res) => {
   const { taskId } = req.params;
   const { completedBy, notes } = req.body as { completedBy?: string; notes?: string };
 
+  // Poka-yoke: a task can't be marked done with nothing to show for it — a
+  // one-tap "done" with no record of what was actually checked/replaced is
+  // exactly the kind of silent-skip a real andon/TPM system tries to prevent.
+  if (!notes?.trim()) {
+    return res.status(400).json({ error: "A short note on what you checked or replaced is required to mark this done." });
+  }
+
   const task = await prisma.maintenanceTask.findUnique({ where: { id: taskId } });
   if (!task) return res.status(404).json({ error: "Task not found" });
 

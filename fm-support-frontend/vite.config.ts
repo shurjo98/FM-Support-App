@@ -29,6 +29,9 @@ export default defineConfig({
       "/organizations": "http://localhost:4000",
       "/approvals": "http://localhost:4000",
       "/maintenance": "http://localhost:4000",
+      "/production": "http://localhost:4000",
+      "/sops": "http://localhost:4000",
+      "/kaizen": "http://localhost:4000",
     },
   },
 });

@@ -28,6 +28,9 @@ export default function LoginPage({
   return (
     <div className="login-page">
       <form className="login-card" onSubmit={handleSubmit}>
+        <div className="login-logo-badge">
+          <img src="/public/logo/No_BG.png" alt="FM" />
+        </div>
         <h1>Internal Team Login</h1>
         <p className="subtitle">Sign in to view the internal support dashboard</p>
 

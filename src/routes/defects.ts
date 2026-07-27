@@ -66,7 +66,7 @@ router.get("/", async (req, res) => {
 
 // POST /defects  — log a defect entry
 router.post("/", async (req, res) => {
-  const { organizationId, serialNumber, machineName, defectType, count, shift, loggedByUserId } = req.body as {
+  const { organizationId, serialNumber, machineName, defectType, count, shift, loggedByUserId, rootCause } = req.body as {
     organizationId: string;
     serialNumber?: string;
     machineName?: string;
@@ -74,6 +74,7 @@ router.post("/", async (req, res) => {
     count: number;
     shift: string;
     loggedByUserId?: string;
+    rootCause?: string[];
   };
 
   if (!organizationId || !defectType || !count || !shift) {
@@ -89,6 +90,7 @@ router.post("/", async (req, res) => {
       defectType,
       count,
       shift,
+      rootCause: Array.isArray(rootCause) ? rootCause.filter((w) => w.trim()) : [],
       loggedByUserId: loggedByUserId ?? null,
     },
   });

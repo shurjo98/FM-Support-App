@@ -13,12 +13,15 @@ export default function InternalAccountPicker({
 }) {
   const [accounts, setAccounts] = useState<InternalAccountLite[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     fetchInternalAccounts(token)
       .then(setAccounts)
       .catch((err) => setError(err.message));
   }, [token]);
+
+  const visibleAccounts = accounts.filter((a) => a.name.toLowerCase().includes(filter.trim().toLowerCase()));
 
   return (
     <div className="int-picker-page">
@@ -31,8 +34,20 @@ export default function InternalAccountPicker({
 
         {error && <div className="login-error">{error}</div>}
 
+        {accounts.length > 6 && (
+          <input
+            type="text"
+            className="int-picker-filter"
+            placeholder="Search by name..."
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            autoFocus
+          />
+        )}
+
         <div className="int-picker-grid">
-          {accounts.map((account) => (
+          {visibleAccounts.length === 0 && <p className="empty">No matching team member.</p>}
+          {visibleAccounts.map((account) => (
             <button key={account.id} className="int-picker-option" onClick={() => onPick(account)}>
               <span className="int-picker-option-left">
                 <Avatar name={account.name} avatarUrl={account.avatarUrl} size={40} />

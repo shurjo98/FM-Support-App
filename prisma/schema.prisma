@@ -42,6 +42,8 @@ model Organization {
   auditItems       AuditItem[]
   sparePartStocks  SparePartStock[]
   defectLogs       DefectLog[]
+  productionLogs   ProductionLog[]
+  kaizenSuggestions KaizenSuggestion[]
   tasks            InternalTask[]
   discountApprovalRequests    DiscountApprovalRequest[]
   hospitalityApprovalRequests HospitalityApprovalRequest[]
@@ -67,6 +69,7 @@ model Machine {
   purchases Purchase[]
   reorders  ReorderRequest[]
   warrantyClaims WarrantyClaim[]
+  sop            Sop?
 }
 
 model NeedleProduct {
@@ -189,6 +192,9 @@ model Ticket {
   status          String
   technicianId    String?
   technicianNotes String[]
+  // Optional 5-Whys chain, captured opt-in at report time — each entry is
+  // one "why" answer, in order. Empty when the reporter skipped it.
+  rootCause       String[]
   createdAt       DateTime @default(now())
 
   events      TicketEvent[]
@@ -443,6 +449,23 @@ model DefectLog {
   defectType      String   // SKIP_STITCH | BROKEN_STITCH | NEEDLE_HOLE | PUCKERING | TENSION | OTHER
   count           Int
   shift           String   // MORNING | EVENING | NIGHT
+  rootCause       String[] // optional 5-Whys chain, same convention as Ticket.rootCause
+  loggedAt        DateTime @default(now())
+  loggedByUserId  String?
+}
+
+// End-of-shift production-count entries, logged alongside DefectLog on the
+// same form — pairing "how many made" with "how many bad" is what makes a
+// real Quality factor (and, combined with downtime, a real Performance
+// factor) possible for OEE, instead of an approximation.
+model ProductionLog {
+  id              String   @id
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  serialNumber    String?
+  machineName     String?
+  quantity        Int
+  shift           String   // MORNING | EVENING | NIGHT
   loggedAt        DateTime @default(now())
   loggedByUserId  String?
 }
@@ -596,4 +619,31 @@ model MaintenanceLog {
   completedBy       String?
   notes             String?
   onTime            Boolean
+}
+
+// Standardized-work procedure, one per machine MODEL (Machine, not
+// MachineInstance) — the same JK-8500D procedure applies to every serial
+// number of it, so this isn't per-instance data like MaintenanceTask.
+model Sop {
+  id         String   @id
+  machineId  String   @unique
+  machine    Machine  @relation(fields: [machineId], references: [id])
+  steps      String[]
+  photoIds   String[] // UploadedFile ids, served at /files/:id
+  updatedAt  DateTime @updatedAt
+  updatedBy  String?
+}
+
+// Lightweight Kaizen-style improvement suggestions — any factory user can
+// submit or move a card, matching this app's existing no-customer-role-system
+// convention (see User.role, only ever "IE" in the seeded data).
+model KaizenSuggestion {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  submittedBy    String?
+  title          String
+  description    String
+  status         String       @default("NEW") // NEW | UNDER_REVIEW | DONE
+  createdAt      DateTime     @default(now())
 }

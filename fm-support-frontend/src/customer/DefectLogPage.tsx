@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { AlertTriangle } from "lucide-react";
-import { fetchDefects, logDefect, fetchAnalyticsFleet, type DefectSummary, type AnalyticsFleetMachine } from "../api";
+import { fetchDefects, logDefect, logProduction, fetchAnalyticsFleet, type DefectSummary, type AnalyticsFleetMachine } from "../api";
 import type { CustomerUser } from "../types";
+import FiveWhys from "./FiveWhys";
 
 const DEFECT_TYPES = [
   { value: "SKIP_STITCH",    label: "Skip Stitch" },
@@ -33,6 +34,8 @@ export default function DefectLogPage({ user }: { user: CustomerUser }) {
   const [machineName, setMachineName] = useState("");
   const [defectType, setDefectType] = useState("SKIP_STITCH");
   const [count, setCount] = useState(1);
+  const [piecesProduced, setPiecesProduced] = useState<number | "">("");
+  const [rootCause, setRootCause] = useState<string[]>([]);
   const [shift, setShift] = useState("MORNING");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -65,8 +68,18 @@ export default function DefectLogPage({ user }: { user: CustomerUser }) {
         machineName: machineName || undefined,
         defectType, count, shift,
         loggedByUserId: user.id,
+        rootCause: rootCause.filter((w) => w.trim()),
       });
-      setCount(1); setSubmitted(true);
+      if (piecesProduced && piecesProduced > 0) {
+        await logProduction({
+          organizationId: user.organizationId,
+          serialNumber: serialNumber || undefined,
+          machineName: machineName || undefined,
+          quantity: piecesProduced, shift,
+          loggedByUserId: user.id,
+        });
+      }
+      setCount(1); setPiecesProduced(""); setRootCause([]); setSubmitted(true);
       setTimeout(() => { setSubmitted(false); load(); }, 1200);
     } catch (err) { setError(err instanceof Error ? err.message : "Failed to log"); }
     finally { setSubmitting(false); }
@@ -121,6 +134,23 @@ export default function DefectLogPage({ user }: { user: CustomerUser }) {
           </label>
 
           <label>
+            Pieces produced this shift <span style={{ opacity: 0.6, fontWeight: 400 }}>(optional — powers OEE)</span>
+            <input
+              className="cust-input"
+              type="number"
+              min={0}
+              placeholder="e.g. 480"
+              value={piecesProduced}
+              onChange={(e) => setPiecesProduced(e.target.value === "" ? "" : Number(e.target.value))}
+              style={{ width: "100%" }}
+            />
+          </label>
+
+          <div style={{ marginBottom: 16 }}>
+            <FiveWhys value={rootCause} onChange={setRootCause} />
+          </div>
+
+          <label>
             Shift
             <select value={shift} onChange={(e) => setShift(e.target.value)} style={{ width: "100%" }}>
               {SHIFTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
@@ -158,7 +188,7 @@ export default function DefectLogPage({ user }: { user: CustomerUser }) {
                     <span>{DEFECT_TYPES.find((d) => d.value === type)?.label ?? type}</span>
                     <span style={{ fontWeight: 600 }}>{cnt}</span>
                   </div>
-                  <div style={{ height: 4, background: "rgba(148,163,184,0.2)", borderRadius: 2 }}>
+                  <div style={{ height: 4, background: "rgba(36,31,66,0.12)", borderRadius: 2 }}>
                     <div style={{ height: "100%", width: `${(cnt / max) * 100}%`, background: TYPE_COLORS[type] ?? "#6b7280", borderRadius: 2 }} />
                   </div>
                 </div>

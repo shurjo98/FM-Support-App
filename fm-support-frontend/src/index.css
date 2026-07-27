@@ -1,3 +1,22 @@
+:root {
+  /* Type scale — mirrors the customer portal's so both apps read consistently */
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.85rem;
+  --fs-base: 0.95rem;
+  --fs-md: 1.05rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.6rem;
+  --fs-2xl: 2rem;
+
+  /* Spacing scale */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -163,50 +182,81 @@ h1 {
   align-items: center;
   justify-content: center;
   background: #f4f5f7;
+  padding: var(--sp-4);
+}
+
+.login-logo-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #ffffff, #e3f1fb 70%);
+  box-shadow: 0 0 0 1px rgba(24, 144, 216, 0.25), 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--sp-3);
+}
+
+.login-logo-badge img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
 }
 
 .login-card {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 32px;
-  width: 320px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: var(--sp-6) var(--sp-5);
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
 }
 
 .login-card h1 {
-  font-size: 20px;
+  font-size: var(--fs-lg);
   margin: 0 0 4px;
 }
 
 .login-card .subtitle {
-  margin: 0 0 20px;
+  margin: 0 0 var(--sp-5);
+  color: #6b7280;
+  font-size: var(--fs-sm);
 }
 
 .login-card label {
   display: block;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: #374151;
   margin-bottom: 14px;
+  text-align: left;
 }
 
 .login-card input {
   display: block;
   width: 100%;
   margin-top: 6px;
-  padding: 9px 10px;
+  padding: 11px 12px;
   border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 8px;
+  font-size: var(--fs-base);
+  transition: border-color 0.15s ease;
+}
+
+.login-card input:focus {
+  outline: none;
+  border-color: #1890d8;
+  box-shadow: 0 0 0 3px rgba(24, 144, 216, 0.15);
 }
 
 .login-card button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #1890d8;
   color: white;
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: 600;
   cursor: pointer;
   margin-top: 6px;
@@ -324,6 +374,7 @@ h1 {
   background: radial-gradient(circle at 50% 30%, #003058, #001b30 70%);
   color: white;
   text-align: center;
+  padding: var(--sp-5) var(--sp-4);
 }
 
 .landing-logo {
@@ -339,19 +390,39 @@ h1 {
 
 .landing-links {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 20px;
   margin-top: 16px;
+  width: 100%;
+  max-width: 520px;
 }
 
 .landing-card {
   display: block;
   width: 240px;
+  max-width: 100%;
+  flex: 0 1 240px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   padding: 24px;
   text-decoration: none;
   color: inherit;
+}
+
+@media (max-width: 560px) {
+  .landing-links {
+    flex-direction: column;
+  }
+
+  .landing-card {
+    width: 100%;
+    /* flex-basis is a HEIGHT hint once the container switches to column
+       direction above — reset it so the card sizes to its content instead
+       of the 240px meant for the desktop row layout. */
+    flex: 0 0 auto;
+  }
 }
 
 .landing-card h2 {
@@ -707,17 +778,38 @@ h1 {
   align-items: center;
   justify-content: center;
   background: #f4f5f7;
+  padding: var(--sp-4);
 }
 
 .int-picker-card {
   background: white;
   border-radius: 14px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  padding: 36px;
-  width: 460px;
+  padding: var(--sp-6) var(--sp-5);
+  width: 100%;
+  max-width: 460px;
   max-height: 90vh;
   overflow-y: auto;
   text-align: center;
+}
+
+.int-picker-filter {
+  display: block;
+  width: 100%;
+  margin: var(--sp-3) 0;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  font-size: var(--fs-base);
+  position: sticky;
+  top: 0;
+  background: white;
+}
+
+.int-picker-filter:focus {
+  outline: none;
+  border-color: #1890d8;
+  box-shadow: 0 0 0 3px rgba(24, 144, 216, 0.15);
 }
 
 .int-picker-card h1 {

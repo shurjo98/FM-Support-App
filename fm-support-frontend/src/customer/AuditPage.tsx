@@ -69,7 +69,7 @@ function AuditItemRow({
   }
 
   return (
-    <div style={{ borderBottom: "1px solid rgba(148,163,184,0.15)", padding: "10px 0" }}>
+    <div style={{ borderBottom: "1px solid rgba(36,31,66,0.1)", padding: "10px 0" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <StatusPill status={item.status} onClick={cycleStatus} />
         {item.autoFilled && (
@@ -98,11 +98,11 @@ function AuditItemRow({
             onBlur={saveNotes}
             placeholder="Add notes or action plan..."
             rows={2}
-            style={{ fontSize: 12, padding: "6px 10px", borderRadius: 6, border: "1px solid rgba(148,163,184,0.35)", background: "rgba(255,255,255,0.05)", color: "white", resize: "vertical" }}
+            style={{ fontSize: 12, padding: "6px 10px", borderRadius: "8px 8px 0 0", border: "none", borderBottom: "2px solid rgba(36,31,66,0.35)", background: "#D3B1C9", color: "#241F42", resize: "vertical" }}
           />
           <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
             {item.documentUrl ? (
-              <a href={item.documentUrl} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: "#60a5fa", display: "flex", alignItems: "center", gap: 4 }}>
+              <a href={item.documentUrl} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: "#2563eb", display: "flex", alignItems: "center", gap: 4 }}>
                 <FileText size={12} /> View document
               </a>
             ) : null}
@@ -171,7 +171,7 @@ export default function AuditPage({ user }: { user: CustomerUser }) {
           </a>
         </div>
         {/* Progress bar */}
-        <div style={{ height: 8, background: "rgba(148,163,184,0.2)", borderRadius: 4, overflow: "hidden" }}>
+        <div style={{ height: 8, background: "rgba(36,31,66,0.12)", borderRadius: 4, overflow: "hidden" }}>
           <div style={{ height: "100%", width: `${data.pct}%`, background: pctColor, borderRadius: 4, transition: "width 0.4s" }} />
         </div>
         <div style={{ fontSize: 12, color: "#6b7280", marginTop: 8 }}>
@@ -190,7 +190,7 @@ export default function AuditPage({ user }: { user: CustomerUser }) {
           <div key={cat} className="cust-card" style={{ marginBottom: 12 }}>
             <button
               onClick={() => toggleCat(cat)}
-              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", background: "none", border: "none", cursor: "pointer", padding: 0, color: "white" }}
+              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", background: "none", border: "none", cursor: "pointer", padding: 0, color: "#241F42" }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontWeight: 700, fontSize: 14 }}>{cat}</span>

@@ -10,7 +10,10 @@ router.get("/debug-orgs", async (_req, res) => {
   const orgs = await prisma.organization.findMany({
     select: { id: true, name: true, portalUserId: true },
   });
-  res.json({ count: orgs.length, orgs });
+  const [conn] = await prisma.$queryRaw<{ db: string; addr: string; port: number }[]>`
+    SELECT current_database() as db, inet_server_addr()::text as addr, inet_server_port() as port
+  `;
+  res.json({ connectedTo: conn, count: orgs.length, orgs });
 });
 
 // POST /portal/login — { userId } → CustomerUser

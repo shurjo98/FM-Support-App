@@ -361,11 +361,11 @@ export async function fetchCustomerUsers(): Promise<CustomerUser[]> {
 
 // ─── Portal auth ─────────────────────────────────────────────────────────────
 
-export async function portalLogin(userId: string, password: string): Promise<CustomerUser> {
+export async function portalLogin(userId: string): Promise<CustomerUser> {
   const res = await fetch("/portal/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId, password }),
+    body: JSON.stringify({ userId }),
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(body.error ?? `Login failed (${res.status})`);
@@ -416,6 +416,7 @@ export async function createTicket(payload: {
   issueType: IssueType;
   description: string;
   lang?: SuggestionLang;
+  rootCause?: string[];
 }): Promise<CreateTicketResponse> {
   const res = await fetch("/tickets", {
     method: "POST",
@@ -719,7 +720,7 @@ export async function fetchMaintenance(organizationId: string): Promise<Maintena
 
 export async function completeMaintenanceTask(
   taskId: string,
-  payload: { completedBy?: string; notes?: string }
+  payload: { completedBy?: string; notes: string }
 ): Promise<MaintenanceTaskRow> {
   const res = await fetch(`/maintenance/${encodeURIComponent(taskId)}/complete`, {
     method: "POST",
@@ -844,7 +845,7 @@ export async function deleteStockItem(id: string): Promise<void> {
 
 export interface DefectLogEntry {
   id: string; organizationId: string; serialNumber: string | null; machineName: string | null;
-  defectType: string; count: number; shift: string; loggedAt: string;
+  defectType: string; count: number; shift: string; rootCause: string[]; loggedAt: string;
 }
 
 export interface DefectSummary {
@@ -863,11 +864,135 @@ export async function fetchDefects(organizationId: string, days = 30): Promise<D
 
 export async function logDefect(payload: {
   organizationId: string; serialNumber?: string; machineName?: string;
-  defectType: string; count: number; shift: string; loggedByUserId?: string;
+  defectType: string; count: number; shift: string; loggedByUserId?: string; rootCause?: string[];
 }): Promise<DefectLogEntry> {
   const res = await fetch("/defects", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(body.error ?? "Failed to log defect");
+  return body;
+}
+
+// ─── Production log ────────────────────────────────────────────────────────────
+
+export interface ProductionLogEntry {
+  id: string; organizationId: string; serialNumber: string | null; machineName: string | null;
+  quantity: number; shift: string; loggedAt: string;
+}
+
+export async function logProduction(payload: {
+  organizationId: string; serialNumber?: string; machineName?: string;
+  quantity: number; shift: string; loggedByUserId?: string;
+}): Promise<ProductionLogEntry> {
+  const res = await fetch("/production", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to log production");
+  return body;
+}
+
+// ─── Andon board ────────────────────────────────────────────────────────────────
+
+export type AndonStatus = "red" | "amber" | "green";
+
+export interface AndonMachine {
+  id: string; serialNumber: string; displayName: string; location: string | null;
+  andonStatus: AndonStatus; reason: string;
+}
+
+export interface AndonSummary {
+  machines: AndonMachine[];
+  summary: { red: number; amber: number; green: number };
+}
+
+export async function fetchAndon(organizationId: string): Promise<AndonSummary> {
+  const res = await fetch(`/analytics/andon?organizationId=${encodeURIComponent(organizationId)}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to load andon board");
+  return body;
+}
+
+// ─── OEE ──────────────────────────────────────────────────────────────────────
+
+export interface OeeMachine {
+  id: string; serialNumber: string; displayName: string; location: string | null;
+  produced: number; defects: number; downtimeHours: number;
+  availability: number; performance: number; quality: number; oee: number;
+}
+
+export interface OeeSummary {
+  fleet: {
+    availability: number; performance: number; quality: number; oee: number;
+    totalProduced: number; totalDefects: number; totalDowntimeHours: number;
+  };
+  machines: OeeMachine[];
+}
+
+export async function fetchOee(organizationId: string): Promise<OeeSummary> {
+  const res = await fetch(`/analytics/oee?organizationId=${encodeURIComponent(organizationId)}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to load OEE data");
+  return body;
+}
+
+// ─── SOPs (standardized work) ────────────────────────────────────────────────
+
+export interface SopMachine {
+  id: string; name: string; brand: string; category: string | null;
+  sop: { steps: string[]; photoIds: string[]; updatedAt: string; updatedBy: string | null } | null;
+}
+
+export async function fetchSops(organizationId: string): Promise<SopMachine[]> {
+  const res = await fetch(`/sops?organizationId=${encodeURIComponent(organizationId)}`);
+  const body = await res.json().catch(() => ([]));
+  if (!res.ok) throw new Error(body.error ?? "Failed to load SOPs");
+  return body;
+}
+
+export async function saveSop(machineId: string, steps: string[], updatedBy?: string): Promise<void> {
+  const res = await fetch(`/sops/${encodeURIComponent(machineId)}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ steps, updatedBy }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to save SOP");
+}
+
+export async function uploadSopPhoto(machineId: string, file: File): Promise<void> {
+  const res = await fetch(`/sops/${encodeURIComponent(machineId)}/photo`, {
+    method: "POST", headers: { "Content-Type": file.type }, body: await file.arrayBuffer(),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to upload photo");
+}
+
+// ─── Kaizen suggestions ─────────────────────────────────────────────────────
+
+export type KaizenStatus = "NEW" | "UNDER_REVIEW" | "DONE";
+
+export interface KaizenSuggestion {
+  id: string; organizationId: string; submittedBy: string | null;
+  title: string; description: string; status: KaizenStatus; createdAt: string;
+}
+
+export async function fetchKaizen(organizationId: string): Promise<KaizenSuggestion[]> {
+  const res = await fetch(`/kaizen?organizationId=${encodeURIComponent(organizationId)}`);
+  const body = await res.json().catch(() => ([]));
+  if (!res.ok) throw new Error(body.error ?? "Failed to load suggestions");
+  return body;
+}
+
+export async function submitKaizen(payload: { organizationId: string; submittedBy?: string; title: string; description: string }): Promise<KaizenSuggestion> {
+  const res = await fetch("/kaizen", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to submit suggestion");
+  return body;
+}
+
+export async function updateKaizenStatus(id: string, status: KaizenStatus): Promise<KaizenSuggestion> {
+  const res = await fetch(`/kaizen/${encodeURIComponent(id)}`, {
+    method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error ?? "Failed to update status");
   return body;
 }
 

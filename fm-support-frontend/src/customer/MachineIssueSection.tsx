@@ -12,6 +12,7 @@ import type {
 import { useLang, type TranslationKey } from "./i18n";
 import DetailModal from "./DetailModal";
 import CallTechnicianButton from "./CallTechnicianButton";
+import FiveWhys from "./FiveWhys";
 
 const ISSUE_TYPES: { value: IssueType; labelKey: TranslationKey }[] = [
   { value: "THREAD_BREAKING", labelKey: "issue.threadBreaking" },
@@ -35,6 +36,7 @@ export default function MachineIssueSection({
   const [serialNumber, setSerialNumber] = useState("");
   const [issueType, setIssueType] = useState<IssueType>("THREAD_BREAKING");
   const [description, setDescription] = useState("");
+  const [rootCause, setRootCause] = useState<string[]>([]);
 
   const [result, setResult] = useState<CreateTicketResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -86,6 +88,7 @@ export default function MachineIssueSection({
         issueType,
         description,
         lang,
+        rootCause: rootCause.filter((w) => w.trim()),
       });
       setResult(res);
 
@@ -208,6 +211,10 @@ export default function MachineIssueSection({
             rows={4}
           />
         </label>
+
+        <div style={{ marginBottom: 16 }}>
+          <FiveWhys value={rootCause} onChange={setRootCause} />
+        </div>
 
         <label>
           {t("machines.attachPhoto")}

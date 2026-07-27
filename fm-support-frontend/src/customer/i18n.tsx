@@ -7,6 +7,10 @@ const LANG_KEY = "fm_customer_lang";
 
 const dict = {
   "nav.overview": { en: "Overview", bn: "ওভারভিউ" },
+  "nav.andon": { en: "Andon Board", bn: "অ্যান্ডন বোর্ড" },
+  "nav.oee": { en: "OEE", bn: "OEE (যন্ত্র কার্যকারিতা)" },
+  "nav.kaizen": { en: "Improvement Ideas", bn: "উন্নতির পরামর্শ" },
+  "nav.sops": { en: "Standard Procedures", bn: "মানক পদ্ধতি" },
   "nav.equipment": { en: "My Equipment", bn: "আমার মেশিনপত্র" },
   "nav.sewing": { en: "Sewing Machines", bn: "সেলাই মেশিন" },
   "nav.automated": { en: "Automated Machines", bn: "অটোমেটেড মেশিন" },
@@ -25,6 +29,13 @@ const dict = {
   "nav.settings":   { en: "Settings",            bn: "সেটিংস" },
   "nav.logout": { en: "Log out", bn: "লগ আউট" },
   "topbar.subtitle": { en: "FM Factory Support — Customer Portal", bn: "এফএম ফ্যাক্টরি সাপোর্ট — কাস্টমার পোর্টাল" },
+
+  "navGroup.floor": { en: "Floor Management", bn: "ফ্লোর ম্যানেজমেন্ট" },
+  "navGroup.report": { en: "Report an Issue", bn: "সমস্যা রিপোর্ট করুন" },
+  "navGroup.history": { en: "History", bn: "ইতিহাস" },
+  "navGroup.resources": { en: "Resources", bn: "রিসোর্স" },
+  "navGroup.insights": { en: "Insights & Reports", bn: "বিশ্লেষণ ও রিপোর্ট" },
+  "nav.closeMenu": { en: "Close menu", bn: "মেনু বন্ধ করুন" },
 
   "overview.machinesOwned": { en: "Machines Owned", bn: "মালিকানাধীন মেশিন" },
   "overview.totalIssues": { en: "Total Issues Raised", bn: "মোট সমস্যা" },
@@ -167,6 +178,30 @@ const dict = {
   },
   "search.button": { en: "Ask AI", bn: "AI কে জিজ্ঞাসা করুন" },
   "search.thinking": { en: "Thinking...", bn: "ভাবা হচ্ছে..." },
+  "search.helperTitle": { en: "How to ask", bn: "যেভাবে জিজ্ঞাসা করবেন" },
+  "search.helperCode": {
+    en: "Type an error code, e.g. \"Err-01\" or \"E5\"",
+    bn: "একটি এরর কোড লিখুন, যেমন \"Err-01\" বা \"E5\"",
+  },
+  "search.helperSymptom": {
+    en: "Or describe the problem, e.g. \"thread keeps breaking on my C5C\"",
+    bn: "অথবা সমস্যাটি লিখুন, যেমন \"আমার C5C-তে থ্রেড বারবার ছিঁড়ে যাচ্ছে\"",
+  },
+  "search.helperModel": {
+    en: "Mention your machine model for the most accurate answer",
+    bn: "সবচেয়ে সঠিক উত্তরের জন্য আপনার মেশিনের মডেল উল্লেখ করুন",
+  },
+  "search.source": { en: "From the manual", bn: "ম্যানুয়াল থেকে" },
+  "search.solution": { en: "Solution", bn: "সমাধান" },
+  "search.ambiguousNote": {
+    en: "This code exists on other models too — mention your machine model for an exact match.",
+    bn: "একই কোড অন্য মডেলেও থাকতে পারে — সঠিক মেশিন মডেল উল্লেখ করুন।",
+  },
+  "search.translating": { en: "Translating...", bn: "অনুবাদ করা হচ্ছে..." },
+  "search.machineTranslated": {
+    en: "Machine-translated — please double check before relying on it for repairs.",
+    bn: "মেশিন-অনুবাদিত — মেরামতের আগে দয়া করে যাচাই করে নিন।",
+  },
   "support.callTechnician": { en: "Call a technician", bn: "টেকনিশিয়ানকে কল করুন" },
   "support.stillNeedHelp": {
     en: "Still need help? Talk to a technician directly.",

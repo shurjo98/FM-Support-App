@@ -8,7 +8,7 @@ function QuantityBar({ qty, min }: { qty: number; min: number }) {
   const color = qty === 0 ? "#dc2626" : qty <= min ? "#d97706" : "#16a34a";
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <div style={{ flex: 1, height: 6, background: "rgba(148,163,184,0.2)", borderRadius: 3, overflow: "hidden", minWidth: 60 }}>
+      <div style={{ flex: 1, height: 6, background: "rgba(36,31,66,0.12)", borderRadius: 3, overflow: "hidden", minWidth: 60 }}>
         <div style={{ height: "100%", width: `${pct}%`, background: color, borderRadius: 3 }} />
       </div>
       <span style={{ fontSize: 12, fontWeight: 700, color, minWidth: 30 }}>{qty}</span>
@@ -33,7 +33,7 @@ function InlineEdit({ value, onSave, type = "text" }: { value: string | number; 
         type={type}
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
-        style={{ width: 70, padding: "2px 6px", borderRadius: 4, border: "1px solid #4fb3e8", background: "rgba(255,255,255,0.1)", color: "white", fontSize: 13 }}
+        style={{ width: 70, padding: "2px 6px", borderRadius: "4px 4px 0 0", border: "none", borderBottom: "2px solid #403D88", background: "#D3B1C9", color: "#241F42", fontSize: 13 }}
         autoFocus
       />
       <button onClick={() => { onSave(draft); setEditing(false); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#16a34a" }}><Check size={13} /></button>

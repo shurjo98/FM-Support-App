@@ -13,7 +13,7 @@ function currency(n: number) {
 
 function Row({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", borderBottom: "1px solid rgba(148,163,184,0.12)", padding: "9px 0" }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", borderBottom: "1px solid rgba(36,31,66,0.1)", padding: "9px 0" }}>
       <div>
         <span style={{ fontSize: 13 }}>{label}</span>
         {sub && <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 1 }}>{sub}</div>}
@@ -28,7 +28,7 @@ function InputRow({ label, value, unit, onChange, type = "number", min, step }: 
   onChange: (v: string) => void; type?: string; min?: number; step?: number;
 }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, borderBottom: "1px solid rgba(148,163,184,0.1)", padding: "8px 0" }}>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, borderBottom: "1px solid rgba(36,31,66,0.1)", padding: "8px 0" }}>
       <label style={{ fontSize: 13, flex: 1 }}>{label}</label>
       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
         <input
@@ -37,7 +37,7 @@ function InputRow({ label, value, unit, onChange, type = "number", min, step }: 
           min={min}
           step={step}
           onChange={(e) => onChange(e.target.value)}
-          style={{ width: 90, padding: "4px 8px", borderRadius: 6, border: "1px solid rgba(148,163,184,0.3)", background: "rgba(255,255,255,0.08)", color: "white", fontSize: 13 }}
+          style={{ width: 90, padding: "4px 8px", borderRadius: "6px 6px 0 0", border: "none", borderBottom: "2px solid #403D88", background: "#D3B1C9", color: "#241F42", fontSize: 13 }}
         />
         {unit && <span style={{ fontSize: 12, color: "#9ca3af", minWidth: 30 }}>{unit}</span>}
       </div>
@@ -128,7 +128,7 @@ export default function RoboticsPage({ user }: { user: CustomerUser }) {
         />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", paddingTop: 10 }}>
           <span style={{ fontSize: 13, fontWeight: 700 }}>Total monthly benefit</span>
-          <span style={{ fontSize: 18, fontWeight: 800, color: "#4fb3e8" }}>{currency(monthlyBenefit)}</span>
+          <span style={{ fontSize: 18, fontWeight: 800, color: "#403D88" }}>{currency(monthlyBenefit)}</span>
         </div>
       </div>
 

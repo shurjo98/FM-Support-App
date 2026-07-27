@@ -138,6 +138,11 @@ function hoursAfter(base: Date, hours: number): Date {
 async function main() {
   console.log("🌱 Seeding pilot factory: Evergreen Garments Ltd…");
 
+  const [conn] = await prisma.$queryRaw<{ db: string; addr: string; port: number }[]>`
+    SELECT current_database() as db, inet_server_addr()::text as addr, inet_server_port() as port
+  `;
+  console.log("  🔌 Seed connected to:", JSON.stringify(conn));
+
   // 1. Organization
   await prisma.organization.upsert({
     where: { id: ORG_ID },

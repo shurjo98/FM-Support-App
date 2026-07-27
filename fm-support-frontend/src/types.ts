@@ -376,6 +376,14 @@ export interface PortalSearchResult {
   action: "navigate" | "answer";
   section?: PortalSection;
   message: string;
+  kb?: {
+    model: string;
+    code?: string;
+    title: string;
+    steps: string[];
+    ambiguous?: boolean;
+    translated?: boolean;
+  };
 }
 
 export type GarmentType = "SHIRTS" | "PANTS" | "JEANS";

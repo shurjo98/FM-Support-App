@@ -278,6 +278,217 @@ router.get("/fleet", async (req, res) => {
   res.json(rows);
 });
 
+// ─── GET /analytics/andon ─────────────────────────────────────────────────────
+// Toyota andon-cord signal, digitized: instead of an IE reading through the
+// ticket list to figure out what's actually down right now, every machine is
+// red/amber/green at a glance. Red = an unresolved ticket exists right now
+// (the same "no resolutionTime yet" signal /overview uses to skip a ticket
+// from downtime totals). Amber = service due/overdue (serviceStatus(), reused
+// as-is) or an abnormal defect rate (same 2x-recent-vs-prior-average check
+// defects.ts uses, duplicated here rather than extracted — matches this
+// codebase's existing convention of duplicating small per-route calcs).
+
+router.get("/andon", async (req, res) => {
+  const { organizationId } = req.query as { organizationId?: string };
+  if (!organizationId) return res.status(400).json({ error: "organizationId required" });
+
+  const instances = await prisma.machineInstance.findMany({
+    where: { organizationId },
+    include: { machine: true },
+    orderBy: [{ location: "asc" }, { id: "asc" }],
+  });
+
+  const orgUsers = await prisma.user.findMany({ where: { organizationId }, select: { id: true } });
+  const userIds = orgUsers.map((u) => u.id);
+  const tickets = await prisma.ticket.findMany({
+    where: { createdByUserId: { in: userIds } },
+    include: { events: true },
+  });
+
+  const openIssueBySerial: Record<string, string> = {};
+  for (const ticket of tickets) {
+    if (ticket.status === "COMPLETED") continue;
+    if (resolutionTime(ticket.events)) continue; // resolved but status not yet flipped — treat as not open
+    const key = ticket.serialNumber ?? ticket.customMachineName;
+    if (key) openIssueBySerial[key] = ticket.issueType;
+  }
+
+  // Defect-rate anomaly, same threshold as defects.ts's GET /defects.
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const defectLogs = await prisma.defectLog.findMany({
+    where: { organizationId, loggedAt: { gte: thirtyDaysAgo } },
+  });
+  const anomalousSerials = new Set<string>();
+  const bySerial: Record<string, { recent: number; older: number }> = {};
+  for (const log of defectLogs) {
+    const key = log.serialNumber ?? log.machineName ?? "Unknown";
+    if (!bySerial[key]) bySerial[key] = { recent: 0, older: 0 };
+    if (log.loggedAt >= sevenDaysAgo) bySerial[key].recent += log.count;
+    else bySerial[key].older += log.count;
+  }
+  for (const [key, d] of Object.entries(bySerial)) {
+    const olderDailyAvg = d.older / 23;
+    if (olderDailyAvg > 0 && d.recent / 7 > olderDailyAvg * 2) anomalousSerials.add(key);
+  }
+
+  const summary = { red: 0, amber: 0, green: 0 };
+  const machines = instances.map((i) => {
+    const { status: svcStatus } = serviceStatus(i.lastServicedAt, i.serviceIntervalMonths);
+    const displayName = i.machine?.name ?? i.customName ?? "Unknown Machine";
+    const openIssueType = openIssueBySerial[i.serialNumber];
+    const isAnomalous = anomalousSerials.has(i.serialNumber) || anomalousSerials.has(displayName);
+
+    let andonStatus: "red" | "amber" | "green" = "green";
+    let reason = "Running normally";
+    if (openIssueType) {
+      andonStatus = "red";
+      reason = `Open issue: ${openIssueType.replaceAll("_", " ").toLowerCase()}`;
+    } else if (svcStatus === "overdue") {
+      andonStatus = "amber";
+      reason = "Service overdue";
+    } else if (svcStatus === "due_soon") {
+      andonStatus = "amber";
+      reason = "Service due soon";
+    } else if (isAnomalous) {
+      andonStatus = "amber";
+      reason = "Defect rate abnormally high";
+    }
+    summary[andonStatus]++;
+
+    return {
+      id: i.id,
+      serialNumber: i.serialNumber,
+      displayName,
+      location: i.location,
+      andonStatus,
+      reason,
+    };
+  });
+
+  res.json({ machines, summary });
+});
+
+// ─── GET /analytics/oee ───────────────────────────────────────────────────────
+// OEE = Availability × Performance × Quality. Availability/downtime reuses
+// the exact resolved-ticket-hours logic from /overview and /hidden-cost;
+// Performance and Quality are only meaningful once ProductionLog entries
+// exist (paired with DefectLog on the same end-of-shift form) — with none
+// logged yet, Performance is honestly 0 rather than a faked/omitted number.
+
+const PLANNED_HOURS_PER_MACHINE_THIS_MONTH = 26 * 8; // 26 working days × 8h, matching the existing "26 working days/month" assumption used elsewhere in this app (see RoboticsPage.tsx)
+
+router.get("/oee", async (req, res) => {
+  const { organizationId } = req.query as { organizationId?: string };
+  if (!organizationId) return res.status(400).json({ error: "organizationId required" });
+
+  const org = await prisma.organization.findUnique({ where: { id: organizationId } });
+  if (!org) return res.status(404).json({ error: "Organization not found" });
+  const { piecesPerHour } = resolveCostSettings(org);
+
+  const now = new Date();
+  const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const instances = await prisma.machineInstance.findMany({
+    where: { organizationId },
+    include: { machine: true },
+  });
+
+  const orgUsers = await prisma.user.findMany({ where: { organizationId }, select: { id: true } });
+  const userIds = orgUsers.map((u) => u.id);
+  const tickets = await prisma.ticket.findMany({
+    where: { createdByUserId: { in: userIds } },
+    include: { events: true },
+  });
+
+  const downtimeBySerial: Record<string, number> = {};
+  for (const ticket of tickets) {
+    if (ticket.status !== "COMPLETED") continue;
+    const resolvedAt = resolutionTime(ticket.events);
+    if (!resolvedAt || ticket.createdAt < firstOfMonth) continue;
+    const hours = (resolvedAt.getTime() - ticket.createdAt.getTime()) / (1000 * 60 * 60);
+    const key = ticket.serialNumber ?? ticket.customMachineName ?? "Unknown";
+    downtimeBySerial[key] = (downtimeBySerial[key] ?? 0) + hours;
+  }
+
+  const productionLogs = await prisma.productionLog.findMany({
+    where: { organizationId, loggedAt: { gte: firstOfMonth } },
+  });
+  const producedBySerial: Record<string, number> = {};
+  for (const log of productionLogs) {
+    const key = log.serialNumber ?? log.machineName ?? "Unknown";
+    producedBySerial[key] = (producedBySerial[key] ?? 0) + log.quantity;
+  }
+
+  const defectLogs = await prisma.defectLog.findMany({
+    where: { organizationId, loggedAt: { gte: firstOfMonth } },
+  });
+  const defectsBySerial: Record<string, number> = {};
+  for (const log of defectLogs) {
+    const key = log.serialNumber ?? log.machineName ?? "Unknown";
+    defectsBySerial[key] = (defectsBySerial[key] ?? 0) + log.count;
+  }
+
+  function oeeFor(downtimeHours: number, produced: number, defects: number) {
+    const plannedHours = PLANNED_HOURS_PER_MACHINE_THIS_MONTH;
+    const runtimeHours = Math.max(0, plannedHours - downtimeHours);
+    const availability = plannedHours > 0 ? runtimeHours / plannedHours : 0;
+    const theoreticalMax = runtimeHours * piecesPerHour;
+    const performance = theoreticalMax > 0 ? Math.min(1, produced / theoreticalMax) : 0;
+    const quality = produced > 0 ? Math.max(0, (produced - defects) / produced) : 0;
+    return {
+      availability: Math.round(availability * 1000) / 10,
+      performance: Math.round(performance * 1000) / 10,
+      quality: Math.round(quality * 1000) / 10,
+      oee: Math.round(availability * performance * quality * 1000) / 10,
+    };
+  }
+
+  const machines = instances.map((i) => {
+    const key = i.serialNumber;
+    const downtimeHours = downtimeBySerial[key] ?? 0;
+    const produced = producedBySerial[key] ?? 0;
+    const defects = defectsBySerial[key] ?? 0;
+    return {
+      id: i.id,
+      serialNumber: i.serialNumber,
+      displayName: i.machine?.name ?? i.customName ?? "Unknown Machine",
+      location: i.location,
+      produced,
+      defects,
+      downtimeHours: Math.round(downtimeHours * 10) / 10,
+      ...oeeFor(downtimeHours, produced, defects),
+    };
+  });
+
+  // Fleet-wide OEE from summed totals (not an average of per-machine %s) —
+  // more honest when only a few machines have logged production so far.
+  const totalDowntime = instances.reduce((s, i) => s + (downtimeBySerial[i.serialNumber] ?? 0), 0);
+  const totalProduced = instances.reduce((s, i) => s + (producedBySerial[i.serialNumber] ?? 0), 0);
+  const totalDefects = instances.reduce((s, i) => s + (defectsBySerial[i.serialNumber] ?? 0), 0);
+  const fleetPlannedHours = PLANNED_HOURS_PER_MACHINE_THIS_MONTH * instances.length;
+  const fleetRuntimeHours = Math.max(0, fleetPlannedHours - totalDowntime);
+  const fleetAvailability = fleetPlannedHours > 0 ? fleetRuntimeHours / fleetPlannedHours : 0;
+  const fleetTheoreticalMax = fleetRuntimeHours * piecesPerHour;
+  const fleetPerformance = fleetTheoreticalMax > 0 ? Math.min(1, totalProduced / fleetTheoreticalMax) : 0;
+  const fleetQuality = totalProduced > 0 ? Math.max(0, (totalProduced - totalDefects) / totalProduced) : 0;
+
+  res.json({
+    fleet: {
+      availability: Math.round(fleetAvailability * 1000) / 10,
+      performance: Math.round(fleetPerformance * 1000) / 10,
+      quality: Math.round(fleetQuality * 1000) / 10,
+      oee: Math.round(fleetAvailability * fleetPerformance * fleetQuality * 1000) / 10,
+      totalProduced,
+      totalDefects,
+      totalDowntimeHours: Math.round(totalDowntime * 10) / 10,
+    },
+    machines: machines.sort((a, b) => a.oee - b.oee),
+  });
+});
+
 // ─── GET /analytics/needles ───────────────────────────────────────────────────
 
 router.get("/needles", async (req, res) => {

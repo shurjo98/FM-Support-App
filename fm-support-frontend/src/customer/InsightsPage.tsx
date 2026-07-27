@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AlertTriangle, ArrowRight, CheckCircle2, Clock, Download, TrendingDown, TrendingUp, Wrench } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ChevronRight, CheckCircle2, Clock, Download, TrendingDown, TrendingUp, Wrench } from "lucide-react";
 import {
   compliancePdfUrl,
   fetchAnalyticsFleet,
@@ -15,6 +15,7 @@ import type { CustomerUser } from "../types";
 import type { CustomerSection } from "./CustomerLayout";
 
 type Tab = "overview" | "fleet" | "needles";
+type OverviewDetail = "hiddenCost" | "topMachines" | "fleet" | null;
 
 // ─── Status badge helpers ─────────────────────────────────────────────────────
 
@@ -55,18 +56,51 @@ function formatMonth(key: string) {
   return new Date(Number(y), Number(m) - 1, 1).toLocaleDateString("en-GB", { month: "short", year: "numeric" });
 }
 
+// A focused "one job per screen" detail header — tap a summary card on the
+// landing, get the full picture, tap back. Reused by every drill-down below
+// instead of stacking everything into one long scroll.
+function DetailHeader({ title, onBack }: { title: string; onBack: () => void }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+      <button className="cust-button-secondary" onClick={onBack} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px" }}>
+        <ArrowLeft size={14} /> Back
+      </button>
+      <h3 className="cust-section-title" style={{ margin: 0 }}>{title}</h3>
+    </div>
+  );
+}
+
+function SummaryCard({ title, onOpen, children }: { title: string; onOpen: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      className="cust-card cust-card-clickable"
+      onClick={onOpen}
+      style={{ textAlign: "left", border: "none", cursor: "pointer", width: "100%", font: "inherit", color: "inherit" }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div className="cust-section-title" style={{ margin: 0 }}>{title}</div>
+        <ChevronRight size={16} style={{ opacity: 0.5, flexShrink: 0 }} />
+      </div>
+      {children}
+    </button>
+  );
+}
+
 // ─── Sub-pages ────────────────────────────────────────────────────────────────
 
 function OverviewTab({
   overview,
+  fleet,
   organizationId,
   onNavigate,
 }: {
   overview: AnalyticsOverview;
+  fleet: AnalyticsFleetMachine[];
   organizationId: string;
   onNavigate?: (section: CustomerSection) => void;
 }) {
   const [hiddenCost, setHiddenCost] = useState<HiddenCostSummary | null>(null);
+  const [detail, setDetail] = useState<OverviewDetail>(null);
   useEffect(() => {
     fetchHiddenCost(organizationId).then(setHiddenCost).catch(() => {});
   }, [organizationId]);
@@ -79,9 +113,106 @@ function OverviewTab({
       ? Math.round((overview.fleet.ok / overview.fleet.total) * 100)
       : 0;
 
+  // ─── Detail views ───────────────────────────────────────────────────────────
+
+  if (detail === "hiddenCost") {
+    return (
+      <div>
+        <DetailHeader title="Hidden Cost of Downtime" onBack={() => setDetail(null)} />
+        <div className="cust-card">
+          <p className="cust-empty" style={{ margin: "0 0 14px" }}>
+            Lost production plus idle labor while machines sit broken. Full editable assumptions live on the
+            Maintenance & Cost page.
+          </p>
+          {onNavigate && (
+            <button
+              className="cust-button-secondary"
+              onClick={() => onNavigate("maintenance")}
+              style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 14 }}
+            >
+              Edit assumptions <ChevronRight size={14} />
+            </button>
+          )}
+          {hiddenCost && (
+            <div
+              style={{
+                background: hiddenCost.totalHiddenCost > 0 ? "#fef2f2" : "#f0fdf4",
+                border: `1px solid ${hiddenCost.totalHiddenCost > 0 ? "#fca5a5" : "#86efac"}`,
+                borderRadius: 10,
+                padding: "14px 18px",
+              }}
+            >
+              <div style={{ fontSize: 12, color: "#6b7280" }}>Estimated total this month</div>
+              <div style={{ fontSize: 28, fontWeight: 700, color: hiddenCost.totalHiddenCost > 0 ? "#dc2626" : "#16a34a" }}>
+                ৳{hiddenCost.totalHiddenCost.toLocaleString()}
+              </div>
+              <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>
+                ৳{hiddenCost.lostProductionValue.toLocaleString()} lost production + ৳{hiddenCost.idleLaborCost.toLocaleString()} idle labor
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (detail === "fleet") {
+    return (
+      <div>
+        <DetailHeader title="Fleet Status" onBack={() => setDetail(null)} />
+        <FleetTab fleet={fleet} organizationId={organizationId} />
+      </div>
+    );
+  }
+
+  if (detail === "topMachines") {
+    return (
+      <div>
+        <DetailHeader title="Machines Causing Most Downtime" onBack={() => setDetail(null)} />
+        {overview.topMachines.length === 0 ? (
+          <p className="cust-empty">No downtime recorded yet.</p>
+        ) : (
+          <div className="cust-card">
+            <table className="cust-table">
+              <thead>
+                <tr>
+                  <th>Machine / Serial</th>
+                  <th>Total Downtime</th>
+                  <th>Ticket Count</th>
+                  <th>Est. Loss</th>
+                </tr>
+              </thead>
+              <tbody>
+                {overview.topMachines.map((m) => (
+                  <tr key={m.serialNumber}>
+                    <td>
+                      <div style={{ fontWeight: 600 }}>{m.label}</div>
+                      {m.label !== m.serialNumber && (
+                        <div style={{ fontSize: 11, color: "#9ca3af" }}>{m.serialNumber}</div>
+                      )}
+                    </td>
+                    <td>{m.hours} hrs</td>
+                    <td>{m.count}</td>
+                    <td>
+                      {hiddenCost
+                        ? `৳${Math.round(m.hours * hiddenCost.settings.piecesPerHour * hiddenCost.settings.pricePerPiece).toLocaleString()}`
+                        : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ─── Landing ────────────────────────────────────────────────────────────────
+
   return (
     <div>
-      {/* KPI row */}
+      {/* KPI row — already glanceable, kept as the one thing you see at a glance */}
       <div className="cust-stat-grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))" }}>
         <div className="cust-card" style={{ borderLeft: "4px solid #dc2626" }}>
           <div className="cust-stat-label">Downtime This Month</div>
@@ -122,128 +253,51 @@ function OverviewTab({
         </div>
       </div>
 
-      {/* Hidden cost of downtime — full detail & editable assumptions live on the Maintenance & Cost page */}
-      <div className="cust-card" style={{ marginTop: 20 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
-          <div>
-            <h3 className="cust-section-title" style={{ margin: 0 }}>Hidden Cost of Downtime</h3>
-            <p className="cust-empty" style={{ margin: "4px 0 0" }}>
-              Lost production plus idle labor while machines sit broken.
-            </p>
-          </div>
-          {onNavigate && (
-            <button
-              className="cust-button-secondary"
-              onClick={() => onNavigate("maintenance")}
-              style={{ display: "flex", alignItems: "center", gap: 6 }}
-            >
-              View details <ArrowRight size={14} />
-            </button>
+      {/* Three tap-through summaries instead of three full stacked cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14, marginTop: 20 }}>
+        <SummaryCard title="Hidden Cost of Downtime" onOpen={() => setDetail("hiddenCost")}>
+          {hiddenCost ? (
+            <div style={{ marginTop: 10 }}>
+              <div style={{ fontSize: 24, fontWeight: 700, color: hiddenCost.totalHiddenCost > 0 ? "#dc2626" : "#16a34a" }}>
+                ৳{hiddenCost.totalHiddenCost.toLocaleString()}
+              </div>
+              <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>estimated this month</div>
+            </div>
+          ) : (
+            <p className="cust-empty" style={{ marginTop: 10 }}>Loading…</p>
           )}
-        </div>
-        {hiddenCost && (
-          <div
-            style={{
-              background: hiddenCost.totalHiddenCost > 0 ? "#fef2f2" : "#f0fdf4",
-              border: `1px solid ${hiddenCost.totalHiddenCost > 0 ? "#fca5a5" : "#86efac"}`,
-              borderRadius: 10,
-              padding: "14px 18px",
-              marginTop: 14,
-            }}
-          >
-            <div style={{ fontSize: 12, color: "#6b7280" }}>Estimated total this month</div>
-            <div style={{ fontSize: 28, fontWeight: 700, color: hiddenCost.totalHiddenCost > 0 ? "#dc2626" : "#16a34a" }}>
-              ৳{hiddenCost.totalHiddenCost.toLocaleString()}
-            </div>
-            <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>
-              ৳{hiddenCost.lostProductionValue.toLocaleString()} lost production + ৳{hiddenCost.idleLaborCost.toLocaleString()} idle labor
+        </SummaryCard>
+
+        <SummaryCard title="Fleet Health" onOpen={() => setDetail("fleet")}>
+          <div style={{ marginTop: 10 }}>
+            <div style={{ fontSize: 24, fontWeight: 700, color: "#16a34a" }}>{fleetHealthPct}%</div>
+            <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>
+              {overview.fleet.ok}/{overview.fleet.total} serviced · {overview.fleet.overdue} overdue
             </div>
           </div>
-        )}
-      </div>
+        </SummaryCard>
 
-      {/* Fleet health breakdown */}
-      <div className="cust-card" style={{ marginTop: 16 }}>
-        <h3 className="cust-section-title" style={{ marginTop: 0 }}>Fleet Status Breakdown</h3>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          {(
-            [
-              ["ok", "Serviced & up to date", "#16a34a"],
-              ["due_soon", "Service due within 14 days", "#d97706"],
-              ["overdue", "Service overdue", "#dc2626"],
-              ["unscheduled", "No maintenance schedule", "#6b7280"],
-            ] as const
-          ).map(([key, label, color]) => (
-            <div
-              key={key}
-              style={{
-                flex: 1,
-                minWidth: 140,
-                background: "#f9fafb",
-                borderRadius: 8,
-                padding: "10px 14px",
-                borderLeft: `4px solid ${color}`,
-              }}
-            >
-              <div style={{ fontSize: 22, fontWeight: 700, color }}>{overview.fleet[key]}</div>
-              <div style={{ fontSize: 11, color: "#6b7280", marginTop: 2 }}>{label}</div>
+        <SummaryCard title="Machines Causing Most Downtime" onOpen={() => setDetail("topMachines")}>
+          {overview.topMachines.length > 0 ? (
+            <div style={{ marginTop: 10 }}>
+              <div style={{ fontSize: 15, fontWeight: 700 }}>{overview.topMachines[0]!.label}</div>
+              <div style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>
+                {overview.topMachines[0]!.hours} hrs downtime · {overview.topMachines.length} machine{overview.topMachines.length === 1 ? "" : "s"} tracked
+              </div>
             </div>
-          ))}
-        </div>
+          ) : (
+            <p className="cust-empty" style={{ marginTop: 10 }}>No downtime recorded yet.</p>
+          )}
+        </SummaryCard>
       </div>
 
-      {/* Top problematic machines */}
-      {overview.topMachines.length > 0 && (
-        <div className="cust-card" style={{ marginTop: 16 }}>
-          <h3 className="cust-section-title" style={{ marginTop: 0 }}>Machines Causing Most Downtime</h3>
-          <table className="cust-table">
-            <thead>
-              <tr>
-                <th>Machine / Serial</th>
-                <th>Total Downtime</th>
-                <th>Ticket Count</th>
-                <th>Est. Loss</th>
-              </tr>
-            </thead>
-            <tbody>
-              {overview.topMachines.map((m) => (
-                <tr key={m.serialNumber}>
-                  <td>
-                    <div style={{ fontWeight: 600 }}>{m.label}</div>
-                    {m.label !== m.serialNumber && (
-                      <div style={{ fontSize: 11, color: "#9ca3af" }}>{m.serialNumber}</div>
-                    )}
-                  </td>
-                  <td>{m.hours} hrs</td>
-                  <td>{m.count}</td>
-                  <td>
-                    {hiddenCost
-                      ? `৳${Math.round(m.hours * hiddenCost.settings.piecesPerHour * hiddenCost.settings.pricePerPiece).toLocaleString()}`
-                      : "—"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Compliance PDF */}
-      <div className="cust-card" style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 600, marginBottom: 4 }}>Buyer Compliance Report</div>
-          <div style={{ fontSize: 13, color: "#6b7280" }}>
-            Download a signed maintenance compliance PDF for buyer audits — lists all machines,
-            service dates, and health status.
-          </div>
-        </div>
+      <div style={{ marginTop: 18 }}>
         <a
           href={compliancePdfUrl(organizationId)}
           download
-          className="cust-button"
-          style={{ display: "inline-flex", alignItems: "center", gap: 6, textDecoration: "none", flexShrink: 0 }}
+          style={{ fontSize: 13, color: "#403D88", display: "inline-flex", alignItems: "center", gap: 6, textDecoration: "none", fontWeight: 600 }}
         >
-          <Download size={15} /> Download PDF
+          <Download size={14} /> Download Buyer Compliance Report
         </a>
       </div>
     </div>
@@ -420,7 +474,7 @@ function NeedlesTab({ data }: { data: { months: AnalyticsNeedleMonth[]; last5Avg
           {data.months.map((m, i) => {
             const isCurrent = i === 5;
             const barH = maxQty > 0 ? Math.max(4, Math.round((m.quantity / maxQty) * 100)) : 4;
-            const color = isCurrent && data.isAnomaly ? "#dc2626" : isCurrent ? "#2563eb" : "#93c5fd";
+            const color = isCurrent && data.isAnomaly ? "#dc2626" : isCurrent ? "#403D88" : "#AF719D";
             return (
               <div key={m.month} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                 <div style={{ fontSize: 10, color: "#6b7280" }}>{m.quantity > 0 ? m.quantity.toLocaleString() : ""}</div>
@@ -531,8 +585,8 @@ export default function InsightsPage({ user, onNavigate }: { user: CustomerUser;
               cursor: "pointer",
               fontSize: 14,
               fontWeight: tab === t.key ? 700 : 400,
-              color: tab === t.key ? "#1d4ed8" : "#6b7280",
-              borderBottom: `2px solid ${tab === t.key ? "#1d4ed8" : "transparent"}`,
+              color: tab === t.key ? "#403D88" : "#6b7280",
+              borderBottom: `2px solid ${tab === t.key ? "#403D88" : "transparent"}`,
               marginBottom: -2,
               transition: "all 0.15s",
             }}
@@ -542,7 +596,7 @@ export default function InsightsPage({ user, onNavigate }: { user: CustomerUser;
         ))}
       </div>
 
-      {tab === "overview" && <OverviewTab overview={overview} organizationId={user.organizationId} onNavigate={onNavigate} />}
+      {tab === "overview" && <OverviewTab overview={overview} fleet={fleet} organizationId={user.organizationId} onNavigate={onNavigate} />}
       {tab === "fleet" && <FleetTab fleet={fleet} organizationId={user.organizationId} />}
       {tab === "needles" && <NeedlesTab data={needles} />}
     </div>

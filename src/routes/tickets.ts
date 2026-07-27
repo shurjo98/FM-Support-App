@@ -85,12 +85,13 @@ router.get("/:ticketId", async (req, res) => {
 // create a ticket with AI suggestion + caching + credit usage
 router.post("/", async (req, res) => {
   try {
-    const { serialNumber, createdByUserId, issueType, description, lang } = req.body as {
+    const { serialNumber, createdByUserId, issueType, description, lang, rootCause } = req.body as {
       serialNumber?: string;
       createdByUserId: string;
       issueType: IssueType;
       description: string;
       lang?: SuggestionLang;
+      rootCause?: string[];
     };
 
     const user = await prisma.user.findUnique({ where: { id: createdByUserId } });
@@ -172,6 +173,7 @@ router.post("/", async (req, res) => {
         status: "OPEN",
         technicianId: null,
         technicianNotes: [],
+        rootCause: Array.isArray(rootCause) ? rootCause.filter((w) => w.trim()) : [],
         events: { create: [mkEventData("RAISED", `Issue raised by ${user.name} on ${serialNumber}`, user.name)] },
       },
       include: ticketInclude,
