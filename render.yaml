@@ -25,12 +25,15 @@ services:
       # actual connection string in the Render dashboard, not here.
       - key: DATABASE_URL
         sync: false
-      # AI is switched off for now — ticket suggestions already use canned
-      # responses, and the portal search bar falls back to local keyword
-      # routing (see src/services/openai.ts). Add OPENAI_API_KEY here and
-      # flip this to "false" once a real/trained model is ready.
-      - key: OPENAI_DEMO_MODE
-        value: "true"
+      # Claude (Anthropic) powers ticket diagnosis + portal search, on top of
+      # the local machine-manual knowledge base (see src/services/claude.ts).
+      # Set the actual key in the Render dashboard, not here — it's a secret.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: CLAUDE_DEMO_MODE
+        value: "false"
+      - key: CLAUDE_MAX_MONTHLY_USD
+        value: "20.00"
       - key: PORT
         value: "4000"
       # Web Push (mobile/desktop notifications). Generate with:

@@ -3,9 +3,11 @@ import {
   createOrganization,
   fetchOrganizations,
   updateOrganization,
+  fetchMachines,
+  assignMachineToFactory,
   UnauthorizedError,
 } from "../api";
-import type { FactoryAccount, InternalAccountLite } from "../types";
+import type { FactoryAccount, InternalAccountLite, Machine } from "../types";
 import { REGIONS } from "../types";
 import { canManageTasks } from "../permissions";
 
@@ -22,6 +24,7 @@ export default function FactoriesPage({
   const [error, setError] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<FactoryAccount | null>(null);
+  const [managingMachines, setManagingMachines] = useState<FactoryAccount | null>(null);
 
   const canManage = canManageTasks(actingAccount);
 
@@ -68,6 +71,9 @@ export default function FactoriesPage({
               </span>
               {canManage && (
                 <div className="team-roster-actions">
+                  <button className="int-button-secondary" onClick={() => setManagingMachines(f)}>
+                    Manage machines
+                  </button>
                   <button className="int-button-secondary" onClick={() => setEditing(f)}>
                     Edit
                   </button>
@@ -100,6 +106,14 @@ export default function FactoriesPage({
             setFactories((prev) => prev.map((f) => (f.id === factory.id ? factory : f)));
             setEditing(null);
           }}
+        />
+      )}
+
+      {managingMachines && (
+        <FactoryMachinesModal
+          token={token}
+          factory={managingMachines}
+          onClose={() => setManagingMachines(null)}
         />
       )}
     </div>
@@ -218,6 +232,137 @@ function FactoryModal({
           <button className="int-button" onClick={handleSubmit} disabled={submitting || !name.trim()}>
             {submitting ? "Saving..." : isEdit ? "Save changes" : "Add factory"}
           </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Lets staff attach a real FM catalog machine (photo + manual-backed
+// troubleshooting already loaded) to this factory under a real serial
+// number — this is what makes a freshly onboarded client's Sewing/Automated
+// Machines pages show anything at all, instead of just the customer's own
+// "My Equipment" (other-brand) registrations.
+function FactoryMachinesModal({
+  token,
+  factory,
+  onClose,
+}: {
+  token: string;
+  factory: FactoryAccount;
+  onClose: () => void;
+}) {
+  const [machines, setMachines] = useState<Machine[]>([]);
+  const [machineId, setMachineId] = useState("");
+  const [serialNumber, setSerialNumber] = useState("");
+  const [location, setLocation] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [justAdded, setJustAdded] = useState<{ model: string; serialNumber: string }[]>([]);
+
+  useEffect(() => {
+    fetchMachines()
+      .then((rows) => {
+        setMachines(rows);
+        setMachineId(rows.length > 0 ? rows[0].id : "");
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : "Failed to load machine catalog"));
+  }, []);
+
+  const sewing = machines.filter((m) => m.productLine === "SEWING");
+  const automated = machines.filter((m) => m.productLine === "AUTOMATED");
+
+  async function handleAdd() {
+    if (!machineId || !serialNumber.trim()) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      await assignMachineToFactory(token, machineId, {
+        organizationId: factory.id,
+        serialNumber: serialNumber.trim(),
+        ...(location.trim() ? { location: location.trim() } : {}),
+      });
+      const model = machines.find((m) => m.id === machineId)?.model ?? machineId;
+      setJustAdded((prev) => [...prev, { model, serialNumber: serialNumber.trim() }]);
+      setSerialNumber("");
+      setLocation("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to assign machine");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <div className="int-modal-overlay" onClick={onClose}>
+      <div className="int-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="int-modal-close" onClick={onClose}>
+          ✕
+        </button>
+        <h2 className="int-modal-title">Manage machines — {factory.name}</h2>
+        <div className="int-modal-fields">
+          <label>
+            Machine model
+            <select value={machineId} onChange={(e) => setMachineId(e.target.value)}>
+              {sewing.length > 0 && (
+                <optgroup label="Sewing Machines">
+                  {sewing.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.model} — {m.name}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+              {automated.length > 0 && (
+                <optgroup label="Automated Machines">
+                  {automated.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.model} — {m.name}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+            </select>
+          </label>
+
+          <label>
+            Serial number
+            <input
+              type="text"
+              value={serialNumber}
+              onChange={(e) => setSerialNumber(e.target.value)}
+              placeholder="e.g. SHG-A-001"
+            />
+          </label>
+
+          <label>
+            Location (optional)
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="e.g. Line A"
+            />
+          </label>
+
+          {error && <div className="login-error">{error}</div>}
+
+          <button className="int-button" onClick={handleAdd} disabled={submitting || !machineId || !serialNumber.trim()}>
+            {submitting ? "Adding..." : "+ Add machine"}
+          </button>
+
+          {justAdded.length > 0 && (
+            <div className="team-roster-list" style={{ marginTop: 12 }}>
+              {justAdded.map((a, i) => (
+                <div key={i} className="team-roster-row">
+                  <div className="team-roster-name">
+                    {a.model}
+                    <div className="team-roster-skills">{a.serialNumber}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

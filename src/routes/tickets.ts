@@ -317,8 +317,7 @@ router.post("/:ticketId/comments", async (req, res) => {
 });
 
 // POST /tickets/:ticketId/attachments -> upload a photo/video of the defect.
-// Raw file bytes in the body, Content-Type set to the file's mime type
-// (same pattern as /ai/transcribe).
+// Raw file bytes in the body, Content-Type set to the file's mime type.
 router.post(
   "/:ticketId/attachments",
   express.raw({ type: Object.keys(ATTACHMENT_MIME_KIND), limit: "20mb" }),

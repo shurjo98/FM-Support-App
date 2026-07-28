@@ -30,9 +30,6 @@ export default function SettingsPage({
           {t("settings.switchAccount")}
         </button>
       </div>
-      <p className="cust-empty" style={{ marginTop: 14 }}>
-        {t("settings.demoNotice")}
-      </p>
     </div>
   );
 }

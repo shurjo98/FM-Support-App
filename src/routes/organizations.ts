@@ -76,9 +76,11 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ error: `region must be one of: ${REGIONS.join(", ")}` });
   }
 
+  const orgId = `org-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
   const created = await prisma.organization.create({
     data: {
-      id: `org-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      id: orgId,
       name: name.trim(),
       location: location?.trim() || null,
       region: region || null,
@@ -90,6 +92,20 @@ router.post("/", async (req, res) => {
       notes: notes?.trim() || null,
     },
     select: ORG_SELECT,
+  });
+
+  // A factory needs an IE (Industrial Engineer) user before portal login can
+  // resolve to anyone — POST /portal/login 404s otherwise. Without this, a
+  // factory created here looked fine in the admin list but was silently
+  // broken to log into until someone noticed and seeded a User by hand.
+  await prisma.user.create({
+    data: {
+      id: `user-ie-${orgId}`,
+      name: contactPerson?.trim() || `${name.trim()} Team`,
+      organizationId: orgId,
+      role: "IE",
+      aiCredits: 50,
+    },
   });
 
   res.status(201).json(toPublic(created));

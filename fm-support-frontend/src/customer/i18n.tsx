@@ -175,10 +175,6 @@ const dict = {
   "settings.switchAccount": { en: "Switch account", bn: "অ্যাকাউন্ট পরিবর্তন করুন" },
   "settings.language": { en: "Language", bn: "ভাষা" },
   "role.ie": { en: "Industrial Engineer (IE)", bn: "Industrial Engineer (IE)" },
-  "settings.demoNotice": {
-    en: "Real customer login isn't enabled yet — you're using the account picker as a stand-in while we test the dashboard.",
-    bn: "এখনো প্রকৃত কাস্টমার লগইন চালু করা হয়নি — ড্যাশবোর্ড পরীক্ষা করার সময় আপনি অ্যাকাউন্ট পিকার ব্যবহার করছেন।",
-  },
 
   "search.placeholder": {
     en: "Ask anything — \"I need needles\", \"why does my machine skip stitches?\"...",

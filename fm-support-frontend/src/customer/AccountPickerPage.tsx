@@ -6,6 +6,7 @@ import { useLang } from "./i18n";
 export default function AccountPickerPage({ onPick }: { onPick: (user: CustomerUser) => void }) {
   const { t, lang, setLang } = useLang();
   const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -14,7 +15,7 @@ export default function AccountPickerPage({ onPick }: { onPick: (user: CustomerU
     setLoginError(null);
     setLoading(true);
     try {
-      const user = await portalLogin(userId.trim());
+      const user = await portalLogin(userId.trim(), password);
       onPick(user);
     } catch (err) {
       setLoginError(err instanceof Error ? err.message : "Login failed");
@@ -50,12 +51,23 @@ export default function AccountPickerPage({ onPick }: { onPick: (user: CustomerU
           />
         </label>
 
+        <label>
+          Password
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            disabled={loading}
+          />
+        </label>
+
         {loginError && <div className="cust-error">{loginError}</div>}
 
         <button
           type="submit"
           className="cust-button"
-          disabled={loading || !userId.trim()}
+          disabled={loading || !userId.trim() || !password}
           style={{ width: "100%" }}
         >
           {loading ? "Signing in..." : "Sign in"}

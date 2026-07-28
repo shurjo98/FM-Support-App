@@ -296,6 +296,18 @@ export async function fetchMachineInstances(machineId: string, organizationId: s
   return res.json();
 }
 
+// Internal-staff-only: attach a real catalog machine (a specific Jack model)
+// to a client factory under a real serial number. See the backend route
+// comment in src/routes/machines.ts for why this exists separately from
+// registerCustomMachine below (customer-facing "My Equipment").
+export function assignMachineToFactory(
+  token: string,
+  machineId: string,
+  payload: { organizationId: string; serialNumber: string; location?: string; serviceIntervalMonths?: number }
+): Promise<EquipmentItem> {
+  return authedMutate<EquipmentItem>(`/machines/${encodeURIComponent(machineId)}/instances`, token, "POST", payload);
+}
+
 export async function fetchMyEquipment(organizationId: string): Promise<EquipmentItem[]> {
   const res = await fetch(`/machines/instances?organizationId=${encodeURIComponent(organizationId)}`);
   if (!res.ok) throw new Error(`Failed to load equipment list (${res.status})`);
@@ -361,11 +373,11 @@ export async function fetchCustomerUsers(): Promise<CustomerUser[]> {
 
 // ─── Portal auth ─────────────────────────────────────────────────────────────
 
-export async function portalLogin(userId: string): Promise<CustomerUser> {
+export async function portalLogin(userId: string, password: string): Promise<CustomerUser> {
   const res = await fetch("/portal/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId }),
+    body: JSON.stringify({ userId, password }),
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(body.error ?? `Login failed (${res.status})`);

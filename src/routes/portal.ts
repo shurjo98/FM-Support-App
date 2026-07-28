@@ -3,30 +3,21 @@ import { prisma } from "../db";
 
 const router = Router();
 
-// TEMPORARY diagnostic route — remove after debugging the production
-// "FM"/"1111" login issue. Never exposes portalPassword values, only
-// whether a portalUserId is set and what it equals.
-router.get("/debug-orgs", async (_req, res) => {
-  const orgs = await prisma.organization.findMany({
-    select: { id: true, name: true, portalUserId: true },
-  });
-  const [conn] = await prisma.$queryRaw<{ db: string; addr: string; port: number }[]>`
-    SELECT current_database() as db, inet_server_addr()::text as addr, inet_server_port() as port
-  `;
-  res.json({ connectedTo: conn, count: orgs.length, orgs });
-});
-
-// POST /portal/login — { userId } → CustomerUser
-// Password check removed for the pilot (see settings.demoNotice in the
-// frontend — this was always a stand-in account picker, not real customer
-// auth). portalPassword stays in the schema/admin UI for later re-enabling.
+// POST /portal/login — { userId, password } → CustomerUser
 router.post("/login", async (req, res) => {
-  const { userId } = req.body as { userId?: string };
+  const { userId, password } = req.body as { userId?: string; password?: string };
   if (!userId) return res.status(400).json({ error: "userId required" });
 
   const org = await prisma.organization.findFirst({ where: { portalUserId: userId } });
   if (!org) {
     return res.status(401).json({ error: "Unknown user ID" });
+  }
+
+  // An org with no portalPassword set has portal login intentionally
+  // disabled for it (e.g. never onboarded) — never let a blank password
+  // field through in that case.
+  if (!org.portalPassword || password !== org.portalPassword) {
+    return res.status(401).json({ error: "Incorrect password" });
   }
 
   const ie = await prisma.user.findFirst({
