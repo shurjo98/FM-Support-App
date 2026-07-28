@@ -1,0 +1,190 @@
+{
+  "model": "W4-D",
+  "manufacturer": "Jack Sewing Machine Co., Ltd.",
+  "controllerType": "W4-D Electronic Control Box (2-digit 7-segment LED display, K4 interlock panel)",
+  "type": "K4 Interlock sewing machine electronic control box",
+  "note": "W4-D uses the same controller panel as K4-D. All error codes, parameters, and monitoring values are identical to K4-D. The W4-D name refers to the machine model — the controller panel operation follows 'K4 Interlock sewing machine panel operation' as stated in the manual subtitle.",
+  "specs": {
+    "display": "2-digit 7-segment LED digital tube ('P' + needle position indicator)",
+    "interface": "▲ (up/increase) and ▼ (down/decrease) buttons",
+    "factoryResetMethod": "Long press ▼ for 3 seconds in P interface (J4, J5, and J6 monitoring data excepted from reset)",
+    "engineerAccess": "Long press ▲ and ▼ together for 3 seconds in P interface — enters engineer interface, displays 'F'"
+  },
+  "errorCodes": [
+    {
+      "code": "E1",
+      "display": "E1",
+      "cause": "Motor stuck (电机堵转) — motor run out of load capacity, motor plug loose or dropped off, sewing material too heavy, machine lacks lubrication",
+      "solution": "Reduce the load capacity for the motor and restart. Check if plug of motor is loose or has dropped off. Check if the sewing material is too heavy. Check if the machine needs lubrication.",
+      "severity": "high"
+    },
+    {
+      "code": "E2",
+      "display": "E2",
+      "cause": "Software over-current (软件过流) — motor load too large",
+      "solution": "Turn off power and power on again. If alarm cannot be eliminated: motor used too much — restart machine after several minutes, then check if fabric is much too heavy.",
+      "severity": "high"
+    },
+    {
+      "code": "E3",
+      "display": "E3",
+      "cause": "Parameter save abnormal (参数保存异常) — parameter storage failure",
+      "solution": "Turn off power and power on again after a moment. If problem persists: restore factory defaults (long press ▼ for 3 seconds). If problem unsolved, contact dealers.",
+      "severity": "medium"
+    },
+    {
+      "code": "E4",
+      "display": "E4",
+      "cause": "Hall signal of motor abnormal (电机霍尔信号异常) — motor encoder plug unreliable, encoder signal wire broken, pin exited or deformed",
+      "solution": "Check if the 10-core line connects well. Check if the connect line of Hall sensor is well or not.",
+      "severity": "high"
+    },
+    {
+      "code": "E5",
+      "display": "E5",
+      "cause": "Synchronizer signal abnormal (定位器信号异常) — synchronizer cable not inserted before powering on, or upper/lower needle position signals not working",
+      "solution": "Check that the synchronizer cable is connected to the controller before turning on. Check both up needle position signal and down needle position signal are working.",
+      "severity": "high"
+    },
+    {
+      "code": "E6",
+      "display": "E6",
+      "cause": "Speed governor abnormal (调速器异常) — presser foot not returned to correct position, safety switch button damaged, or outlet/plug abnormal",
+      "solution": "Check if the presser foot is back to the correct position. Check if the safety switch button is damaged. Check if the outlet/plug is normal.",
+      "severity": "high"
+    },
+    {
+      "code": "E7",
+      "display": "E7",
+      "cause": "Current detection circuit fault (电流检测电路故障) — circuit board dirty, power supply voltage abnormal, or power board functions abnormal",
+      "solution": "Check whether the circuit board is clean. Check whether the power voltage is normal. Wait for power to be restarted/reset (carefully check each function of the power board).",
+      "severity": "high"
+    },
+    {
+      "code": "EA",
+      "display": "EA",
+      "cause": "Hardware over-current (硬件过流)",
+      "solution": "Switch off the power and restart. Check whether the supply voltage is normal. Try to restore factory defaults.",
+      "severity": "critical"
+    },
+    {
+      "code": "Eb",
+      "display": "Eb",
+      "cause": "System over-voltage (系统过电压) — supply voltage too high",
+      "solution": "Immediately switch off the power. Check whether the supply voltage is too high. If yes, adjust the rated voltage, then start to work (rated voltage: 220V).",
+      "severity": "critical"
+    },
+    {
+      "code": "EC",
+      "display": "EC",
+      "cause": "System under-voltage (系统欠电压) — voltage abnormal or too low",
+      "solution": "Check if the voltage is normal. Wait for power to be restarted/reset (carefully check each function of the power board). Alternatively recover factory reset.",
+      "severity": "critical"
+    },
+    {
+      "code": "Ed",
+      "display": "Ed",
+      "cause": "Brake resistor protection (刹车电阻保护) — brake resistor plug loose or dropped off, supply voltage abnormal",
+      "solution": "Check whether the plug of brake resistor is loose or has dropped off. Check whether the supply voltage is normal. Try to restore factory defaults or restart.",
+      "severity": "high"
+    }
+  ],
+  "alarmCodes": [],
+  "parameters": [
+    {
+      "id": "K",
+      "name": "LED light adjustment",
+      "range": "0-3",
+      "default": 2,
+      "values": { "0": "Off", "1": "Level 1", "2": "Level 2", "3": "Level 3" },
+      "note": "Machine head LED brightness control"
+    },
+    {
+      "id": "L",
+      "name": "Speed limitation",
+      "range": "05-55",
+      "default": 50,
+      "unit": "×100 RPM",
+      "note": "Decrease by 500RPM every step. Value 50 = 5000 RPM maximum."
+    },
+    {
+      "id": "M",
+      "name": "Needle position function",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off", "1": "On" }
+    },
+    {
+      "id": "H",
+      "name": "Dormancy time",
+      "range": "0-6",
+      "default": 3,
+      "unit": "×10 minutes",
+      "note": "0 = Off (no sleep)"
+    },
+    {
+      "id": "V",
+      "name": "Speed display",
+      "range": "0-1",
+      "default": 0,
+      "values": { "0": "Off", "1": "On" }
+    }
+  ],
+  "monitoring": [
+    { "id": "J1", "name": "Real-time speed", "note": "Displayed number × 100 = actual speed (RPM)" },
+    { "id": "J2", "name": "Real-time power", "note": "Displayed number × 10 = actual power (W)" },
+    { "id": "J3", "name": "Input voltage", "note": "Displayed number × 10 = actual voltage (V)" },
+    { "id": "J4", "name": "Historical voltage", "note": "Displays historical lowest and highest input voltage. Not reset by factory reset." },
+    { "id": "J5", "name": "Historical error code", "note": "Shows latest 5 historical error codes. Not reset by factory reset." },
+    { "id": "J6", "name": "Cumulative running time", "note": "Chinese text: ×100 = hours; English text: ×10 = hours (manual discrepancy). Not reset by factory reset." }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "E3 parameter save error on W4-D interlock machine",
+      "checks": [
+        "Turn off power completely, wait a moment, then power on again",
+        "If error persists, perform factory reset: long press ▼ for 3 seconds in P interface",
+        "Note: J4, J5, J6 monitoring data will NOT be reset by factory reset",
+        "If still unresolved, contact Jack dealer or service agent"
+      ]
+    },
+    {
+      "symptom": "E5 synchronizer signal error on W4-D",
+      "checks": [
+        "Check that the synchronizer/positioner cable is inserted into the control box before powering on",
+        "Check both up and down needle position signals by slowly rotating the hand wheel",
+        "Verify the synchronizer disc is clean and not damaged",
+        "Inspect the synchronizer sensor gap and alignment"
+      ]
+    },
+    {
+      "symptom": "Ed brake resistor protection error on W4-D",
+      "checks": [
+        "Check whether the brake resistor plug is firmly connected and not loose",
+        "Inspect the brake resistor wire for damage",
+        "Check supply voltage is within normal range (220V ±10%)",
+        "Try factory reset (long press ▼ for 3 seconds) or restart",
+        "The brake resistor dissipates energy when motor decelerates — check it is not overheated or burned"
+      ]
+    },
+    {
+      "symptom": "E6 speed governor error on W4-D interlock machine",
+      "checks": [
+        "Check that the presser foot has returned to its correct home position",
+        "Inspect the presser foot safety switch — press it and check if it clicks normally",
+        "Check the connection plug at the control box for the speed governor/pedal",
+        "If safety switch is damaged, the machine will give E6 alarm — replace if necessary"
+      ]
+    },
+    {
+      "symptom": "EA hardware overcurrent on W4-D",
+      "checks": [
+        "Switch off power immediately",
+        "Check supply voltage is within 220V ±20% range",
+        "Wait at least 30 seconds before restarting",
+        "After restart if error returns, perform factory reset (long press ▼ for 3 seconds)",
+        "If error persists, contact service — may indicate a controller hardware fault"
+      ]
+    }
+  ]
+}

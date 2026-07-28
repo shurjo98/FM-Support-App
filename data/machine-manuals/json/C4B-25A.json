@@ -1,0 +1,298 @@
+{
+  "model": "C4B-25A",
+  "manufacturer": "Jack",
+  "controllerType": "JK-EC4B-25A Integrated Control Box (V1.1, 2022-01-06)",
+  "type": "Overlock / serger sewing machine (包缝机) integrated controller",
+  "source": "C4B-25A包缝机说明书-(中英文).pdf (JK-EC4B-25A Integrated Control Box Instructions V1.1, 18 pages, bilingual Chinese/English)",
+  "note": "The JK-EC4B-25A is a 9-button + 4-digit LED display controller for overlock/serger machines. Features three optical sensors (front, rear, anti-cutting-cloth) for automatic thread trimming. Sewing modes: B=Semi-automatic, BA=Semi-automatic thin/mesh fabric, BS=Semi-automatic big-hole fabric, C=Full computer mode. The 1st digit on display shows working mode (B/C), 4th digit scrolls marquee.",
+  "specs": {
+    "display": "4-digit 7-segment LED display",
+    "sensors": 3,
+    "sensorTypes": ["Front sensor (前传感器)", "Rear sensor (后传感器)", "Anti-cutting-cloth sensor (防切布传感器)"],
+    "sewingModes": ["B=Semi-automatic", "BA=Semi-auto thin fabric/mesh", "BS=Semi-auto big hole fabric", "C=Full computer manual"],
+    "startupDisplay": "All 4 tubes and 5 indicator lights on → chip version Vx.xx → standby interface"
+  },
+  "panel": {
+    "type": "9-button panel with 4-digit LED and 5 indicator lights",
+    "indicators": [
+      "Front sensor indication (前传感器指示)",
+      "Rear sensor indication (后传感器指示)",
+      "Anti-cutting-cloth sensor indication (防切布传感器指示)",
+      "Thread trimming mode indicator",
+      "Presser foot lift mode indicator"
+    ],
+    "buttons": [
+      {
+        "id": 1,
+        "name": "P — Parameter entry/confirm key",
+        "functions": [
+          "Long press: enter user parameter adjustment mode",
+          "Short press: confirm parameter or return to standby"
+        ]
+      },
+      {
+        "id": 2,
+        "name": "+ (Speed add / parameter increment)",
+        "functions": [
+          "Short press in standby: quick increase max speed (100 RPM per press)",
+          "Short/Long press in param mode: increase parameter value"
+        ]
+      },
+      {
+        "id": 3,
+        "name": "- (Speed reduce / parameter decrement)",
+        "functions": [
+          "Short press in standby: quick decrease max speed (100 RPM per press)",
+          "Short/Long press in param mode: decrease parameter value"
+        ]
+      },
+      {
+        "id": 4,
+        "name": "LED /> key (right page / LED brightness)",
+        "functions": [
+          "Short press in standby: cycle LED brightness L0→L1→L2→L3 (off, level 1, 2, 3); auto-saved",
+          "Short press in parameter mode: page to next parameter (increasing direction)"
+        ]
+      },
+      {
+        "id": 5,
+        "name": "Mesh /< key (fabric type select / left page)",
+        "functions": [
+          "Long press 2s: enter fabric selection — shows current type (B0=normal, A=thin/mesh, S=big hole); short press to switch; short press P to save",
+          "Short press in parameter mode: page to previous parameter (decreasing direction)"
+        ]
+      },
+      {
+        "id": 6,
+        "name": "Reset button",
+        "functions": [
+          "Long press 2s: restore user-defined parameters (display flashes all, then shows OK)",
+          "Long press Mesh+LED both 2s: restore factory settings"
+        ]
+      },
+      {
+        "id": 7,
+        "name": "Presser foot lift button",
+        "functions": [
+          "Short press: cycle presser foot modes: front lift before sewing → rear lift after sewing → front+rear → closed → ...",
+          "Long press: enter fabric recognition mode (material detection)"
+        ]
+      },
+      {
+        "id": 8,
+        "name": "Thread trimming / scissors button",
+        "functions": [
+          "Short press: cycle trimmer mode: no trim(0) → front trim before sewing(1) → rear trim after sewing(2) → front+rear(3) → ...",
+          "Long press 2s: unlock panel (when P62=1 locked, all buttons except this one are locked)"
+        ]
+      },
+      {
+        "id": 9,
+        "name": "Sensor button",
+        "functions": [
+          "Short press: sensor emit strength parameter quick adjustment",
+          "Long press 1s: sensor auto-calibration mode (auto-adjust sensor PWM); shows OK on success, A-01/A-04 on failure"
+        ]
+      }
+    ]
+  },
+  "parameterEntry": {
+    "userParams": {
+      "range": "P-01 to P-25",
+      "access": "Long press P → user parameter interface. Navigate with </> (Mesh/LED buttons) or short/long press. Press +/- to change value. Short press P to save (shows OK). No button action within 5s → auto-return to standby."
+    },
+    "technicianParams": {
+      "range": "P-26 to P-74",
+      "access": "Long press P + Presser foot lift button simultaneously → technician parameter interface. Navigate and adjust same as user params."
+    },
+    "systemParams": {
+      "range": "P-75 to P-125",
+      "access": "Long press P + '+' button simultaneously for 1s+ → password interface (shows 000_) → enter password → navigate and adjust. Short press P to save."
+    },
+    "monitoring": {
+      "access": "Long press P + LED button simultaneously → monitoring interface. Navigate with </> or LED. Short press P to view value. Press any button except Reset to exit, or short press P at M-00 to return to standby."
+    },
+    "speedAdjust": "Short press +/- in standby: adjusts max speed (P-01) ±100 RPM per press with auto-save.",
+    "sewingModeSwitch": "Short press trimmer key to cycle mode; when trimmer mode=0 (off) both indicators off, system auto-links to full computer C mode. When trimmer mode=1/2/3, system auto-links to semi-automatic B mode.",
+    "modeSwitch": "P5=0 = Full computer C mode; P5=1 = Semi-automatic B mode.",
+    "buttonLock": "P62=1: all buttons except trimmer locked; long press trimmer 2s to unlock (P62 auto-clears to 0, shows UL). When unlocked: long press trimmer 2s to force reset piece count (shows CLC).",
+    "fabricRecognition": {
+      "steps": [
+        "Long press Mesh button to confirm fabric type (normal/mesh/big hole fabric)",
+        "Long press Presser foot button to start fabric recognition",
+        "Display shows F, put fabric in (must block all 3 sensors)",
+        "Decimal point flashes: fabric inserted successfully, keep still",
+        "Display shows OK: recognition successful. Display shows Er: failure."
+      ]
+    },
+    "sensorAutoCalibration": "Long press Sensor button 1s → sensor PWM auto-adjust mode. Shows OK if successful, shows A-01/A-02/A-03/A-04 on failure.",
+    "antiCuttingClothShortcut": "Long press P + Sensor button for 3s: toggle anti-cutting cloth sensor on/off.",
+    "customUserParams": "Adjust parameters as needed, then set P21=1. System saves current params as user-defined custom params (shows OK).",
+    "sleepMode": "P55=2: force system into sleep mode. In sleep, machine light off, display shows OFF, last decimal point flickers. Short press any button to exit sleep.",
+    "agingMode": {
+      "modeA": "Motor+solenoid running. P55=1, press pedal at middle. System enters aging A mode.",
+      "modeB": "Solenoid running only. P56=1. System first runs hardware detection (motor turns to different positions, shows LP...), then OK, then aging B mode.",
+      "display": "Shows LH01 format: alternates running time (minutes) and running time (hours) every 2s.",
+      "exit": "Short press P to exit aging mode."
+    },
+    "errorOneKeyClear": "When error shown, short press P to clear error and re-detect. If no error, alarm clears. If error persists, alarm continues. Works for E4, E5, E6, E9; E9 auto-recovers when pedal is normal."
+  },
+  "parameters": [
+    {"code": "P-01", "name": "Max rotate speed", "default": 6000, "unit": "rpm", "range": "500-L", "description": "L is the value set for P-77 parameter", "level": "user"},
+    {"code": "P-02", "name": "Stop needle position", "default": 1, "range": "0-3", "description": "0=off (no needle position stop); 1=up needle position; 2=down needle position; 3=down needle (auto find up position on trailing step)", "level": "user"},
+    {"code": "P-03", "name": "Start sewing speed", "default": 5500, "unit": "rpm", "range": "500-L", "level": "user"},
+    {"code": "P-05", "name": "Sewing mode selection", "default": 1, "range": "0-1", "description": "0=full computer (manual) C mode; 1=semi-automatic B mode", "level": "user"},
+    {"code": "P-07", "name": "Auto trimming", "default": 3, "range": "0-3", "description": "0=off; 1=front trimmer before sewing; 2=trimmer after sewing; 3=trimmer both before and after sewing", "level": "user"},
+    {"code": "P-09", "name": "Counter pedal trimmer", "default": 1, "range": "0-1", "description": "0=off; 1=on", "level": "user"},
+    {"code": "P-10", "name": "Auto press foot lifter", "default": 0, "range": "0-3", "description": "0=off; 1=front lifter before sewing; 2=rear lifter after sewing; 3=front and back lifter, closed", "level": "user"},
+    {"code": "P-11", "name": "Press foot lifter when sewing stops", "default": 0, "range": "0-1", "description": "0=off; 1=presser foot lifter", "level": "user"},
+    {"code": "P-12", "name": "Press foot lifter after trimming", "default": 0, "range": "0-1", "description": "0=off; 1=presser foot lifter", "level": "user"},
+    {"code": "P-13", "name": "Semi-counter presser foot lifter", "default": 1, "range": "0-1", "description": "0=off; 1=semi-counter or reverse presser foot lifter", "level": "user"},
+    {"code": "P-15", "name": "Head lamp switch", "default": 1, "range": "0-3", "description": "0=off; 1-3=on (brightness levels)", "level": "user"},
+    {"code": "P-16", "name": "Dormancy function", "default": 1, "range": "0-1", "description": "0=off; 1=on", "level": "user"},
+    {"code": "P-17", "name": "Semi-automatic constant rate trimming", "default": 2, "range": "0-2", "description": "0=off; 1=front step continuous sewing; 2=constant sewing and ignore the front sensor switch", "level": "user"},
+    {"code": "P-18", "name": "Semi-automatic constant rate trimming (speed fix)", "default": 1, "range": "0-1", "description": "0=off; 1=fix the machine speed when front thread trimmer activates", "level": "user"},
+    {"code": "P-19", "name": "Under voltage alarm when machine stop", "default": 0, "range": "0-1", "description": "0=off; 1=on", "level": "user"},
+    {"code": "P-20", "name": "Over voltage alarm running when machine stop", "default": 1, "range": "0-1", "description": "0=off; 1=on", "level": "user"},
+    {"code": "P-21", "name": "User common parameters (custom save)", "default": 0, "range": "0-1", "description": "0=no operation; 1=saving current parameters into user common parameters (shows OK)", "level": "user"},
+    {"code": "P-22", "name": "Front sensor switch", "default": 1, "range": "0-1", "description": "0=off; 1=on", "level": "user"},
+    {"code": "P-25", "name": "Back sensor switch", "default": 1, "range": "0-1", "description": "0=off; 1=on", "level": "user"},
+    {"code": "P-26", "name": "Stitch number between front and back sensor", "default": 100, "unit": "needle", "range": "1-250", "level": "technician"},
+    {"code": "P-27", "name": "Delay stitches number of trimmer before sewing (front trimmer)", "default": 2, "unit": "needle", "range": "0-10", "description": "The bigger the value, the shorter the thread length after cut", "level": "technician"},
+    {"code": "P-28", "name": "Delay stitches number of anti-cutting the cloth (rear trimmer)", "default": 8, "unit": "needle", "range": "0-50", "description": "The smaller the value, the shorter the thread length on the cloth. P32=0 activates this parameter.", "level": "technician"},
+    {"code": "P-32", "name": "Sensor for anti-cutting the cloth switch", "default": 1, "range": "0-1", "description": "0=off; 1=on", "level": "technician"},
+    {"code": "P-33", "name": "Sensitivity of sensor for anti-cutting the cloth", "default": 330, "unit": "0.1V", "range": "200-400", "level": "technician"},
+    {"code": "P-34", "name": "Stitch number between back sensor and anti-cutting cloth sensor", "default": 99, "unit": "needle", "range": "1-200", "description": "Smaller value = shorter thread length after cut", "level": "technician"},
+    {"code": "P-35", "name": "Delay stitch number when stop sewing", "default": 0, "unit": "needle", "range": "1-90", "level": "technician"},
+    {"code": "P-37", "name": "Sensitivity of front sensor", "default": 330, "unit": "0.01V", "range": "200-400", "description": "Greater sensitivity = more translucent materials can be recognized", "level": "technician"},
+    {"code": "P-38", "name": "Sensitivity of back sensor", "default": 330, "unit": "0.01V", "range": "200-400", "description": "Greater sensitivity = more translucent materials can be recognized", "level": "technician"},
+    {"code": "P-39", "name": "Delay time before presser foot lifter", "default": 2, "unit": "100ms", "range": "1-50", "level": "technician"},
+    {"code": "P-40", "name": "Start time after presser foot lifter", "default": 0, "unit": "100ms", "range": "0-20", "level": "technician"},
+    {"code": "P-41", "name": "Full output time of presser foot", "default": 10, "unit": "10ms", "range": "1-50", "level": "technician"},
+    {"code": "P-42", "name": "Periodic signal of presser foot output (turn-on time)", "default": 15, "unit": "0.1ms", "range": "0-50", "description": "Turn-on time; total cycle period is 5ms", "level": "technician"},
+    {"code": "P-43", "name": "Time of presser foot put down", "default": 10, "unit": "10ms", "range": "1-99", "level": "technician"},
+    {"code": "P-44", "name": "Time of presser foot protection", "default": 5, "unit": "1s", "range": "1-20", "level": "technician"},
+    {"code": "P-45", "name": "Time of trimmer", "default": 30, "unit": "ms", "range": "1-100", "level": "technician"},
+    {"code": "P-47", "name": "Manual trimmer switch", "default": 1, "range": "0-1", "description": "0=off; 1=on", "level": "technician"},
+    {"code": "P-48", "name": "Automatically find up positioning", "default": 0, "range": "0-1", "description": "0=off; 1=on", "level": "technician"},
+    {"code": "P-49", "name": "Periodic signal of presser foot closed (turn-off time)", "default": 35, "unit": "0.1ms", "range": "0-50", "description": "Turn-off time; total cycle period is 5ms", "level": "technician"},
+    {"code": "P-50", "name": "Delay stitches number of trimmer after sewing (anti-cutting cloth sensor)", "default": 0, "unit": "needle", "range": "0-50", "level": "technician"},
+    {"code": "P-51", "name": "Point needle parameter", "default": 3, "range": "0-29", "level": "technician"},
+    {"code": "P-52", "name": "Speed testing", "default": 5000, "unit": "rpm", "range": "500-6000", "level": "technician"},
+    {"code": "P-53", "name": "Work time testing", "default": 3, "unit": "1s", "range": "1-60", "level": "technician"},
+    {"code": "P-54", "name": "Stop time testing", "default": 3, "unit": "1s", "range": "1-60", "level": "technician"},
+    {"code": "P-55", "name": "Testing parameter A", "default": 0, "range": "0-2", "description": "0=off; 1=on (aging A mode: motor+solenoid); 2=dormancy (force sleep)", "level": "technician"},
+    {"code": "P-56", "name": "Testing parameter B", "default": 0, "range": "0-1", "description": "0=off; 1=on (aging B mode: solenoid only)", "level": "technician"},
+    {"code": "P-57", "name": "Presser foot safety switch", "default": 0, "range": "0-1", "description": "0=off; 1=on", "level": "technician"},
+    {"code": "P-60", "name": "No stop enable before cover", "default": 1, "range": "0-1", "level": "technician"},
+    {"code": "P-61", "name": "Sleeping time", "default": 30, "unit": "minute", "range": "1-250", "level": "technician"},
+    {"code": "P-62", "name": "Panel button lock", "default": 0, "range": "0-1", "description": "0=unlock; 1=lock (all buttons except trimmer button are locked)", "level": "technician"},
+    {"code": "P-63", "name": "Slow down speed button", "default": 0, "range": "0-1", "level": "technician"},
+    {"code": "P-64", "name": "Stitch number of slow down speed", "default": 1, "range": "1-200", "level": "technician"},
+    {"code": "P-65", "name": "Speed of slowing down", "default": 3500, "unit": "rpm", "range": "500-6000", "level": "technician"},
+    {"code": "P-66", "name": "Adjusting gear of front sensor", "default": null, "range": "1-180", "description": "This parameter does NOT restore to factory settings", "level": "technician"},
+    {"code": "P-67", "name": "Adjusting gear of back sensor", "default": null, "range": "1-180", "description": "This parameter does NOT restore to factory settings", "level": "technician"},
+    {"code": "P-68", "name": "Adjusting gear of anti-cutting cloth sensor", "default": null, "range": "1-180", "description": "This parameter does NOT restore to factory settings", "level": "technician"},
+    {"code": "P-69", "name": "Unit number counting (trimming times per piece)", "default": 10, "range": "1-50", "description": "Increment piece count by 1 after this many trimming operations", "level": "technician"},
+    {"code": "P-70", "name": "Total counting setting", "default": 100, "range": "1-9999", "level": "technician"},
+    {"code": "P-71", "name": "Counting mode", "default": 0, "range": "0-5", "description": "0=off; 1=ascending cycle count; 2=descending cycle count; 3=ascending full alarm; 4=descending full alarm; 5=remove full alarm", "level": "technician"},
+    {"code": "P-72", "name": "Stitches number of constraint back trimmer", "default": 9, "range": "0-20", "description": "Adjusts back trimmer even if fabric doesn't cover anti-cutting sensor — activates after this many stitches", "level": "technician"},
+    {"code": "P-73", "name": "Factory default speed parameter (machine type preset)", "default": 0, "range": "0-3", "description": "0=four-wire model: P01=6000, P03=5500; 1=five-line model: P01=5000, P03=5000; 2=thick material model: P01=5300, P03=5000; 3=Z machine: P01=6000, P03=5500", "level": "technician"},
+    {"code": "P-74", "name": "Number of stitches for thread trimming delay (rear trim anti-cloth)", "default": 9, "range": "0-20", "level": "technician"},
+    {"code": "P-75", "name": "Connecting board function", "default": 1, "range": "0-1", "description": "0=off; 1=turn on connecting board detection function", "level": "system"},
+    {"code": "P-77", "name": "Internal speed limit L", "default": 6000, "unit": "rpm", "range": "500-7000", "description": "Upper limit for P-01 max speed", "level": "system"},
+    {"code": "P-79", "name": "Reset to factory setting", "default": 0, "range": "0-1", "description": "0=no operation; 1=restore all factory parameter settings", "level": "system"},
+    {"code": "P-80", "name": "Start-up auto calibration", "default": 1, "range": "0-1", "description": "0=off; 1=on", "level": "system"},
+    {"code": "P-89", "name": "Enable One Pin function", "default": 1, "range": "0-1", "level": "system"},
+    {"code": "P-90", "name": "Monitoring parameter search range", "default": 0, "range": "0-1", "description": "0=can check within M50 parameters; 1=can check parameters beyond M50", "level": "system"},
+    {"code": "P-91", "name": "Mesh detection delay stitch number", "default": 30, "unit": "0.1 needle", "range": "0-100", "level": "system"},
+    {"code": "P-92", "name": "Fabric detection type", "default": 0, "range": "0-2", "description": "0=normal fabric (voltage when not covered 3.65-3.85V); 1=big hole fabric (voltage 3.4-3.55V); 2=mesh fabric (voltage 3.4-3.55V)", "level": "system"},
+    {"code": "P-93", "name": "Heavy duty detection delay stitch number", "default": 0, "unit": "0.1 needle", "range": "0-100", "level": "system"},
+    {"code": "P-118", "name": "Restore capability of internal speed limit", "default": 0, "range": "0-1", "level": "system"},
+    {"code": "P-120", "name": "Min rotate speed", "default": 500, "unit": "rpm", "range": "200-500", "level": "system"},
+    {"code": "P-121", "name": "Initial position of pedal", "default": 349, "range": "0-1023", "level": "system"},
+    {"code": "P-122", "name": "Pedal low speed start position", "default": 59, "range": "0-1023", "level": "system"},
+    {"code": "P-123", "name": "Pedal starts to accelerate position", "default": 30, "range": "0-1023", "level": "system"},
+    {"code": "P-124", "name": "Pedal maximum speed position", "default": 745, "range": "0-1023", "level": "system"},
+    {"code": "P-125", "name": "Position of presser foot lifting after stepping on pedal (rear pedal)", "default": 151, "range": "0-1023", "level": "system"}
+  ],
+  "monitoring": [
+    {"code": "M-00", "description": "Exit monitoring mode"},
+    {"code": "M-01", "description": "Current sewing quantity (based on trimming times and counting unit)"},
+    {"code": "M-03", "description": "Quadrature axis current (A)"},
+    {"code": "M-04", "description": "AC input voltage (V)"},
+    {"code": "M-05", "description": "Pedal voltage sampling value (AD)"},
+    {"code": "M-06", "description": "Aging record parameters — after aging 15 minutes, M06 automatically changes to 1"},
+    {"code": "M-07", "description": "Front sensor voltage value (V)"},
+    {"code": "M-08", "description": "Middle sensor voltage value (V)"},
+    {"code": "M-09", "description": "Back sensor voltage value (V)"},
+    {"code": "M-10", "description": "Real time speed (r/min)"},
+    {"code": "M-14", "description": "Bus voltage (V)"},
+    {"code": "M-17", "description": "Sensor module software version"},
+    {"code": "M-18", "description": "Motherboard software fix version"},
+    {"code": "M-19", "description": "Motherboard software version"},
+    {"code": "M-22", "description": "Serial number high position (4 digits)"},
+    {"code": "M-23", "description": "Serial number mid position (4 digits)"},
+    {"code": "M-24", "description": "Serial number low position (3 digits)"}
+  ],
+  "errorCodes": [
+    {"code": "E-01", "description": "Motor stuck", "solution": "Check if machine head is stuck or dry/difficult to rotate. Check if fabric is too thick (insufficient torque). Check the motor and connection wires. Cannot be cleared with P key."},
+    {"code": "E-02", "description": "Software over current", "solution": "Check voltage status. Wait to restart (check power board functions carefully). Cannot be cleared with P key."},
+    {"code": "E-04", "description": "Motor Hall signal abnormal", "solution": "Check motor encoder plug connection reliability, signal wire integrity, and pin condition. Check Hall signal."},
+    {"code": "E-05", "description": "Abnormal positioning function", "solution": "Check if position part is connected to control box. Check top/down signal. Long press - (or short press P to re-detect) to clear if no error."},
+    {"code": "E-06", "description": "Presser foot safety function on", "solution": "Check if presser foot can return to original place. Short press P to re-detect."},
+    {"code": "E-09", "description": "Pedal plug not well-connected", "solution": "Check pedal and its connection signal, plugs connected to control box. E9 auto-recovers when pedal is normal."},
+    {"code": "E-10", "description": "Hardware over current", "solution": "Check voltage. Wait to restart (check power board functions carefully). Cannot be cleared with P key."},
+    {"code": "E-11", "description": "System over-voltage (static)", "solution": "Check voltage. Wait to restart (check power board carefully). Cannot be cleared with P key."},
+    {"code": "E-12", "description": "System low voltage", "solution": "Check voltage. Wait to restart (check power board functions carefully)."},
+    {"code": "E-15", "description": "Hard ware problem of drive circuit", "solution": "Check motor plug wires are well-connected. Check IGBT."},
+    {"code": "E-19", "description": "Current circuit problem", "solution": "Check if current sensor is broken."},
+    {"code": "E-26", "description": "Transition board communication problem", "solution": "Check circuit between transition board and main board."},
+    {"code": "E-28", "description": "Abnormal trimming magnet", "solution": "Check if trimming magnet (electromagnet) is damaged."},
+    {"code": "E-29", "description": "Abnormal presser foot magnet", "solution": "Check if presser foot magnet is damaged."},
+    {"code": "E-30", "description": "Abnormal speed control", "solution": "Detect Hall signal for static interference."},
+    {"code": "E-A1", "description": "Alarm: up piece count is full", "solution": "Press P key to clear data and cancel alarm."},
+    {"code": "E-A2", "description": "Alarm: down piece count is full", "solution": "Press P key to clear data and cancel alarm."}
+  ],
+  "alarmCodes": [
+    {"code": "A-01", "description": "Front sensor calibration alarm (前传感器校准警告)", "solution": "Detect / re-calibrate front sensor."},
+    {"code": "A-02", "description": "Back sensor calibration alarm (后传感器校准警告)", "solution": "Detect / re-calibrate back sensor."},
+    {"code": "A-03", "description": "Anti fabric cutting sensor calibration alarm (防切布传感器校准警告)", "solution": "Detect / re-calibrate anti fabric cutting sensor."},
+    {"code": "A-04", "description": "Calibration over-time alarm", "solution": "Detect all three sensors."},
+    {"code": "A-05", "description": "Fabric detection sensitivity alarm (面料识别灵敏度错误)", "solution": "Fabric too thin — cannot be detected with current sensitivity."},
+    {"code": "A-06", "description": "Fabric detection over-time alarm (面料识别超时警告)", "solution": "Detect again."},
+    {"code": "A-07", "description": "Fabric alarm during detection — fabric present on table when starting recognition", "solution": "Detect again (remove fabric first)."}
+  ],
+  "troubleshooting": [
+    {
+      "issue": "Machine stuck in full-computer C mode",
+      "cause": "Trimmer mode set to 0 (off), or both indicators off",
+      "solution": "When trimmer mode=0, system auto-links to full computer C mode. Short press trimmer button to cycle to mode 1/2/3 for semi-automatic B mode, or set P5=1 directly."
+    },
+    {
+      "issue": "Thread tail too long after front trim",
+      "cause": "P-27 delay stitches too small",
+      "solution": "Increase P-27 value. The bigger the value, the shorter the thread length will be after cut."
+    },
+    {
+      "issue": "Thread tail too long on cloth after rear trim",
+      "cause": "P-28 delay stitches too large, or P-34 too large",
+      "solution": "Decrease P-28 (when P32=0) or decrease P-34. Smaller value = shorter thread on cloth."
+    },
+    {
+      "issue": "Sensor calibration fails (A-01 to A-04)",
+      "cause": "Sensor position misalignment or obstruction",
+      "solution": "Long press Sensor button 1s+ for auto-calibration. If shows A-01/A-02/A-03, detect the respective sensor. If A-04 (timeout), detect all 3 sensors."
+    },
+    {
+      "issue": "Fabric recognition fails (shows Er)",
+      "cause": "Fabric not blocking all 3 sensors simultaneously, or wrong fabric type selected",
+      "solution": "Ensure fabric covers all 3 sensors at once. Long press Mesh button to confirm correct fabric type (B0/A/S) before starting recognition."
+    },
+    {
+      "issue": "Panel buttons not responding",
+      "cause": "Panel locked (P62=1)",
+      "solution": "Long press trimmer button for 2s to unlock. P62 auto-clears to 0, shows UL."
+    }
+  ]
+}

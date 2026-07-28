@@ -55,7 +55,7 @@ export default function SparePartsPage({ user }: { user: CustomerUser }) {
       {error && <div className="cust-error">{error}</div>}
 
       <h2 className="cust-section-title">{t("spareparts.catalog")}</h2>
-      <div className="cust-machine-grid" style={{ marginBottom: 28 }}>
+      <div className="cust-catalog-row" style={{ marginBottom: 28 }}>
         {catalog.map((sp) => (
           <div
             key={sp.id}

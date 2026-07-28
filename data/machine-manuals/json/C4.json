@@ -1,0 +1,704 @@
+{
+  "model": "C4",
+  "manufacturer": "Jack Sewing Machine Co., Ltd.",
+  "controllerType": "EC4 (LCD panel, blue, with voice navigation and IoT connectivity)",
+  "type": "C4 Internet overlock sewing machine (包缝机)",
+  "note": "EC4 controller V3.16 (2020-08-05). Features 3-sensor system (front/rear/anti-cut cloth), IoT connectivity, voice navigation in 10 languages, and three sewing modes (full automatic / semi-automatic / full manual). P94 selects model variant: electric (chopper), pneumatic, or side draught. Note: some default values differ between chopper (砍刀) and side draught (侧吸) variants.",
+  "specs": {
+    "maxSpeed": "6000 RPM (P1 default)",
+    "display": "LCD display (blue panel with icons)",
+    "panelKeys": "P | Left (◄) / Language | Up (+) / Speed+ | Down (-) / Speed- | Right (►) / LED | Sewing mode | Presser foot lifter | Trimmer parameter | Reset | Voice navigation",
+    "sewingModes": "Full automatic (全智能) / Semi-automatic (半智能) / Full manual (全电脑)",
+    "presserFootModes": "Front lifter / Rear lifter / Front+rear lifter / Closed",
+    "sensorSystem": "Three sensors: front sensor, rear sensor, anti-cut cloth sensor",
+    "voiceLanguages": "Chinese, English, Russian, Arabic, Turkish, Portuguese, Spanish, Indonesian, Vietnamese, Polish",
+    "iotCapability": "IoT piece count (M6) and IoT working status (M11) monitoring",
+    "userParameterAccess": "Long press P for 1.5 seconds",
+    "technicianParameterAccess": "Press P + presser foot lifter button together for 1.5 seconds (shows P26)",
+    "systemMemberAccess": "Press P + Up button, enter 3-digit password '111'",
+    "artMemberAccess": "Press P + Down button (shows U40)",
+    "monitoringAccess": "P + Right button",
+    "factoryResetMethod": "Press Reset button for 1.5s (restores user saved params); press Left + Right together for 1.5s (restores full factory defaults + associated params)",
+    "sensorCalibration": "Press P + Voice button together for 1.5 seconds to start sensor auto calibration"
+  },
+  "errorCodes": [
+    {
+      "code": "E1",
+      "display": "E1",
+      "cause": "Motor stall — machine head stuck or difficult to turn; motor plug or sensor connector loose",
+      "solution": "Check if machine head is stuck or difficult to turn. Check motor plug and motor sensor connector for looseness or fall-off. If cannot solve, contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E2",
+      "display": "E2",
+      "cause": "Software overcurrent — voltage abnormal or motor load excessive",
+      "solution": "Check if the voltage used is normal. Try to restore factory settings or restart power supply. If cannot solve, contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E3",
+      "display": "E3",
+      "cause": "Operation panel and control box communicate abnormally — cable loose or disconnected",
+      "solution": "Turn off system power; check if motor Hall signal connector is loose or disconnected; return to normal and restart. Try restoring factory settings. If cannot solve, contact local service or call 4008876858.",
+      "severity": "high",
+      "voiceBroadcast": "Operation panel and controller box communication is abnormal"
+    },
+    {
+      "code": "E4",
+      "display": "E4",
+      "cause": "Motor Hall error — Hall signal connector loose or disconnected",
+      "solution": "Turn off system power; check if motor Hall signal connector is loose or disconnected; return to normal and restart. Try restoring factory settings. If cannot solve, contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E5",
+      "display": "E5",
+      "cause": "Abnormal needle stop signal — motor stop signal connector loose or fallen off",
+      "solution": "Turn off system power; check if motor stop signal connector is loose or fallen off; return to normal and restart. If cannot solve, contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E6",
+      "display": "E6",
+      "cause": "Presser foot protection — presser foot not returned to correct position",
+      "solution": "Check if presser foot is pushed back to correct position. If still cannot solve, temporarily change P57 parameter from 1 to 0. If still cannot solve, contact local service or call 4008876858.",
+      "severity": "medium",
+      "note": "After placing presser foot in correct position, press P key to clear E06 error"
+    },
+    {
+      "code": "E7",
+      "display": "E7",
+      "cause": "Slot (sewing table) protection — sewing table not pushed to correct position",
+      "solution": "Check if sewing table is pushed to correct position. Temporarily change P58 parameter from 1 to 0. If still cannot resolve, contact local service or call 4008876858.",
+      "severity": "medium"
+    },
+    {
+      "code": "E8",
+      "display": "E8",
+      "cause": "Needle bar shield protection — needle bar guard not in correct position",
+      "solution": "Check that needle bar guard is placed back in correct position. Temporarily change P59 parameter from 1 to 0. If still cannot resolve, contact local service or call 4008876858.",
+      "severity": "medium"
+    },
+    {
+      "code": "E9",
+      "display": "E9",
+      "cause": "Abnormal foot pedal connection — pedal plug not connected to control box",
+      "solution": "Check if pedal plug is connected to control box. If cannot solve, contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E10",
+      "display": "E10",
+      "cause": "Hardware overcurrent — power supply voltage abnormal",
+      "solution": "Check if power supply voltage is normal. Try to restore factory settings or restart. If cannot solve, contact local service or call 4008876858.",
+      "severity": "critical"
+    },
+    {
+      "code": "E11",
+      "display": "E11",
+      "cause": "Overpressure during shutdown — power supply voltage abnormal",
+      "solution": "Check if power supply voltage is normal. Try to restore factory settings or restart. If cannot solve, contact local service or call 4008876858.",
+      "severity": "critical"
+    },
+    {
+      "code": "E12",
+      "display": "E12",
+      "cause": "System undervoltage — power supply voltage too low",
+      "solution": "Check if power supply voltage is normal. Try to restore factory settings or restart. If cannot solve, contact local service or call 4008876858.",
+      "severity": "critical"
+    },
+    {
+      "code": "E13",
+      "display": "E13",
+      "cause": "Abnormal brake circuit — brake circuit fault",
+      "solution": "Contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E14",
+      "display": "E14",
+      "cause": "Parameter read and write exception — memory fault",
+      "solution": "Try to turn off power and restart. If cannot solve, contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E15",
+      "display": "E15",
+      "cause": "Motor overspeed protection (not available currently)",
+      "solution": "Try to turn off power and restart. If cannot solve, contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E16",
+      "display": "E16",
+      "cause": "Motor reversal (not available currently)",
+      "solution": "Restore factory settings. If cannot solve, contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E17",
+      "display": "E17",
+      "cause": "Overvoltage during operation (not available currently)",
+      "solution": "Check power supply voltage. Try restoring factory settings or restart.",
+      "severity": "high"
+    },
+    {
+      "code": "E18",
+      "display": "E18",
+      "cause": "Motor overload (not available currently) — machine head stuck or motor plug loose",
+      "solution": "Check if machine head is stuck or difficult to turn. Check if motor plug is loose. If cannot solve, contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E19",
+      "display": "E19",
+      "cause": "Current detection loop abnormal — circuit fault",
+      "solution": "Try to turn off power and restart. If cannot solve, contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E20",
+      "display": "E20",
+      "cause": "Power off — abnormal power disconnection",
+      "solution": "Check power connection and restore power normally.",
+      "severity": "info"
+    },
+    {
+      "code": "E24",
+      "display": "E24",
+      "cause": "Voice chip works abnormally — voice system fault",
+      "solution": "Try to restore factory settings or restart. If cannot solve, contact local service or call 4008876858.",
+      "severity": "medium"
+    },
+    {
+      "code": "E26",
+      "display": "E26",
+      "cause": "Adapter board communicates abnormally with controller — connection loose",
+      "solution": "Check if connection between adapter plate and control box is loose. Try restoring factory settings or restart. If cannot solve, contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E27",
+      "display": "E27",
+      "cause": "Factory reset error — factory settings restoration failed",
+      "solution": "Shutdown and restart; restore factory settings again.",
+      "severity": "medium"
+    },
+    {
+      "code": "E28",
+      "display": "E28",
+      "cause": "Trimming electromagnet error — trimming solenoid fault",
+      "solution": "Check trimming electromagnet connection and function. Contact local service if needed.",
+      "severity": "high"
+    },
+    {
+      "code": "E29",
+      "display": "E29",
+      "cause": "Lifting foot electromagnet error — presser foot solenoid fault",
+      "solution": "Check lifting foot electromagnet connection and function. Contact local service if needed.",
+      "severity": "high"
+    },
+    {
+      "code": "EA1",
+      "display": "EA1",
+      "cause": "Counting counts in ascending order — count full (upper limit reached)",
+      "solution": "Press P key to clear, or set P71 parameter to 5.",
+      "severity": "info"
+    },
+    {
+      "code": "EA2",
+      "display": "EA2",
+      "cause": "Counting counts in descending order — count full (reached zero)",
+      "solution": "Press P key to clear, or set P71 parameter to 5.",
+      "severity": "info"
+    }
+  ],
+  "alarmCodes": [
+    {
+      "code": "A-01",
+      "display": "A-01",
+      "meaning": "Front sensor auto calibration failed",
+      "solution": "Check if front sensor receiver and transmitter surfaces are clean.",
+      "severity": "warning"
+    },
+    {
+      "code": "A-02",
+      "display": "A-02",
+      "meaning": "Mid-sensor automatic calibration failed",
+      "solution": "Check if mid-sensor receiver and transmitter surfaces are clean.",
+      "severity": "warning"
+    },
+    {
+      "code": "A-03",
+      "display": "A-03",
+      "meaning": "Rear sensor automatic calibration failed",
+      "solution": "Check if rear sensor receiver and transmitter surfaces are clean.",
+      "severity": "warning"
+    },
+    {
+      "code": "A-04",
+      "display": "A-04",
+      "meaning": "Automatic calibration timeout",
+      "solution": "Check all three sensor receiver and transmitter surfaces are clean.",
+      "severity": "warning"
+    },
+    {
+      "code": "A-05",
+      "display": "A-05",
+      "meaning": "Fabric recognition sensitivity error — fabric is too thin",
+      "solution": "The fabric is too thin. Try fabric identification again.",
+      "severity": "info"
+    },
+    {
+      "code": "A-06",
+      "display": "A-06",
+      "meaning": "Fabric recognition timeout warning",
+      "solution": "Test again.",
+      "severity": "info"
+    },
+    {
+      "code": "A-07",
+      "display": "A-07",
+      "meaning": "Cloth warning during identification process — cloth on table during recognition",
+      "solution": "Remove cloth from table and test again.",
+      "severity": "info"
+    },
+    {
+      "code": "A-08",
+      "display": "A-08",
+      "meaning": "Panel and electronic control models do not match — firmware mismatch",
+      "solution": "Upgrade electronic control and panel programs to matching programs.",
+      "severity": "warning"
+    }
+  ],
+  "parameters": [
+    {
+      "id": "P1",
+      "name": "Max rotate speed",
+      "range": "500-7000",
+      "default": 6000,
+      "unit": "RPM",
+      "area": "user"
+    },
+    {
+      "id": "P2",
+      "name": "Needle stop positioning selection",
+      "range": "0-3",
+      "default": 1,
+      "values": { "0": "No needle position", "1": "Up needle position", "2": "Down needle position", "3": "Down needle position without counter-presser for up needle" },
+      "area": "user"
+    },
+    {
+      "id": "P3",
+      "name": "Start sewing speed",
+      "range": "500-7000",
+      "default": "5500 (chopper) / 4000 (side draught)",
+      "unit": "RPM",
+      "area": "user"
+    },
+    {
+      "id": "P4",
+      "name": "Start up mode",
+      "range": "0-1",
+      "default": 0,
+      "values": { "0": "Automatic mode", "1": "Foot control mode" },
+      "area": "user"
+    },
+    {
+      "id": "P5",
+      "name": "Sewing mode selection",
+      "range": "0-2",
+      "default": 1,
+      "values": { "0": "Full manual (全电脑)", "1": "Semi-automatic (半智能)", "2": "Full automatic (全智能)" },
+      "area": "user"
+    },
+    {
+      "id": "P6",
+      "name": "Voice volume adjustment",
+      "range": "0-3",
+      "default": 2,
+      "values": { "0": "Off", "1-3": "On (levels)" },
+      "area": "user"
+    },
+    {
+      "id": "P7",
+      "name": "Auto trimming",
+      "range": "0-3",
+      "default": 3,
+      "values": { "0": "Off", "1": "Front trimmer before sewing", "2": "Rear trimmer after sewing", "3": "Front and rear trimmer both before and after sewing" },
+      "area": "user"
+    },
+    {
+      "id": "P8",
+      "name": "Automatic inhalation (suction)",
+      "range": "0-3",
+      "default": "1 (chopper) / 3 (side draught)",
+      "values": { "0": "Off", "1": "Front trimming suction (before sewing)", "2": "Rear trimming suction (after sewing)", "3": "Front and rear trimming suction (both)" },
+      "area": "user"
+    },
+    {
+      "id": "P9",
+      "name": "Counter pedal trimmer",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off", "1": "On" },
+      "area": "user"
+    },
+    {
+      "id": "P10",
+      "name": "Auto press foot lifter",
+      "range": "0-3",
+      "default": 0,
+      "values": { "0": "Off", "1": "Front lifter before sewing", "2": "Rear lifter after sewing", "3": "Front and rear lifter both before and after sewing" },
+      "area": "user"
+    },
+    {
+      "id": "P11",
+      "name": "Press foot lifter when sewing stops",
+      "range": "0-1",
+      "default": 0,
+      "values": { "0": "Off", "1": "Presser foot lifter" },
+      "area": "user"
+    },
+    {
+      "id": "P12",
+      "name": "Press foot lifter after trimming",
+      "range": "0-1",
+      "default": 0,
+      "values": { "0": "Off", "1": "Presser foot lifter" },
+      "area": "user"
+    },
+    {
+      "id": "P13",
+      "name": "Semi-counter presser foot lifter",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off", "1": "Semi-counter or reverse presser foot lifter" },
+      "area": "user"
+    },
+    {
+      "id": "P14",
+      "name": "Manual suction switch",
+      "range": "0-2",
+      "default": 2,
+      "values": { "0": "Off", "1": "Rear suction", "2": "Front suction and rear suction" },
+      "area": "user"
+    },
+    {
+      "id": "P15",
+      "name": "Head lamp switch",
+      "range": "0-3",
+      "default": 1,
+      "values": { "0": "Off", "1-3": "On" },
+      "area": "user"
+    },
+    {
+      "id": "P16",
+      "name": "Dormancy function",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off", "1": "On" },
+      "area": "user"
+    },
+    {
+      "id": "P17",
+      "name": "Semi-automatic constant sewing",
+      "range": "0-2",
+      "default": 2,
+      "values": { "0": "Off", "1": "Front step continuous sewing", "2": "Constant sewing and ignore front sensor switch" },
+      "area": "user"
+    },
+    {
+      "id": "P18",
+      "name": "Semi-automatic constant rate trimming",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off", "1": "Fix machine speed when front thread trimmer activates" },
+      "area": "user"
+    },
+    {
+      "id": "P21",
+      "name": "User common parameters save",
+      "range": "0-1",
+      "default": 0,
+      "values": { "0": "No operation", "1": "Save parameters as user common parameters" },
+      "area": "user"
+    },
+    {
+      "id": "P22",
+      "name": "Front sensor switch",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off", "1": "On" },
+      "area": "user"
+    },
+    {
+      "id": "P23",
+      "name": "Opening time of manual suction",
+      "range": "1-250",
+      "default": 5,
+      "unit": "×100ms",
+      "area": "user"
+    },
+    {
+      "id": "P24",
+      "name": "Turn off time of suction",
+      "range": "0-250",
+      "default": 0,
+      "unit": "×100ms",
+      "note": "0 = no shutdown",
+      "area": "user"
+    },
+    {
+      "id": "P25",
+      "name": "Back sensor switch",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off", "1": "On" },
+      "area": "user"
+    },
+    {
+      "id": "P26",
+      "name": "Stitch number between front and back sensor",
+      "range": "1-250",
+      "default": 100,
+      "area": "technician"
+    },
+    {
+      "id": "P27",
+      "name": "Delay stitches number of trimmer before sewing",
+      "range": "0-50",
+      "default": 2,
+      "note": "Bigger value = shorter thread length after cut",
+      "area": "technician"
+    },
+    {
+      "id": "P28",
+      "name": "Delay stitches number of anti-cutting cloth sensor",
+      "range": "0-50",
+      "default": 8,
+      "note": "Smaller value = shorter thread length on cloth",
+      "area": "technician"
+    },
+    {
+      "id": "P32",
+      "name": "Sensor for anti-cutting cloth switch",
+      "range": "0-1",
+      "default": "1 (chopper) / 0 (side draught)",
+      "values": { "0": "Off", "1": "On" },
+      "area": "technician"
+    },
+    {
+      "id": "P33",
+      "name": "Sensitivity of sensor for anti-cutting cloth",
+      "range": "200-400",
+      "default": 330,
+      "note": "Bigger value = more capable of identifying translucent materials",
+      "area": "technician"
+    },
+    {
+      "id": "P37",
+      "name": "Sensitivity of front sensor",
+      "range": "200-400",
+      "default": 330,
+      "note": "Bigger value = more capable of identifying translucent materials",
+      "area": "technician"
+    },
+    {
+      "id": "P38",
+      "name": "Sensitivity of back sensor",
+      "range": "200-400",
+      "default": 330,
+      "note": "Bigger value = more capable of identifying translucent materials",
+      "area": "technician"
+    },
+    {
+      "id": "P48",
+      "name": "Automatically find up positioning on power on",
+      "range": "0-1",
+      "default": 0,
+      "values": { "0": "Off", "1": "On" },
+      "area": "technician"
+    },
+    {
+      "id": "P50",
+      "name": "Delay stitches number of trimmer after sewing",
+      "range": "0-50",
+      "default": 0,
+      "area": "technician"
+    },
+    {
+      "id": "P57",
+      "name": "Presser foot safety switch",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off (disable protection)", "1": "On (enable protection)" },
+      "note": "Set to 0 temporarily if E6 cannot be resolved mechanically",
+      "area": "technician"
+    },
+    {
+      "id": "P58",
+      "name": "Sewing plate safety switch",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off (disable protection)", "1": "On (enable protection)" },
+      "note": "Set to 0 temporarily if E7 cannot be resolved mechanically",
+      "area": "technician"
+    },
+    {
+      "id": "P59",
+      "name": "Needle bar cover safety switch",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off (disable protection)", "1": "On (enable protection)" },
+      "note": "Set to 0 temporarily if E8 cannot be resolved mechanically",
+      "area": "technician"
+    },
+    {
+      "id": "P61",
+      "name": "Sleeping time",
+      "range": "1-250",
+      "default": 30,
+      "unit": "minutes",
+      "area": "technician"
+    },
+    {
+      "id": "P62",
+      "name": "Panel button lock",
+      "range": "0-1",
+      "default": 0,
+      "values": { "0": "Unlock", "1": "Lock (long press trimmer button to unlock)" },
+      "area": "technician"
+    },
+    {
+      "id": "P71",
+      "name": "Counting mode",
+      "range": "0-5",
+      "default": 0,
+      "values": {
+        "0": "Off",
+        "1": "Ascending cycle count",
+        "2": "Descending cycle count",
+        "3": "Ascending full alarm",
+        "4": "Descending full alarm",
+        "5": "Remove full count alarm"
+      },
+      "area": "technician"
+    },
+    {
+      "id": "P73",
+      "name": "Factory default speed parameter",
+      "range": "0-2",
+      "default": 0,
+      "values": { "0": "4-thread default (P01=6000, P03=5500)", "1": "5-thread default (P01=5000, P03=5000)", "2": "Custom" },
+      "area": "technician"
+    },
+    {
+      "id": "P78",
+      "name": "Display mode",
+      "range": "0-4",
+      "default": 0,
+      "values": { "0": "Normal sewing mode and steering", "1": "Real-time current speed", "2": "Front sensor induced voltage value", "3": "Post sensor induced voltage value", "4": "Third sensor induced voltage value" },
+      "area": "technician"
+    },
+    {
+      "id": "P80",
+      "name": "Language type selection",
+      "range": "0-9",
+      "default": 0,
+      "values": { "0": "Chinese", "1": "English", "2": "Russian", "3": "Arabic", "4": "Turkish", "5": "Portuguese", "6": "Spanish", "7": "Indonesian", "8": "Vietnamese", "9": "Polish" },
+      "area": "system"
+    },
+    {
+      "id": "P94",
+      "name": "Model selection",
+      "range": "0-2",
+      "default": 0,
+      "values": { "0": "Electric (chopper / 砍刀)", "1": "Pneumatic", "2": "Side draught (侧吸)" },
+      "note": "This setting changes defaults for several other parameters (P3, P8, P28, P30, P31, P32, P35)",
+      "area": "technician"
+    },
+    {
+      "id": "U40",
+      "name": "Front loose line execute once only",
+      "range": "0-1",
+      "default": 1,
+      "note": "Special craft: one loose line per sewing cycle",
+      "area": "art"
+    },
+    {
+      "id": "U41",
+      "name": "Not stop before sensor enable",
+      "range": "0-1",
+      "default": 1,
+      "note": "Only valid when motor stops; if front sensor blocked before stop, does not stop",
+      "area": "art"
+    },
+    {
+      "id": "U42",
+      "name": "Level of slow foot down",
+      "range": "0-9",
+      "default": 0,
+      "note": "Bigger value = slower foot down",
+      "area": "art"
+    }
+  ],
+  "monitoring": [
+    { "id": "M0", "name": "Exit monitor mode" },
+    { "id": "M1", "name": "Current piece count" },
+    { "id": "M2", "name": "Model type" },
+    { "id": "M3", "name": "Q axis current" },
+    { "id": "M4", "name": "AC input voltage" },
+    { "id": "M5", "name": "Pedal voltage value" },
+    { "id": "M6", "name": "Number of IoT pieces" },
+    { "id": "M7", "name": "Front sensor voltage value" },
+    { "id": "M8", "name": "Medium (mid) sensor voltage value" },
+    { "id": "M9", "name": "Post (rear) sensor voltage value" },
+    { "id": "M10", "name": "Real-time speed value" },
+    { "id": "M11", "name": "IoT sewing machine working status", "note": "0=normal; 1=IoT staging; 2=IoT lock status; 3=IoT lock line speed" },
+    { "id": "M14", "name": "Bus voltage value" },
+    { "id": "M17", "name": "Adapter board software version number" },
+    { "id": "M18", "name": "Main control board software repair version number" },
+    { "id": "M19", "name": "Main control board software version number" },
+    { "id": "M20", "name": "Panel software version number" },
+    { "id": "M21", "name": "Panel repair version number" }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "E6 presser foot protection alarm that won't clear",
+      "checks": [
+        "Place presser foot back in the correct home position",
+        "After placing presser foot in correct position, press P key to clear E06 error",
+        "If presser foot safety switch is faulty, temporarily set P57 from 1 to 0 to disable protection",
+        "Contact local service or call 4008876858 if persistent"
+      ]
+    },
+    {
+      "symptom": "Sensor calibration fails (A-01, A-02, A-03, A-04)",
+      "checks": [
+        "Clean front, mid, and rear sensor receiver and transmitter surfaces",
+        "Press P + Voice button for 1.5 seconds to restart sensor auto calibration",
+        "If A-05 (fabric too thin) appears, use thin cloth mode: long press LED button 1s, switch to mesh fabric type A"
+      ]
+    },
+    {
+      "symptom": "Thread cutting quality poor (too long or too short)",
+      "checks": [
+        "Adjust P27 (delay stitches before sewing trimmer) — bigger value makes thread shorter",
+        "Adjust P28 (anti-cut cloth sensor delay stitches) — smaller value makes thread on cloth shorter",
+        "Check P7 (auto trimming setting) — ensure front and rear trimming are configured correctly",
+        "Check anti-cut cloth sensor (P32) and sensor sensitivity (P33)"
+      ]
+    },
+    {
+      "symptom": "Machine not detecting fabric in automatic mode",
+      "checks": [
+        "Check P22 (front sensor) and P25 (rear sensor) are set to 1 (on)",
+        "Check P5 (sewing mode) — must be 1 (semi-auto) or 2 (full auto) for sensor detection",
+        "Clean sensor surfaces and run auto calibration (P + Voice key for 1.5s)",
+        "In automatic mode: before needle number that front sensor sets is done, middle sensor must be triggered"
+      ]
+    }
+  ]
+}

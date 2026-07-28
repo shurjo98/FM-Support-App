@@ -1,0 +1,81 @@
+{
+  "model": "W5E-UT",
+  "manufacturer": "Jack",
+  "controllerType": "W5-specific electronic control assembly (1JD130023000)",
+  "type": "Safety-stitch / interlock machine (安全缝机) with stepper motor thread trimmer",
+  "source": "W5E-UT Parts Manual (零件手册) 2023.12",
+  "note": "DOCUMENTATION LIMITATION: The only available PDF for this model is a parts manual (零件手册) and a brief mechanical user manual. It does not contain electronic control operation instructions, error codes, or parameter tables. For electronic troubleshooting, refer to the W4-UT or W4-D manuals if the controller is the same family, or request the W5E electronic control manual separately.",
+  "relatedModels": ["W4-UT", "W4-D", "W4-01CB", "W4-22BB", "W4-23CB", "W4-23CB(L)"],
+  "electronicComponents": {
+    "description": "Parts list section 25 (电控专用件 — Electronic control specific parts) lists the following without detail:",
+    "parts": [
+      "Electronic control assembly: 1JD130023000 (W5-specific)",
+      "2D controller (二维控制器)",
+      "Hall servo motor",
+      "LED indicator lights",
+      "Speed controller"
+    ],
+    "threadTrimmer": "Stepper motor-based thread trimmer system (W5E步进剪线专用件 — Section 26 of parts list)"
+  },
+  "specs": {
+    "lubrication": "ISO VG22 oil; fill between H and L lines. Apply 2-3 drops manually after long periods of non-use.",
+    "variants": {
+      "W4-01CB": {
+        "needleBarStroke": "356mm",
+        "stitchLength": "1.2-1.5mm",
+        "presserFootHeight": "5.0-5.1mm",
+        "threadTakeUp": "17mm",
+        "sliderStroke": "6.2mm",
+        "looserStroke": "35.8mm"
+      },
+      "W4-22BB": {
+        "needleBarStroke": "364mm",
+        "stitchLength": "2.0-3.1mm",
+        "presserFootHeight": "5.0-5.1mm",
+        "threadTakeUp": "17mm",
+        "sliderStroke": "6.2mm",
+        "looserStroke": "35.9mm"
+      },
+      "W4-23CB": {
+        "needleBarStroke": "364mm",
+        "stitchLength": "2.0-3.1mm",
+        "presserFootHeight": "5.0-5.1mm",
+        "threadTakeUp": "17mm",
+        "sliderStroke": "6.2mm",
+        "looserStroke": "35.8mm"
+      },
+      "W4-23CB_L": {
+        "needleBarStroke": "364mm",
+        "stitchLength": "2.0-3.1mm",
+        "presserFootHeight": "5.0-5.1mm",
+        "threadTakeUp": "17mm",
+        "sliderStroke": "6.2mm",
+        "looserStroke": "35.8mm"
+      }
+    }
+  },
+  "errorCodes": [],
+  "alarmCodes": [],
+  "parameters": [],
+  "monitoring": [],
+  "troubleshooting": [
+    {
+      "issue": "Electronic control error codes or parameters needed",
+      "cause": "W5E-UT electronic control manual not available in current documentation",
+      "solution": "Request W5E electronic control manual from Jack. In the interim, refer to W4-UT or W4-D electronic manuals if the W5 controller is from the same family. The W5E-specific controller part number is 1JD130023000."
+    },
+    {
+      "issue": "Thread trimmer not functioning",
+      "cause": "Stepper motor thread trimmer (W5E-specific) may have wiring or mechanical issue",
+      "solution": "Check stepper motor (part 7RJ37007) connections. Refer to parts diagram section 26 (W5E步进剪线专用件) for component identification."
+    }
+  ],
+  "mechanicalSetup": {
+    "threading": "2-thread and 3-thread configurations. Follow threading diagram on machine body.",
+    "oilLevel": "Maintain ISO VG22 oil between H (high) and L (low) marks. Manual lubrication (2-3 drops) required after extended non-use.",
+    "presserFoot": "Adjust presser foot height based on fabric thickness (0.5-5.1mm range).",
+    "threadTension": "Two tension knobs (knob 1 and knob 2) for thread tension adjustment.",
+    "differentialRatio": "Adjustable differential ratio for fabric type.",
+    "stitchLength": "Mechanical stitch length adjustment."
+  }
+}

@@ -15,6 +15,8 @@ export default function TicketHistoryPage({ user }: { user: CustomerUser }) {
   const [tickets, setTickets] = useState<CustomerTicket[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   useEffect(() => {
     fetchCustomerTickets(user.id)
@@ -32,8 +34,47 @@ export default function TicketHistoryPage({ user }: { user: CustomerUser }) {
 
   const sorted = tickets.slice().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
+  // Date range applied client-side, same reasoning as Purchase History — a
+  // single factory's ticket volume is small enough not to need a dedicated
+  // server-side date filter endpoint.
+  const from = dateFrom ? new Date(dateFrom) : null;
+  const to = dateTo ? new Date(`${dateTo}T23:59:59`) : null;
+  const filtered = sorted.filter((tk) => {
+    const d = new Date(tk.createdAt);
+    if (from && d < from) return false;
+    if (to && d > to) return false;
+    return true;
+  });
+  const dateFiltered = Boolean(dateFrom || dateTo);
+
   return (
-    <div className="cust-card">
+    <div>
+      <div className="cust-card cust-form" style={{ marginBottom: 18 }}>
+        <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "flex-end" }}>
+          <label style={{ flex: 1, minWidth: 140, marginBottom: 0 }}>
+            {t("tickets.dateFrom")}
+            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} max={dateTo || undefined} />
+          </label>
+          <label style={{ flex: 1, minWidth: 140, marginBottom: 0 }}>
+            {t("tickets.dateTo")}
+            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} min={dateFrom || undefined} />
+          </label>
+          {dateFiltered && (
+            <button
+              type="button"
+              className="cust-button-secondary"
+              onClick={() => { setDateFrom(""); setDateTo(""); }}
+            >
+              {t("tickets.clearDates")}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {filtered.length === 0 ? (
+        <p className="cust-empty">{t("tickets.noneInRange")}</p>
+      ) : (
+      <div className="cust-card">
       <table className="cust-table">
         <thead>
           <tr>
@@ -45,7 +86,7 @@ export default function TicketHistoryPage({ user }: { user: CustomerUser }) {
           </tr>
         </thead>
         <tbody>
-          {sorted.map((tk) => (
+          {filtered.map((tk) => (
             <Fragment key={tk.id}>
               <tr>
                 <td>{tk.issueType.replaceAll("_", " ")}</td>
@@ -76,6 +117,8 @@ export default function TicketHistoryPage({ user }: { user: CustomerUser }) {
           ))}
         </tbody>
       </table>
+      </div>
+      )}
     </div>
   );
 }

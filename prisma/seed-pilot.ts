@@ -15,12 +15,48 @@ const IE_ID            = "user-ie-evergreen-001";
 const PORTAL_USER_ID   = "FM";
 const PORTAL_PASSWORD  = "1111";
 
+// productLine must be exactly "SEWING" or "AUTOMATED" — these previously said
+// "Sewing Machines", which never matched the frontend's ?productLine=SEWING
+// query, so this factory's Sewing/Automated Machines pages silently showed
+// zero machines. imageUrl/images/description now point at the real Jack
+// catalog photos + spec-sheet copy in public/img/*_Files (see the info.png
+// spec sheet in each model's folder).
 const MACHINE_DEFS = [
-  { id: "m-jk8500d", name: "JK-8500D High Speed Lockstitch", model: "JK-8500D", productLine: "Sewing Machines", category: "Lockstitch" },
-  { id: "m-jk8700d", name: "JK-8700D Lockstitch w/ Needle Positioner", model: "JK-8700D", productLine: "Sewing Machines", category: "Lockstitch" },
-  { id: "m-jkt1906", name: "JK-T1906 Electronic Bartack", model: "JK-T1906", productLine: "Sewing Machines", category: "Bartack" },
-  { id: "m-jkt781d", name: "JK-T781D Overlock", model: "JK-T781D", productLine: "Sewing Machines", category: "Overlock" },
-  { id: "m-jkw4",   name: "JK-W4 Interlock / Flatbed", model: "JK-W4",   productLine: "Sewing Machines", category: "Interlock" },
+  {
+    id: "m-jk8500d", name: "JK-8558G High Speed Lockstitch", model: "JK-8558G",
+    productLine: "SEWING", category: "Lockstitch",
+    imageUrl: "/public/img/Lockstitch_Machines_Files/JK-8558G/8558G.png",
+    images: ["/public/img/Lockstitch_Machines_Files/JK-8558G/8558G.png"],
+    description: "Power-saving chain stitch machine — suitable for umbrella, denim, T-shirt, and other chain-stitching work.",
+  },
+  {
+    id: "m-jk8700d", name: "JK-5559F-W Side Cutter Lockstitch", model: "JK-5559F-W",
+    productLine: "SEWING", category: "Lockstitch",
+    imageUrl: "/public/img/Lockstitch_Machines_Files/JK-5559f-W/5559f.png",
+    images: ["/public/img/Lockstitch_Machines_Files/JK-5559f-W/5559f.png"],
+    description: "Computerized edge-cutter lockstitch machine — suitable for shirts, suits, pants, down jackets, and similar garments.",
+  },
+  {
+    id: "m-jkt1906", name: "JK-T430G Electronic Bartack", model: "JK-T430G",
+    productLine: "AUTOMATED", category: "Bartack",
+    imageUrl: "/public/img/Special_Machine_Files/JK-T430G/430G.png",
+    images: ["/public/img/Special_Machine_Files/JK-T430G/430G.png"],
+    description: "High-speed electronic bartack machine — suitable for reinforced sewing of pants, clothing, denim, luggage, shoes, underwear, and more.",
+  },
+  {
+    id: "m-jkt781d", name: "JK-C7 Overlock", model: "JK-C7",
+    productLine: "SEWING", category: "Overlock",
+    imageUrl: "/public/img/Overlock_Machine_Files/C7/C7.png",
+    images: ["/public/img/Overlock_Machine_Files/C7/C7.png"],
+    description: "Full-speed cross-seam overlock machine.",
+  },
+  {
+    id: "m-jkw4", name: "JK-W5E Interlock / Flatbed", model: "JK-W5E",
+    productLine: "AUTOMATED", category: "Interlock",
+    imageUrl: "/public/img/Interlock_Machine_Files/W5E/W5E.png",
+    images: ["/public/img/Interlock_Machine_Files/W5E/W5E.png"],
+    description: "Stepping flatbed high-speed computerized interlock machine — suitable for knitted fabrics including mesh, lace, and intimate apparel.",
+  },
 ];
 
 const NEEDLE_DEFS = [
@@ -89,35 +125,35 @@ const NEEDLE_PURCHASES = [
 
 // Stock items (spare parts in inventory)
 const STOCK_ITEMS = [
-  { id: "stk-001", name: "Bobbin Case JK-8500D",       qty: 8,  min: 3, unit: "pcs" },
+  { id: "stk-001", name: "Bobbin Case JK-8558G",       qty: 8,  min: 3, unit: "pcs" },
   { id: "stk-002", name: "Presser Foot Standard",       qty: 2,  min: 5, unit: "pcs" },
-  { id: "stk-003", name: "Feed Dog JK-8700D",          qty: 4,  min: 3, unit: "pcs" },
+  { id: "stk-003", name: "Feed Dog JK-5559F-W",          qty: 4,  min: 3, unit: "pcs" },
   { id: "stk-004", name: "Needle Clamp Screw",         qty: 25, min: 10, unit: "pcs" },
   { id: "stk-005", name: "Machine Oil (500ml)",        qty: 1,  min: 2, unit: "bottles" },
-  { id: "stk-006", name: "Looper JK-T781D Overlock",   qty: 0,  min: 2, unit: "pcs" },
-  { id: "stk-007", name: "Throat Plate JK-8500D",      qty: 3,  min: 2, unit: "pcs" },
+  { id: "stk-006", name: "Looper JK-C7 Overlock",   qty: 0,  min: 2, unit: "pcs" },
+  { id: "stk-007", name: "Throat Plate JK-8558G",      qty: 3,  min: 2, unit: "pcs" },
 ];
 
 // 3 weeks of defect logs
 const DEFECT_LOGS: { sn: string; machineName: string; type: string; count: number; shift: string; daysAgo: number }[] = [
-  { sn: "EG-A-001", machineName: "JK-8500D (EG-A-001)", type: "SKIP_STITCH",   count: 12, shift: "MORNING", daysAgo: 21 },
-  { sn: "EG-A-004", machineName: "JK-8700D (EG-A-004)", type: "TENSION",       count: 8,  shift: "MORNING", daysAgo: 20 },
-  { sn: "EG-B-002", machineName: "JK-8500D (EG-B-002)", type: "BROKEN_STITCH", count: 5,  shift: "EVENING", daysAgo: 19 },
-  { sn: "EG-A-009", machineName: "JK-8500D (EG-A-009)", type: "SKIP_STITCH",   count: 18, shift: "MORNING", daysAgo: 18 },
-  { sn: "EG-A-009", machineName: "JK-8500D (EG-A-009)", type: "TENSION",       count: 10, shift: "EVENING", daysAgo: 18 },
-  { sn: "EG-B-003", machineName: "JK-8700D (EG-B-003)", type: "PUCKERING",     count: 7,  shift: "MORNING", daysAgo: 17 },
-  { sn: "EG-A-001", machineName: "JK-8500D (EG-A-001)", type: "SKIP_STITCH",   count: 9,  shift: "MORNING", daysAgo: 15 },
-  { sn: "EG-A-004", machineName: "JK-8700D (EG-A-004)", type: "NEEDLE_HOLE",   count: 14, shift: "MORNING", daysAgo: 14 },
-  { sn: "EG-A-009", machineName: "JK-8500D (EG-A-009)", type: "SKIP_STITCH",   count: 22, shift: "MORNING", daysAgo: 12 },
-  { sn: "EG-A-009", machineName: "JK-8500D (EG-A-009)", type: "BROKEN_STITCH", count: 15, shift: "EVENING", daysAgo: 12 },
-  { sn: "EG-B-007", machineName: "JK-8500D (EG-B-007)", type: "TENSION",       count: 6,  shift: "MORNING", daysAgo: 10 },
-  { sn: "EG-A-008", machineName: "JK-8500D (EG-A-008)", type: "SKIP_STITCH",   count: 11, shift: "MORNING", daysAgo: 8  },
-  { sn: "EG-B-002", machineName: "JK-8500D (EG-B-002)", type: "PUCKERING",     count: 4,  shift: "EVENING", daysAgo: 7  },
-  { sn: "EG-A-009", machineName: "JK-8500D (EG-A-009)", type: "SKIP_STITCH",   count: 30, shift: "MORNING", daysAgo: 5  },
-  { sn: "EG-A-009", machineName: "JK-8500D (EG-A-009)", type: "TENSION",       count: 20, shift: "EVENING", daysAgo: 5  },
-  { sn: "EG-A-004", machineName: "JK-8700D (EG-A-004)", type: "NEEDLE_HOLE",   count: 9,  shift: "MORNING", daysAgo: 3  },
-  { sn: "EG-B-009", machineName: "JK-8700D (EG-B-009)", type: "SKIP_STITCH",   count: 7,  shift: "MORNING", daysAgo: 2  },
-  { sn: "EG-A-009", machineName: "JK-8500D (EG-A-009)", type: "SKIP_STITCH",   count: 35, shift: "MORNING", daysAgo: 1  },
+  { sn: "EG-A-001", machineName: "JK-8558G (EG-A-001)", type: "SKIP_STITCH",   count: 12, shift: "MORNING", daysAgo: 21 },
+  { sn: "EG-A-004", machineName: "JK-5559F-W (EG-A-004)", type: "TENSION",       count: 8,  shift: "MORNING", daysAgo: 20 },
+  { sn: "EG-B-002", machineName: "JK-8558G (EG-B-002)", type: "BROKEN_STITCH", count: 5,  shift: "EVENING", daysAgo: 19 },
+  { sn: "EG-A-009", machineName: "JK-8558G (EG-A-009)", type: "SKIP_STITCH",   count: 18, shift: "MORNING", daysAgo: 18 },
+  { sn: "EG-A-009", machineName: "JK-8558G (EG-A-009)", type: "TENSION",       count: 10, shift: "EVENING", daysAgo: 18 },
+  { sn: "EG-B-003", machineName: "JK-5559F-W (EG-B-003)", type: "PUCKERING",     count: 7,  shift: "MORNING", daysAgo: 17 },
+  { sn: "EG-A-001", machineName: "JK-8558G (EG-A-001)", type: "SKIP_STITCH",   count: 9,  shift: "MORNING", daysAgo: 15 },
+  { sn: "EG-A-004", machineName: "JK-5559F-W (EG-A-004)", type: "NEEDLE_HOLE",   count: 14, shift: "MORNING", daysAgo: 14 },
+  { sn: "EG-A-009", machineName: "JK-8558G (EG-A-009)", type: "SKIP_STITCH",   count: 22, shift: "MORNING", daysAgo: 12 },
+  { sn: "EG-A-009", machineName: "JK-8558G (EG-A-009)", type: "BROKEN_STITCH", count: 15, shift: "EVENING", daysAgo: 12 },
+  { sn: "EG-B-007", machineName: "JK-8558G (EG-B-007)", type: "TENSION",       count: 6,  shift: "MORNING", daysAgo: 10 },
+  { sn: "EG-A-008", machineName: "JK-8558G (EG-A-008)", type: "SKIP_STITCH",   count: 11, shift: "MORNING", daysAgo: 8  },
+  { sn: "EG-B-002", machineName: "JK-8558G (EG-B-002)", type: "PUCKERING",     count: 4,  shift: "EVENING", daysAgo: 7  },
+  { sn: "EG-A-009", machineName: "JK-8558G (EG-A-009)", type: "SKIP_STITCH",   count: 30, shift: "MORNING", daysAgo: 5  },
+  { sn: "EG-A-009", machineName: "JK-8558G (EG-A-009)", type: "TENSION",       count: 20, shift: "EVENING", daysAgo: 5  },
+  { sn: "EG-A-004", machineName: "JK-5559F-W (EG-A-004)", type: "NEEDLE_HOLE",   count: 9,  shift: "MORNING", daysAgo: 3  },
+  { sn: "EG-B-009", machineName: "JK-5559F-W (EG-B-009)", type: "SKIP_STITCH",   count: 7,  shift: "MORNING", daysAgo: 2  },
+  { sn: "EG-A-009", machineName: "JK-8558G (EG-A-009)", type: "SKIP_STITCH",   count: 35, shift: "MORNING", daysAgo: 1  },
 ];
 
 function daysAgo(n: number): Date {
@@ -169,7 +205,10 @@ async function main() {
   for (const m of MACHINE_DEFS) {
     await prisma.machine.upsert({
       where: { id: m.id },
-      update: { name: m.name, model: m.model, productLine: m.productLine, category: m.category },
+      update: {
+        name: m.name, model: m.model, productLine: m.productLine, category: m.category,
+        imageUrl: m.imageUrl, images: m.images, description: m.description,
+      },
       create: { ...m, brand: "Jack", organizationId: ORG_ID },
     });
   }

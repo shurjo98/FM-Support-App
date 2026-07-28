@@ -1,0 +1,279 @@
+{
+  "model": "ZB-A2C",
+  "manufacturer": "Jack (Zhongbang)",
+  "controllerType": "A2C series",
+  "manualVersion": "1.0",
+  "type": "Lockstitch sewing machine electronic controller",
+  "specs": {
+    "operatingTemp": "0°C and above",
+    "humidity": "30% to 95% (non-condensing)"
+  },
+  "errorCodes": [
+    {
+      "code": "Err-01",
+      "display": "Err-01",
+      "cause": "Hardware overcurrent",
+      "solution": "Turn off system power, reconnect after 30 seconds. If still cannot work, replace controller and notify the factory.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-02",
+      "display": "Err-02",
+      "cause": "Software overcurrent",
+      "solution": "Turn off system power, reconnect after 30 seconds. If still cannot work, replace controller and notify the factory.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-03",
+      "display": "Err-03",
+      "cause": "Excessive shutdown — input supply voltage is too low (under 154V)",
+      "solution": "Disconnect controller power and check if input supply voltage is low (under 154V). If low, restart after voltage returns to normal. If voltage is normal, start controller again — if still fails, replace controller and notify factory.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-04",
+      "display": "Err-04",
+      "cause": "Running over voltage — input voltage too high (above 264V)",
+      "solution": "Disconnect controller power, check if input voltage is above 264V. If high, restart after voltage returns to normal. If voltage is normal, replace controller and notify factory.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-07",
+      "display": "Err-07",
+      "cause": "Current detection circuit failure",
+      "solution": "Turn off system power, reconnect after 30 seconds to check normal operation. Retry several times. If fault occurs frequently, replace controller and inform manufacturer.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-08",
+      "display": "Err-08",
+      "cause": "Motor stalled — motor power input plug off/loose/broken, or foreign body wrapped around machine head",
+      "solution": "Disconnect controller power. Check motor power input plug condition. Check machine head for foreign bodies. Resetting and restarting should resolve. If not, replace controller and inform factory.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-13",
+      "display": "Err-13",
+      "cause": "Motor Hall signal abnormal — motor sensor connector loose or dropped off",
+      "solution": "Turn off system power. Check if motor sensor connector is loose or dropped off, restore to normal and restart. If still not working, replace controller and notify manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-19",
+      "display": "Err-19",
+      "cause": "Locator signal abnormal — encoder/positioner plug not connected reliably",
+      "solution": "Controller automatically switches to non-positioning mode. Check encoder/positioner plug connection. Turn off and on power again. If alarm cannot be eliminated, Hall sensor may be abnormal — contact Maintenance staff. Long press S key to clear E-19 alarm; set P03 to OFF to disable positioning function.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-20",
+      "display": "Err-20",
+      "cause": "Governor (foot pedal) not plugged in — connector loose or falling off, or pedal is depressed",
+      "solution": "Turn off system power. Check if governor connector is loose or falling off, and that foot pedal is not stepped down. Restore to normal state and restart. Replace controller if still failing.",
+      "severity": "medium"
+    }
+  ],
+  "alarmCodes": [
+    {
+      "code": "OFF",
+      "display": "OFF",
+      "cause": "Power off or power supply voltage is too low",
+      "solution": "Please check the supply voltage.",
+      "severity": "medium"
+    },
+    {
+      "code": "OF.",
+      "display": "OF.",
+      "cause": "Motor sleep — machine has been in standby for time set by parameter P55 without running",
+      "solution": "Press any key to wake up the machine.",
+      "severity": "low"
+    },
+    {
+      "code": "A-UP",
+      "display": "A-UP",
+      "cause": "Flip switch alarm — machine is not in correct position (nose not straight)",
+      "solution": "Straighten the nose to ensure flip switch is restored. Press and hold S key to clear alarm and turn off dump detection function.",
+      "severity": "medium"
+    },
+    {
+      "code": "A-01",
+      "display": "A-01",
+      "cause": "Needle signal abnormal — needle replenishment button of machine head may be stuck closed",
+      "solution": "Check whether needle replenishment button can be closed and opened normally. If always closed, replace the needle replenishment button. This alarm auto-turns off needle replenishment function but does not affect operation. After 30 seconds, alarm clears automatically or manually by short pressing P key.",
+      "severity": "low"
+    }
+  ],
+  "parameters": [
+    {
+      "id": "P01",
+      "name": "Highest speed",
+      "range": "200-5000",
+      "default": 3600,
+      "unit": "RPM",
+      "note": "Maximum speed setting during sewing. Adjustment unit: 100RPM"
+    },
+    {
+      "id": "P03",
+      "name": "Needle position",
+      "range": "OFF/UP/DN",
+      "default": "DN",
+      "values": { "OFF": "no needle position", "UP": "up needle position", "DN": "down needle position" }
+    },
+    {
+      "id": "P07",
+      "name": "Slow starting sewing speed",
+      "range": "200-2000",
+      "default": 800,
+      "unit": "RPM",
+      "note": "Adjustment unit: 100RPM"
+    },
+    {
+      "id": "P08",
+      "name": "Slow starting sewing stitches",
+      "range": "1-9",
+      "default": 2,
+      "unit": "Half stitch"
+    },
+    {
+      "id": "P09",
+      "name": "Slow starting sewing switch",
+      "range": "ON/OFF",
+      "default": "ON",
+      "values": { "OFF": "close", "ON": "open" }
+    },
+    {
+      "id": "P15",
+      "name": "Needle repair function",
+      "range": "0-3",
+      "default": 0,
+      "values": { "0": "patching by time", "1": "half stitch", "2": "one stitch", "3": "off" }
+    },
+    {
+      "id": "P24",
+      "name": "Pedal thread trimmer position",
+      "range": "0-4095",
+      "default": 655
+    },
+    {
+      "id": "P30",
+      "name": "Thick force switch",
+      "range": "ON/OFF",
+      "default": "ON",
+      "values": { "OFF": "close", "ON": "open" }
+    },
+    {
+      "id": "P31",
+      "name": "Trimming force coefficient",
+      "range": "10-300",
+      "default": 150,
+      "note": "Adjustment unit: 10"
+    },
+    {
+      "id": "P38",
+      "name": "Trimming switch",
+      "range": "ON/OFF",
+      "default": "ON",
+      "values": { "OFF": "close", "ON": "open" }
+    },
+    {
+      "id": "P49",
+      "name": "Trimming speed",
+      "range": "150-450",
+      "default": 250,
+      "unit": "RPM",
+      "note": "Adjustment unit: 10RPM"
+    },
+    {
+      "id": "P54",
+      "name": "Backlight brightness adjustment",
+      "range": "0-4",
+      "default": 0
+    },
+    {
+      "id": "P55",
+      "name": "Sleep time",
+      "range": "0-60",
+      "default": 0,
+      "unit": "minutes",
+      "note": "Set 0 to turn off sleep function"
+    },
+    {
+      "id": "P56",
+      "name": "Boot up and find needle position enable",
+      "range": "ON/OFF",
+      "default": "ON",
+      "values": { "OFF": "don't find upper needle position on startup", "ON": "automatically find upper needle position on power on" }
+    },
+    {
+      "id": "P58",
+      "name": "Upper needle position angle adjustment",
+      "range": "-6 to 11",
+      "default": -1
+    },
+    {
+      "id": "P62",
+      "name": "Special operating mode",
+      "range": "0-5",
+      "default": 0,
+      "values": { "0": "normal", "1": "aging", "2": "reserved", "3": "automatic test mode", "4": "electromagnet run only", "5": "wire cutting electromagnetic testing mode" }
+    },
+    {
+      "id": "P66",
+      "name": "Safety switch",
+      "range": "ON/OFF",
+      "default": "ON",
+      "values": { "OFF": "close", "ON": "open" }
+    },
+    {
+      "id": "P68",
+      "name": "Maximum speed limit",
+      "range": "500-5000",
+      "default": 3600,
+      "unit": "RPM",
+      "note": "Adjustment unit: 100RPM"
+    }
+  ],
+  "monitorParams": [
+    { "id": "M11", "name": "Piece count — counting of thread trimming pieces" },
+    { "id": "M18", "name": "Electronic control master and slave version number" },
+    { "id": "M20", "name": "Bus voltage" },
+    { "id": "M21", "name": "Head speed — real-time speed" },
+    { "id": "M22", "name": "Motor line current — AD value" },
+    { "id": "M27", "name": "Electronic control cumulative running time (hours)" },
+    { "id": "M30-M37", "name": "Historical fault codes (latest 8; E-00 when no fault)" }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "Error code appears on display",
+      "checks": [
+        "Confirm machine connection cable is intact",
+        "Confirm electronic control box and machine are matched",
+        "Confirm factory reset is accurate"
+      ]
+    },
+    {
+      "symptom": "Err-19 locator signal abnormal",
+      "checks": [
+        "Check encoder/positioner plug is connected reliably",
+        "Turn off then on power",
+        "Long press S key to clear E-19 alarm",
+        "Set P03 to OFF to disable positioning function if issue persists",
+        "Contact maintenance staff if Hall sensor abnormal"
+      ]
+    },
+    {
+      "symptom": "Machine enters sleep mode (OF. display)",
+      "checks": [
+        "This is normal sleep behavior after idle period set by P55",
+        "Press any key to wake the machine"
+      ]
+    },
+    {
+      "symptom": "A-UP alarm: flip switch alarm",
+      "checks": [
+        "Straighten the machine head nose so flip switch is restored",
+        "Press and hold S key to clear alarm"
+      ]
+    }
+  ]
+}

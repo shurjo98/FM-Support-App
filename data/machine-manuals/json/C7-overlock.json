@@ -1,0 +1,413 @@
+{
+  "model": "C7",
+  "manufacturer": "Jack",
+  "controllerType": "C7 panel V1.1",
+  "manualVersion": "V1.1",
+  "type": "Overlock sewing machine (包缝机) panel controller",
+  "specs": {
+    "maxSpeed": 6000,
+    "maxSpeedUnit": "RPM",
+    "sewingModes": ["Full automatic (全智能)", "Semi-automatic (半智能)", "Full manual (全电脑)"],
+    "fabricTypes": ["Normal (b0)", "Big net hole fabric (S)", "Gauze/mesh fabric (A)"]
+  },
+  "errorCodes": [
+    {
+      "code": "E1",
+      "display": "E1",
+      "cause": "Main spindle motor stall — machine head stuck or difficult to turn, motor plug or sensor loose/falling off",
+      "solution": "Check machine head and motor plug. Check motor sensor connector. Check for oil shortage. Check spindle motor drive line for short circuit. Check controller for magnetization. Contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E2",
+      "display": "E2",
+      "cause": "Main motor software overcurrent — IGBT damaged, motor drive line short circuit, hardware abnormal",
+      "solution": "Try to restore factory settings or restart power supply. Check IGBT and spindle motor drive line for short. Check electronic control hardware circuit and IGBT/drive chip and surrounding circuits. Replace controller if damaged.",
+      "severity": "high"
+    },
+    {
+      "code": "E3",
+      "display": "E3",
+      "cause": "Operation panel and control box communication abnormal — Hall signal connector loose or disconnected",
+      "solution": "Check operation panel and control box connection cable. If loose/disconnected, restore and restart. Replace controller and contact service if still failing.",
+      "severity": "medium"
+    },
+    {
+      "code": "E4",
+      "display": "E4",
+      "cause": "Motor Hall error — Hall signal connector loose or foreign body in motor, encoder/positioner plug loose",
+      "solution": "Turn off power. Check if operation panel and control box cable are loose. Try factory restore or restart. Check M40 value is not 000 or 111. Check handwheel value changes during rotation. Contact service if unresolved.",
+      "severity": "high"
+    },
+    {
+      "code": "E5",
+      "display": "E5",
+      "cause": "Needle stop signal abnormal — motor stop signal connector loose or fallen off",
+      "solution": "Turn off system power. Check motor stop signal connector for loose/falling off; restore and restart. Check if fan blade magnets are correctly installed. If position alarm cannot be resolved, the positioning function will auto-disable.",
+      "severity": "medium"
+    },
+    {
+      "code": "E6",
+      "display": "E6",
+      "cause": "Presser foot protection is on — presser foot not pushed back to correct position",
+      "solution": "Check if presser foot is pushed back to correct position. For temporary use, change P57 parameter to 0. Check presser foot safety switch sensor for damage. Contact service if unresolved.",
+      "severity": "medium"
+    },
+    {
+      "code": "E7",
+      "display": "E7",
+      "cause": "Slot protection function is on — sewing table not pushed back to correct position",
+      "solution": "Check if sewing table is pushed back to correct position. For temporary use, change P58 parameter to 0. Check sewing table safety switch sensor. Contact service if unresolved.",
+      "severity": "medium"
+    },
+    {
+      "code": "E8",
+      "display": "E8",
+      "cause": "Needle bar shield protection is on — needle bar guard not in correct position",
+      "solution": "Check that needle bar guard is placed back in correct position. For temporary use, change P59 parameter to 0. Check needle bar shield safety switch sensor. Contact service if unresolved.",
+      "severity": "medium"
+    },
+    {
+      "code": "E9",
+      "display": "E9",
+      "cause": "Foot pedal connection abnormal — pedal plug not connected or loose",
+      "solution": "Check if pedal plug is connected to control box or loose. Keep power on and check pedal returns to middle automatically. Check pedal voltage via M05 monitoring or multimeter. Replace pedal if needed.",
+      "severity": "medium"
+    },
+    {
+      "code": "E10",
+      "display": "E10",
+      "cause": "Main motor hardware overcurrent — IGBT damaged, motor drive lines short circuit",
+      "solution": "Check if power supply voltage is normal. Try factory restore or power restart. Check IGBT and motor lines. Check electronic control hardware circuits. Replace controller if damaged.",
+      "severity": "high"
+    },
+    {
+      "code": "E11",
+      "display": "E11",
+      "cause": "Main motor overpressure during shutdown — supply voltage too high (above 275V)",
+      "solution": "Check if supply voltage is normal (above 275V is too high). Try factory restore or power restart. Contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E12",
+      "display": "E12",
+      "cause": "Main motor system undervoltage — supply voltage too low (below 110V)",
+      "solution": "Check if supply voltage is normal (below 110V is too low). Try factory restore or power restart. Contact local service or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "E13",
+      "display": "E13",
+      "cause": "Main motor abnormal brake circuit — brake resistance damaged or abnormal",
+      "solution": "Contact local service provider or call 4008876858. Check brake resistance value.",
+      "severity": "high"
+    },
+    {
+      "code": "E14",
+      "display": "E14",
+      "cause": "Parameter read and write exception",
+      "solution": "Try to turn off power and restart. Contact local service or call 4008876858 if unresolved.",
+      "severity": "medium"
+    },
+    {
+      "code": "E19",
+      "display": "E19",
+      "cause": "Main motor current detection loop abnormal — hardware abnormal",
+      "solution": "Try turning off power and restart. Check hardware, U/V sampling resistors and TVS tube for damage. Check operational amplifier and peripheral components. Contact service if unresolved.",
+      "severity": "high"
+    },
+    {
+      "code": "E20",
+      "display": "E20",
+      "cause": "Power off — spindle motor power line out of phase, electronic control hardware drive circuit abnormal",
+      "solution": "Check spindle motor power line for phase loss. Check electronic control hardware drive circuit. Try turning off power and restart. Contact local service if unresolved.",
+      "severity": "high"
+    },
+    {
+      "code": "E21",
+      "display": "E21",
+      "cause": "Spindle motor or IGBT lack of phase — motor power line out of phase, IGBT damaged",
+      "solution": "Check spindle motor power line. Check hardware: U/V sampling resistors and TVS tube, operational amplifier and peripheral components. Turn off and restart. Contact service if unresolved.",
+      "severity": "high"
+    },
+    {
+      "code": "E26",
+      "display": "E26",
+      "cause": "Adapter board communicates abnormally with controller — adapter board connection loose",
+      "solution": "Check connection between adapter plate and control box for loose. Try factory restore or power restart. Check adapter board connection cable — if loose/falling off/broken, fix it. Replace adapter board if needed.",
+      "severity": "medium"
+    },
+    {
+      "code": "E27",
+      "display": "E27",
+      "cause": "Factory reset error",
+      "solution": "After shutdown restart, restore factory settings again.",
+      "severity": "low"
+    },
+    {
+      "code": "E31",
+      "display": "E31",
+      "cause": "Foot motor soft overcurrent — IGBT damaged, motor lines short circuit",
+      "solution": "Check power supply voltage. Try factory restore or restart. Check IGBT and foot motor drive line. Check electronic control hardware circuits and IGBT/drive chip/surroundings. Replace controller if damaged.",
+      "severity": "high"
+    },
+    {
+      "code": "E32",
+      "display": "E32",
+      "cause": "Foot motor current detection loop abnormal",
+      "solution": "Try turning off power and restart. Check hardware: foot motor U/V sampling resistors and TVS tube, operational amplifier and peripheral components. Contact service if unresolved.",
+      "severity": "high"
+    },
+    {
+      "code": "E33",
+      "display": "E33",
+      "cause": "Foot motor stall — machine head stuck or difficult to turn, motor plug or encoder connector loose",
+      "solution": "Check motor plug and encoder connector for loose/falling off/broken. Check foot motor cam position. Contact local service or call 4008875685.",
+      "severity": "high"
+    },
+    {
+      "code": "E34",
+      "display": "E34",
+      "cause": "Foot Motor encoder signal abnormal — motor plug or encoder connector loose",
+      "solution": "Check foot motor power line and encoder line for loose/falling off/broken. Contact service if unresolved.",
+      "severity": "medium"
+    },
+    {
+      "code": "E35",
+      "display": "E35",
+      "cause": "Foot motor cannot find initial position — motor plug or encoder loose, or cam position incorrect",
+      "solution": "Check foot motor cam position. Check foot motor power line and encoder line. Replace foot motor or encoder. Contact service.",
+      "severity": "high"
+    },
+    {
+      "code": "E36",
+      "display": "E36",
+      "cause": "Foot motor hardware overcurrent",
+      "solution": "Check power supply. Check IGBT and foot motor drive line. Check hardware circuits. Contact service.",
+      "severity": "high"
+    },
+    {
+      "code": "E37",
+      "display": "E37",
+      "cause": "Foot motor overpressure — supply voltage too high (above 275V)",
+      "solution": "Check supply voltage is normal (above 275V is too high). Try factory restore or restart. Contact service.",
+      "severity": "high"
+    },
+    {
+      "code": "E38",
+      "display": "E38",
+      "cause": "Foot motor or IGBT lack of phase",
+      "solution": "Check foot motor power line for phase loss. Check electronic control hardware drive circuit. Turn off and restart. Contact service.",
+      "severity": "high"
+    },
+    {
+      "code": "E41",
+      "display": "E41",
+      "cause": "Foot motor position deviation counter overflowing — encoder grating dusty or damaged, load too high",
+      "solution": "Check foot motor encoder grating for dust or damage. Check foot pedal encoder interface for loose. Check foot motor drive circuit. Contact service.",
+      "severity": "medium"
+    },
+    {
+      "code": "E43",
+      "display": "E43",
+      "cause": "Foot motor overspeeding — encoder grating dusty or damaged",
+      "solution": "Check foot pedal encoder interface for loose. Check foot motor drive circuit. Check foot motor encoder grating for dust/damage. Contact service.",
+      "severity": "medium"
+    },
+    {
+      "code": "E57",
+      "display": "E57",
+      "cause": "High speed serial communication failure of adapter board — adapter plate connection loose",
+      "solution": "Check adapter plate and control box connection for loose. Set U94 parameter to 0 or try factory restore. Check adapter board connection cable and replace adapter board if needed.",
+      "severity": "medium"
+    },
+    {
+      "code": "EA1",
+      "display": "EA1",
+      "cause": "Counting counts in ascending order full",
+      "solution": "Press P key to clear, or set P71 parameter to 5.",
+      "severity": "low"
+    },
+    {
+      "code": "EA2",
+      "display": "EA2",
+      "cause": "Counting counts in descending order full",
+      "solution": "Press P key to clear, or set P71 parameter to 5.",
+      "severity": "low"
+    }
+  ],
+  "alarmCodes": [
+    {
+      "code": "A-01",
+      "display": "A-01",
+      "cause": "Front sensor auto calibration failed — sensor surface dirty",
+      "solution": "Check receive sensor and transmitter surface — clean if dirty.",
+      "severity": "low"
+    },
+    {
+      "code": "A-02",
+      "display": "A-02",
+      "cause": "Mid-sensor automatic calibration failed",
+      "solution": "Check the sensor receiver and transmitter surface — clean if dirty.",
+      "severity": "low"
+    },
+    {
+      "code": "A-03",
+      "display": "A-03",
+      "cause": "After sensor auto calibration failed",
+      "solution": "Check the sensor receiver and transmitter surface — clean if dirty.",
+      "severity": "low"
+    },
+    {
+      "code": "A-04",
+      "display": "A-04",
+      "cause": "Automatic calibration timeout — all three sensor surfaces may be dirty",
+      "solution": "Detect all three sensor receiver and transmitter surfaces and clean if dirty.",
+      "severity": "low"
+    },
+    {
+      "code": "A-08",
+      "display": "A-08",
+      "cause": "Panel and electronic control models do not match",
+      "solution": "Upgrade electronic control and panel programs to matching programs.",
+      "severity": "medium"
+    },
+    {
+      "code": "A-09",
+      "display": "A-09",
+      "cause": "White grease regular maintenance warning",
+      "solution": "Apply white grease maintenance as scheduled.",
+      "severity": "low"
+    },
+    {
+      "code": "A-10",
+      "display": "A-10",
+      "cause": "Regular cleaning warning",
+      "solution": "Perform regular cleaning maintenance.",
+      "severity": "low"
+    },
+    {
+      "code": "A-11",
+      "display": "A-11",
+      "cause": "Acquisition module disconnected from gateway (IoT)",
+      "solution": "Check connection between panel and acquisition module.",
+      "severity": "low"
+    },
+    {
+      "code": "A-12",
+      "display": "A-12",
+      "cause": "Gateway disconnected from server (IoT)",
+      "solution": "Check the gateway's networking situation.",
+      "severity": "low"
+    },
+    {
+      "code": "A-13",
+      "display": "A-13",
+      "cause": "Panel and collector disconnected",
+      "solution": "Check if connection between panel and acquisition module is normal.",
+      "severity": "low"
+    },
+    {
+      "code": "A-14",
+      "display": "A-14",
+      "cause": "Oil free warning — machine is out of oil",
+      "solution": "Check oil of sewing machine. Add oil as needed.",
+      "severity": "medium"
+    },
+    {
+      "code": "A-21",
+      "display": "A-21",
+      "cause": "Normal/Thickness switch warning — fabric thickness mode changed",
+      "solution": "Normal notification when switching between fabric thickness modes.",
+      "severity": "low"
+    }
+  ],
+  "parameters": [
+    { "id": "P1", "name": "Max rotate speed", "range": "500-7000", "default": 6000, "unit": "RPM" },
+    { "id": "P2", "name": "Needle stop positioning selection", "range": "0-5", "default": 1, "values": { "0": "no needle position", "1": "up needle position", "2": "down needle position", "3": "down needle position (rear tread won't find up needle)", "4": "down needle (can find on table with or without fabric)", "5": "down needle (auto returns to up if no fabric on table)" } },
+    { "id": "P3", "name": "Start sewing speed", "range": "500-7000", "default": "5700 (chopper) / 4000 (side suction)", "unit": "RPM" },
+    { "id": "P4", "name": "Start up mode", "range": "0-1", "default": 0, "values": { "0": "automatic mode", "1": "foot control mode" } },
+    { "id": "P5", "name": "Sewing mode selection", "range": "0-2", "default": 1, "values": { "0": "full manual (全电脑)", "1": "semi-automatic (半智能)", "2": "full automatic (全智能)" } },
+    { "id": "P7", "name": "Trimming mode adjustment", "range": "0-3", "default": 3, "values": { "0": "off", "1": "trim before sewing", "2": "trim after sewing", "3": "trim both before and after sewing" } },
+    { "id": "P10", "name": "Presser foot mode adjustment", "range": "0-3", "default": 0, "values": { "0": "off", "1": "lift before sewing", "2": "lift after sewing", "3": "lift both before and after sewing" } },
+    { "id": "P15", "name": "Head lamp switch", "range": "0-5", "default": 1, "values": { "0": "off", "1-5": "on (brightness levels)" } },
+    { "id": "P22", "name": "Front sensor switch", "range": "0-1", "default": 1, "values": { "0": "off", "1": "on" } },
+    { "id": "P25", "name": "Back sensor switch", "range": "0-1", "default": 1, "values": { "0": "off", "1": "on" } },
+    { "id": "P61", "name": "Sleeping time", "range": "1-250", "default": 30, "unit": "minutes" },
+    { "id": "P62", "name": "Panel button lock", "range": "0-1", "default": 0, "values": { "0": "unlock", "1": "lock (long press trimmer button to unlock)" } },
+    { "id": "P80", "name": "Language type selection", "range": "0-11", "default": 0, "values": { "0": "Chinese", "1": "English", "2": "Russian", "3": "Arabic", "4": "Turkish", "5": "Portuguese", "6": "Spanish", "7": "Persian", "8": "Bengali", "9": "Indonesian", "10": "Polish", "11": "Italian" } },
+    { "id": "P92", "name": "Fabric identification fabric type", "range": "0-2", "default": 0, "values": { "0": "normal fabric mode", "1": "big net hole fabric mode", "2": "gauze fabric mode" } },
+    { "id": "P94", "name": "Model selection", "range": "6-8", "default": 6, "values": { "6": "electric", "7": "pneumatic", "8": "side draught" } },
+    { "id": "P116", "name": "IoT serial number setting enable", "range": "0-1", "default": 0, "values": { "0": "disabled", "1": "enabled" } },
+    { "id": "U15", "name": "Thickness detection zero position threshold", "range": "100-500", "default": 300, "unit": "0.01V" },
+    { "id": "U20", "name": "Switching speed reduction after bone cross sewing", "range": "0-2", "default": 0, "values": { "0": "close", "1": "thick material deceleration mode", "2": "bone cross sewing slow down mode" } },
+    { "id": "U25", "name": "Out-of-factory needle gauge setting", "range": "10-60", "default": 44, "unit": "0.1mm" }
+  ],
+  "monitorParams": [
+    { "id": "M0", "name": "Exit monitor mode" },
+    { "id": "M1", "name": "Current piece count" },
+    { "id": "M3", "name": "Q axis current" },
+    { "id": "M4", "name": "AC input voltage" },
+    { "id": "M5", "name": "Pedal voltage value" },
+    { "id": "M7", "name": "Front sensor voltage value" },
+    { "id": "M9", "name": "Post sensor voltage value" },
+    { "id": "M10", "name": "Real-time speed value" },
+    { "id": "M15", "name": "IoT networking status" },
+    { "id": "M20", "name": "Panel software version number" },
+    { "id": "M32", "name": "Voltage value of thickness measurement" },
+    { "id": "M33", "name": "Short thread sensor voltage value" }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "E1 main motor stall error",
+      "checks": [
+        "Check if machine head is stuck or difficult to turn",
+        "Check motor plug and motor sensor connector for loose or fallen off",
+        "Check if there is oil shortage — add oil if needed",
+        "Check spindle motor drive line and hall signal wire",
+        "Call 4008876858 if unable to resolve"
+      ]
+    },
+    {
+      "symptom": "E3 communication error between panel and control box",
+      "checks": [
+        "Check connection cable between operation panel and control box",
+        "Ensure cable is not loose, dropped, or broken",
+        "Restore connection and restart system",
+        "Replace controller if still failing"
+      ]
+    },
+    {
+      "symptom": "E6 presser foot protection error",
+      "checks": [
+        "Check if presser foot is pushed back to correct position",
+        "Set P57 to 0 for temporary bypass if needed",
+        "Check presser foot safety switch sensor for damage"
+      ]
+    },
+    {
+      "symptom": "Machine reports oil warning A-14",
+      "checks": [
+        "This is a normal maintenance reminder",
+        "Check oil level of sewing machine",
+        "Add oil as required"
+      ]
+    },
+    {
+      "symptom": "Sensor calibration fails (A-01, A-02, A-03)",
+      "checks": [
+        "Clean sensor receiver and transmitter surfaces",
+        "Ensure there is no fabric blocking the sensor",
+        "Re-run automatic calibration after cleaning"
+      ]
+    },
+    {
+      "symptom": "Machine speed unexpectedly slow or stops mid-fabric",
+      "checks": [
+        "Check P5 sewing mode — ensure correct mode for fabric type",
+        "Check U20 — thick material deceleration may be active",
+        "Check fabric type setting P92 matches actual fabric"
+      ]
+    }
+  ]
+}

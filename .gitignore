@@ -26,3 +26,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# raw source machine manuals (PDFs/pptx) — the app only reads the extracted
+# data/machine-manuals/json/ at runtime; some of these source files are
+# 300MB+, over GitHub's 100MB push limit
+data/machine-manuals/*.pdf
+data/machine-manuals/*.PDF
+data/machine-manuals/*.pptx
+

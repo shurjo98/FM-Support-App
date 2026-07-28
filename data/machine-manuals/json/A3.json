@@ -1,0 +1,647 @@
+{
+  "model": "A3",
+  "manufacturer": "Qixing (琦星)",
+  "controllerType": "A3 LCD Controller (Qixing brand)",
+  "type": "Lockstitch sewing machine electronic control box (Qixing/琦星 brand — NOT Jack)",
+  "specs": {
+    "display": "LCD with 7-segment display (BBB:BB:BB format), character map for numbers and alphabet, icons: free sewing, multi-segment sewing, bar-tacking, needle up/down, trimming, presser foot, clamp, loud speaker, wireless signal",
+    "interface": "Start/End Back-Tacking keys (AB / CD panel), Free Sewing+Trim key, Needle stop up/down, Clamp function key, P (parameter enter/save/exit), + (increase), - (decrease), < (left select), > (right select), Restore Factory (needle-hole touch switch)",
+    "parameterEntryUser": "Long press P key to enter User Parameter Mode (P01-P43, P99, P108, PA0, PA3)",
+    "parameterEntryTechnician": "Hold P key and turn on power — shows P27 — to enter Technician Parameter Mode (P44-P99, P108, PA0, PA3)",
+    "factoryResetMethod": "Use a machine needle to press the Restore Factory hole touch switch",
+    "speedAdjust": "Press + to accelerate, press - to decelerate; each press adjusts by 50 r/S",
+    "warranty": "1 year from purchase, or 2 years from ex-factory date"
+  },
+  "note": "A3 is manufactured by Qixing (琦星), NOT Jack. Parameter naming conventions differ significantly from Jack machines. Needle position default is DN (down) — opposite labeling from some Jack machines where UP means stops-up. Error codes use E-prefix with 2-digit number (E01, E03, E07...) — not the Err-XX or E1/E2 format used in Jack machines.",
+  "errorCodes": [
+    {
+      "code": "E01",
+      "display": "E01",
+      "cause": "Power ON voltage detection too high, or supply voltage is too high",
+      "solution": "Turn off the system power supply and detect whether the supply voltage is correct (or exceeds rated voltage). If correct, please replace the control box and inform the factory.",
+      "severity": "critical"
+    },
+    {
+      "code": "E02",
+      "display": "E02",
+      "cause": "Power ON voltage detection too high, or supply voltage is too high (same display category as E01)",
+      "solution": "Turn off the system power supply and detect whether the supply voltage is correct (or exceeds rated voltage). If correct, please replace the control box and inform the factory.",
+      "severity": "critical"
+    },
+    {
+      "code": "E03",
+      "display": "E03",
+      "cause": "Operation panel and CPU transmission communication exception",
+      "solution": "Turn off the system power. Check the operation panel interface is loose. If contact is good, please change the operation panel. If it is not operated, the control box is damaged, please change.",
+      "severity": "high"
+    },
+    {
+      "code": "E05",
+      "display": "E05",
+      "cause": "Control of the contact of the device — connector loose or fallen off",
+      "solution": "Off the system power supply. Check and control the connector is loose or fall off. Will resume normal after the restart system. If you still cannot work normally, please replace the speed controller and notify the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "E07",
+      "display": "E07",
+      "cause": "Motor plug wiring not transferred, lock head or foreign body in card die, machine material too thick (motor torque insufficient), or module driven output exception",
+      "solution": "Rotating head motor hand wheel to observe if stuck. If stuck, rule out mechanical failure first. Check the motor encoder connector and motor power cable joints are loose. If loose, revise. Check the supply voltage — if too high or too low, adjust to normal. If cannot adjust, please replace the control box and notify the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "E08",
+      "display": "E08",
+      "cause": "Continuous manual back-stitch pour for over 15 seconds",
+      "solution": "Back-sewing electromagnet time is too long; can restart.",
+      "severity": "medium"
+    },
+    {
+      "code": "E10",
+      "display": "E10",
+      "cause": "Electromagnetic overcurrent protection — solenoid connection line loose or solenoid valve damaged",
+      "solution": "Power off system. Check solenoid (solenoid valve) connection line or solenoid (solenoid valve) is damaged. Check solenoid connection line or solenoid is damaged. Replace immediately if defective.",
+      "severity": "critical"
+    },
+    {
+      "code": "E11",
+      "display": "E11",
+      "cause": "Locating signal anomaly — motor encoder interface loose or disconnected",
+      "solution": "Power off system. Check the motor encoder interface is loose or off. Will resume normal after the restart system. If you still cannot work normally, please inform the factory and replace the motor.",
+      "severity": "high"
+    },
+    {
+      "code": "E13",
+      "display": "E13",
+      "cause": "Power module overheat protection",
+      "solution": "Turn off the system power. Check the power module and the heat sink is in good contact.",
+      "severity": "high"
+    },
+    {
+      "code": "E14",
+      "display": "E14",
+      "cause": "Encoder signal exception — encoder interface loose or disconnected",
+      "solution": "Turn off the system power. Check the motor encoder interface is loose or off. Will resume normal after the restart system. If you still cannot work normally, please replace the motor and notify the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "E15",
+      "display": "E15",
+      "cause": "Power module not normal overcurrent protection",
+      "solution": "Turn off the system power, and then restart. If you still cannot work normally, please inform the factory and replace the motor.",
+      "severity": "high"
+    },
+    {
+      "code": "E17",
+      "display": "E17",
+      "cause": "Head protection switch is not in the correct position — machine head switch damaged",
+      "solution": "Turn off the system power. Check the nose is opened, and the head switch is damaged.",
+      "severity": "high"
+    },
+    {
+      "code": "E20",
+      "display": "E20",
+      "cause": "Power motor failed to start — motor encoder interface or motor power connector loose or fallen off",
+      "solution": "Power off the system. Check the motor encoder interface and motor power connector is loose or fall off. It will resume normal after restarting the system. If it still does not work, replace the control box and inform the manufacturer.",
+      "severity": "high"
+    }
+  ],
+  "alarmCodes": [],
+  "parameters": [
+    {
+      "id": "P01",
+      "name": "Maximum Sewing Speed",
+      "range": "200-5000",
+      "default": 3800,
+      "unit": "r/S",
+      "level": "user"
+    },
+    {
+      "id": "P02",
+      "name": "Speed Curve Adjustment",
+      "range": "10-100",
+      "default": 80,
+      "unit": "%",
+      "level": "user",
+      "note": "Large slope = fast speed increase; small slope = slow speed increase"
+    },
+    {
+      "id": "P03",
+      "name": "Needle UP/DOWN Selection",
+      "range": "DN/UP",
+      "default": "DN",
+      "level": "user",
+      "values": { "UP": "Needle stops at UP position", "DN": "Needle stops at DOWN position" },
+      "note": "IMPORTANT: A3 default DN means needle stops DOWN. This is opposite labeling convention from some Jack machines."
+    },
+    {
+      "id": "P04",
+      "name": "Start Back-Tacking Speed",
+      "range": "200-3200",
+      "default": 1800,
+      "unit": "r/S",
+      "level": "user",
+      "note": "Speed of front-end back tacking (start back tacking)"
+    },
+    {
+      "id": "P05",
+      "name": "End Back-Tacking Speed",
+      "range": "200-3200",
+      "default": 1800,
+      "unit": "r/S",
+      "level": "user",
+      "note": "Speed of rear-end back tacking (end back tacking)"
+    },
+    {
+      "id": "P06",
+      "name": "Bar-Tacking Speed",
+      "range": "200-3200",
+      "default": 1800,
+      "unit": "r/S",
+      "level": "user"
+    },
+    {
+      "id": "P07",
+      "name": "Soft Start Speed",
+      "range": "200-1500",
+      "default": 400,
+      "unit": "r/S",
+      "level": "user"
+    },
+    {
+      "id": "P08",
+      "name": "Stitch Numbers for Soft Start (SLS)",
+      "range": "0-99",
+      "default": 2,
+      "level": "user",
+      "note": "One unit = half stitch"
+    },
+    {
+      "id": "P09",
+      "name": "Automatic Constant-Stitch Sewing Speed",
+      "range": "200-4000",
+      "default": 3500,
+      "unit": "r/S",
+      "level": "user",
+      "note": "Constant-stitch sewing speed set at A (or when AUTO signal is active)"
+    },
+    {
+      "id": "P10",
+      "name": "Automatic End Back-Tacking after Constant Sewing",
+      "range": "ON/OFF",
+      "default": "ON",
+      "level": "user",
+      "note": "ON: execute end back-tacking after finishing last constant sewing section. OFF: requires pedal or full heeling."
+    },
+    {
+      "id": "P11",
+      "name": "Back-Tacking Mode when Manually Pushing Back-Tacking",
+      "range": "J/B",
+      "default": "J",
+      "level": "user",
+      "values": { "J": "JUKI Mode — active during sewing or stop", "B": "BROTHER Mode — only acts during sewing" }
+    },
+    {
+      "id": "P12",
+      "name": "Start Back-Tacking Mode Selection",
+      "range": "A/M",
+      "default": "A",
+      "level": "user",
+      "values": { "A": "One shot to pedal — auto execute Start Back-Tacking", "M": "Pedal-controlled and motor can stop arbitrarily" }
+    },
+    {
+      "id": "P13",
+      "name": "Mode Selection at End of Start Back-Tacking",
+      "range": "CON/STP",
+      "default": "CON",
+      "level": "user",
+      "values": { "CON": "Machine continues sewing if pedal pressed or START signal on (standing operation)", "STP": "Machine stops at end of Start Back-Tacking" }
+    },
+    {
+      "id": "P14",
+      "name": "Soft Start",
+      "range": "ON/OFF",
+      "default": "OFF",
+      "level": "user",
+      "values": { "ON": "Soft start function on", "OFF": "Soft start function off" }
+    },
+    {
+      "id": "P15",
+      "name": "Stitch Compensation Mode",
+      "range": "0-2",
+      "default": 0,
+      "level": "user",
+      "values": { "0": "Fill half needle", "1": "Fill a needle", "2": "Continuous half needle" }
+    },
+    {
+      "id": "P16",
+      "name": "Adjustment Response Time",
+      "range": "0-990",
+      "default": 100,
+      "level": "user",
+      "note": "Corresponding time of sensor foot lift after testing with cloth"
+    },
+    {
+      "id": "P17",
+      "name": "Sensor Sensitivity",
+      "range": "10-200",
+      "default": 90,
+      "level": "user",
+      "note": "If testing the value larger than sensitivity value it means with cloth"
+    },
+    {
+      "id": "P18",
+      "name": "Start Back Tacking Compensation 1",
+      "range": "0-200",
+      "default": 131,
+      "level": "user",
+      "note": "0 to 200: action gradually delays"
+    },
+    {
+      "id": "P19",
+      "name": "Start Back Tacking Compensation 2",
+      "range": "0-200",
+      "default": 158,
+      "level": "user"
+    },
+    {
+      "id": "P20",
+      "name": "End Back-Tacking Mode Selection",
+      "range": "A/M",
+      "default": "A",
+      "level": "user",
+      "values": { "A": "Pedal full heeling — auto execute end Back-Tacking", "M": "Pedal-controlled and motor can stop arbitrarily" }
+    },
+    {
+      "id": "P21",
+      "name": "End Back-Tacking Function Selection",
+      "range": "ON/OFF",
+      "default": "ON",
+      "level": "user",
+      "note": "Valid only when operation panel disconnected"
+    },
+    {
+      "id": "P24",
+      "name": "Voltage of Pedal Heeling",
+      "range": "30-500",
+      "default": 110,
+      "level": "user"
+    },
+    {
+      "id": "P25",
+      "name": "Stitch Compensation for End Back-Tacking 3",
+      "range": "0-200",
+      "default": 131,
+      "level": "user"
+    },
+    {
+      "id": "P26",
+      "name": "Stitch Compensation for End Back-Tacking 4",
+      "range": "0-200",
+      "default": 158,
+      "level": "user"
+    },
+    {
+      "id": "P27",
+      "name": "Sensor Switch",
+      "range": "0-9",
+      "default": 0,
+      "level": "user",
+      "values": { "0": "Off the sensor", "1": "Sensor after trimming", "2": "Normal sensor", "8": "Receive sensor AD", "9": "Sensor sensitivity" }
+    },
+    {
+      "id": "P28",
+      "name": "Bar-Tacking Sewing Mode Selection",
+      "range": "A/M",
+      "default": "A",
+      "level": "user",
+      "values": { "A": "One shot to pedal — auto execute Bar-Tacking", "M": "Pedal-controlled and motor can stop arbitrarily" }
+    },
+    {
+      "id": "P29",
+      "name": "Brake Pressure After Trimming",
+      "range": "1-50",
+      "default": 20,
+      "level": "user"
+    },
+    {
+      "id": "P30",
+      "name": "Torque Increase for Over Thick Material",
+      "range": "0-100",
+      "default": 0,
+      "level": "user"
+    },
+    {
+      "id": "P31",
+      "name": "Torque Increase of Trimming",
+      "range": "0-100",
+      "default": 40,
+      "level": "user"
+    },
+    {
+      "id": "P32",
+      "name": "Stitch Compensation for Bar-Tacking 5",
+      "range": "0-200",
+      "default": 131,
+      "level": "user"
+    },
+    {
+      "id": "P33",
+      "name": "Stitch Compensation for Bar-Tacking 6",
+      "range": "0-200",
+      "default": 158,
+      "level": "user"
+    },
+    {
+      "id": "P34",
+      "name": "Mode Selection for Constant-Stitch Sewing",
+      "range": "A/M",
+      "default": "A",
+      "level": "user",
+      "values": { "A": "One shot to pedal — auto execute Constant-Stitch", "M": "Pedal-controlled and motor can stop arbitrarily" }
+    },
+    {
+      "id": "P37",
+      "name": "Wiper Function Selection (Thread Clamp Device pressure)",
+      "range": "0-11",
+      "default": 8,
+      "level": "user",
+      "values": { "0": "No action", "1": "Wiper action", "2-11": "Clamp action — pressure gradually increased" }
+    },
+    {
+      "id": "P38",
+      "name": "Trimmer Output Function Selection",
+      "range": "ON/OFF",
+      "default": "ON",
+      "level": "user",
+      "values": { "ON": "Trimmer Valid", "OFF": "Trimmer Invalid" }
+    },
+    {
+      "id": "P39",
+      "name": "Presser Foot UP/Down at Intermediate Stop",
+      "range": "DN/UP",
+      "default": "DN",
+      "level": "user",
+      "values": { "UP": "Presser foot goes up automatically", "DN": "Presser foot keeps down (controlled by heeling pedal)" }
+    },
+    {
+      "id": "P40",
+      "name": "Presser Foot UP/Down after Trimming",
+      "range": "DN/UP",
+      "default": "DN",
+      "level": "user",
+      "values": { "UP": "Presser foot goes up automatically", "DN": "Presser foot keeps down (controlled by heeling pedal)" }
+    },
+    {
+      "id": "P41",
+      "name": "Display Sewing Finished Quantity",
+      "range": "0-9999",
+      "default": 0,
+      "level": "user"
+    },
+    {
+      "id": "P42",
+      "name": "Information Display",
+      "range": "N01-N07",
+      "default": "N01",
+      "level": "user",
+      "values": {
+        "N01": "Control box version no.",
+        "N02": "Panel version no.",
+        "N03": "Rotational speed",
+        "N04": "Pedal AD",
+        "N05": "Up position angle",
+        "N06": "Down position angle",
+        "N07": "Busbar voltage AD"
+      }
+    },
+    {
+      "id": "P43",
+      "name": "Setting Direction of Motor Rotation",
+      "range": "CCW/CW",
+      "default": "CCW",
+      "level": "user",
+      "values": { "CW": "Clockwise", "CCW": "Counter Clockwise" }
+    },
+    {
+      "id": "P44",
+      "name": "Brake Efforts",
+      "range": "1-50",
+      "default": 16,
+      "level": "technician",
+      "note": "Adjustment of efforts while machine stops"
+    },
+    {
+      "id": "P45",
+      "name": "Periodic Signal of Back Seam Output",
+      "range": "10-40",
+      "default": 25,
+      "unit": "%",
+      "level": "technician",
+      "note": "Periodic energy saving output while back seam proceeding"
+    },
+    {
+      "id": "P46",
+      "name": "Inversion of Needle Angle after Trimming",
+      "range": "ON/OFF",
+      "default": "OFF",
+      "level": "technician",
+      "note": "ON: motor automatic running after trimming (needle angle decided by P47.TR8). OFF: inaction"
+    },
+    {
+      "id": "P47",
+      "name": "Adjustment of Reverse Angles after Trimming",
+      "range": "50-200",
+      "default": 160,
+      "level": "technician"
+    },
+    {
+      "id": "P48",
+      "name": "Low (Positioning) Speed",
+      "range": "100-500",
+      "default": 210,
+      "unit": "r/S",
+      "level": "technician",
+      "note": "Setting positioning speed"
+    },
+    {
+      "id": "P49",
+      "name": "Trimming Speed",
+      "range": "100-500",
+      "default": 250,
+      "unit": "r/S",
+      "level": "technician",
+      "note": "Adjustment of motor running speed while trimming"
+    },
+    {
+      "id": "P50",
+      "name": "Time of Foot Lifting",
+      "range": "10-990",
+      "default": 250,
+      "unit": "ms",
+      "level": "technician"
+    },
+    {
+      "id": "P51",
+      "name": "Periodic Signal of Foot Lifter Output",
+      "range": "10-40",
+      "default": 25,
+      "unit": "%",
+      "level": "technician",
+      "note": "Setting as periodic power saving output of foot lifter can avoid electromagnet's over-heating"
+    },
+    {
+      "id": "P52",
+      "name": "Time of Foot Lifter Down",
+      "range": "10-990",
+      "default": 120,
+      "unit": "ms",
+      "level": "technician",
+      "note": "Delay down time setting for foot lifter"
+    },
+    {
+      "id": "P53",
+      "name": "Cancel Foot Lifting if Half-Heeling Pedal",
+      "range": "ON/OFF",
+      "default": "OFF",
+      "level": "technician",
+      "values": { "ON": "Without foot lifting while half-heeling pedal", "OFF": "With function" }
+    },
+    {
+      "id": "P54",
+      "name": "Trimming Time",
+      "range": "10-990",
+      "default": 200,
+      "unit": "ms",
+      "level": "technician",
+      "note": "Setting time trimming sequence required"
+    },
+    {
+      "id": "P55",
+      "name": "Wiper Time",
+      "range": "10-990",
+      "default": 380,
+      "unit": "ms",
+      "level": "technician"
+    },
+    {
+      "id": "P56",
+      "name": "Automatically Find UP Position",
+      "range": "0-2",
+      "default": 2,
+      "level": "technician",
+      "values": { "1": "With power on, automatically find UP position", "0": "Inaction" }
+    },
+    {
+      "id": "P57",
+      "name": "Protection Time for Foot Lifter",
+      "range": "1-120",
+      "default": 10,
+      "unit": "seconds",
+      "level": "technician",
+      "note": "Foot lifter comes down automatically after setting time is over"
+    },
+    {
+      "id": "P58",
+      "name": "Up Position Adjustment",
+      "range": "0-1799",
+      "default": 40,
+      "level": "technician",
+      "note": "Needle stops ahead of time with value decrease; needle delayed stopping with value increase"
+    },
+    {
+      "id": "P59",
+      "name": "Down Position Adjustment",
+      "range": "0-1799",
+      "default": 750,
+      "level": "technician"
+    },
+    {
+      "id": "P60",
+      "name": "Testing Speed",
+      "range": "100-4000",
+      "default": 2000,
+      "unit": "r/s",
+      "level": "technician"
+    },
+    { "id": "P61", "name": "Testing A", "range": "ON/OFF", "default": "OFF", "level": "technician", "note": "Continuous running at P60 speed" },
+    { "id": "P62", "name": "Testing B", "range": "ON/OFF", "default": "OFF", "level": "technician", "note": "Continuous running at P60 speed" },
+    { "id": "P63", "name": "Testing C", "range": "ON/OFF", "default": "OFF", "level": "technician", "note": "Continuous running at P60 speed" },
+    { "id": "P64", "name": "Running Time of Testing B and C", "range": "1-250", "default": 20, "level": "technician" },
+    { "id": "P65", "name": "Stopping Time of Testing B and C", "range": "1-250", "default": 20, "level": "technician" },
+    {
+      "id": "P66",
+      "name": "Machine Protection Switch Testing",
+      "range": "0-2",
+      "default": 1,
+      "level": "technician",
+      "values": { "0": "Disable", "1": "Testing zero signal", "2": "Testing positive signal" }
+    },
+    { "id": "P67", "name": "Trimming Protection Switch Testing", "range": "ON/OFF", "default": "OFF", "level": "technician", "values": { "OFF": "Disable", "ON": "Enable" } },
+    { "id": "P69", "name": "Buffer of Backstitch Release", "range": "0-40", "default": 2, "unit": "ms", "level": "technician" },
+    { "id": "P71", "name": "Buffer of Presser Foot Release", "range": "0-40", "default": 2, "unit": "ms", "level": "technician" },
+    { "id": "P72", "name": "UP Needle Position Adjustment", "range": "0", "default": 0, "level": "technician", "note": "Press P key to turn on machine and enter P72 needle up position adjustment" },
+    { "id": "P73", "name": "DOWN Needle Position Adjustment", "range": "0", "default": 0, "level": "technician" },
+    { "id": "P76", "name": "Full Output Time of Backstitch", "range": "10-990", "default": 250, "unit": "ms", "level": "technician" },
+    { "id": "P77", "name": "Pause Time of End Back to Seam in FREE Mode", "range": "20-200", "default": 75, "unit": "ms", "level": "technician" },
+    { "id": "P78", "name": "Starting Clip Angle of Thread Clamp", "range": "10-150", "default": 100, "level": "technician", "note": "Positioning angle when start clip" },
+    { "id": "P79", "name": "Stopping Clip Angle of Thread Clamp", "range": "160-359", "default": 270, "level": "technician", "note": "Positioning angle when finish clipping" },
+    { "id": "P80", "name": "Feeding Angle of Thread Trimming", "range": "5-359", "default": 18, "level": "technician", "note": "Down position as 0°" },
+    { "id": "P81", "name": "Torque Angle of Thread Trimming", "range": "5-359", "default": 120, "level": "technician", "note": "Down position as 0°" },
+    { "id": "P82", "name": "Feeder Back Angle of Thread Trimming", "range": "5-359", "default": 172, "level": "technician", "note": "Down position as 0°" },
+    { "id": "P84", "name": "Starting Torque Angle of Thick Material Machine", "range": "0-359", "default": 9, "level": "technician" },
+    { "id": "P85", "name": "Stopping Torque Angle of Thick Material Machine", "range": "0-359", "default": 57, "level": "technician" },
+    { "id": "P92", "name": "Encoder Start Angle", "range": "0-479", "default": 445, "level": "technician", "note": "CRITICAL: Factory pre-set. DO NOT CHANGE. Freely changing will lead to control box, motor abnormal or damaged." },
+    { "id": "P99", "name": "Chinese-English Shift", "range": "0-2", "default": 1, "level": "user", "values": { "0": "Off", "1": "Chinese", "2": "English" } },
+    { "id": "P108", "name": "Boot Speech On/Off", "range": "ON/OFF", "default": "ON", "level": "technician" },
+    { "id": "PA0", "name": "Induced Pressure Protection Time", "range": "1-120", "default": 5, "unit": "seconds", "level": "technician", "note": "Forced induction presser foot down after holding time — prevents solenoid long pull heat" },
+    { "id": "PA3", "name": "Without Protective Time of Foot Protection", "range": "1-30", "default": 5, "level": "technician", "note": "Forced induction presser foot down after holding time — prevents solenoid long pull heat" }
+  ],
+  "monitoring": [
+    {
+      "note": "No dedicated monitoring table in A3 manual — use P42 Information Display (N01-N07) to view version, speed, pedal, angles, and busbar voltage"
+    }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "E03 communication exception on A3",
+      "checks": [
+        "Turn off system power",
+        "Check that the operation panel cable is firmly connected — not loose or fallen off",
+        "Reconnect the panel cable and restart",
+        "If contact is confirmed good but error persists, replace the operation panel",
+        "If still unresolved, the control box may be damaged — replace it"
+      ]
+    },
+    {
+      "symptom": "E07 motor issues on A3",
+      "checks": [
+        "Rotate the hand wheel to check if the machine head is mechanically stuck",
+        "If stuck, identify and remove the mechanical obstruction before proceeding",
+        "Check the motor encoder connector and motor power cable — reconnect if loose",
+        "Check that supply voltage is within the rated range (up to 250V AC)",
+        "If voltage and connections are correct but error persists, replace the control box"
+      ]
+    },
+    {
+      "symptom": "E10 electromagnetic overcurrent on A3",
+      "checks": [
+        "Power off system immediately",
+        "Check all solenoid (electromagnet) connections — look for loose or damaged wires",
+        "Check if the solenoid valve itself is damaged",
+        "Replace any damaged solenoid or wiring immediately",
+        "Restart and check operation; inform manufacturer if problem recurs"
+      ]
+    },
+    {
+      "symptom": "Machine will not start or pedal unresponsive on A3",
+      "checks": [
+        "Check power connection and verify supply voltage is below 250V AC",
+        "Verify the motor plug and encoder connector are fully seated",
+        "Check P03 (needle position) setting — ensure it matches expected needle stop behavior",
+        "Check that the head protection switch (related to E17) is not activated",
+        "Verify P12 (start back-tacking mode) and P13 (end of start back-tacking) are set correctly"
+      ]
+    }
+  ]
+}

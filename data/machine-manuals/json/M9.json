@@ -1,0 +1,280 @@
+{
+  "model": "M9",
+  "manufacturer": "Xinghuo (Shenzhen Xing Huo CNC Technology)",
+  "controllerType": "Xinghuo CS01 Generation-II HMI",
+  "manualVersion": "V2.0",
+  "manualDate": "August 2023",
+  "type": "Fully automatic template sewing machine",
+  "note": "M9 V2.0 does not have a printed error code appendix. Error codes are logged in E### format viewable via: Assist Settings > Test Transfer > Alarm Log. The errors below are derived from the alarm log screenshot in the manual and cross-referenced with the M5 V1.1 manual (same machine family).",
+  "specs": {
+    "supplyVoltage": "Single-phase AC 220V",
+    "frequency": "50/60 Hz",
+    "display": "7-inch color LCD touch screen (Generation-II HMI)",
+    "fileFormats": ".KLW and .SLW processing files",
+    "networkControl": "Xinghuo IOT APP via wireless network (WiFi or wired LAN)",
+    "serviceHotline": "800-800-9029",
+    "mainboardVersion": "V.IS01.215",
+    "interfaceVersion": "V2.1.2309.6 T5.112s45"
+  },
+  "errorCodes": [
+    {
+      "code": "E003",
+      "display": "E003: Couldn't find Y zero signal",
+      "cause": "Y-axis motor direction error, Y-axis position sensor failure, or excessive load in Y direction causing motor failure to move",
+      "solution": "Enter the manual frame shift interface and test Y motor rotation. Enter Assist Settings > Input Test and manually trigger Y-zero position sensor to verify detection. Turn off power and manually push press frame in Y direction to check for mechanical obstruction. Check encoder cable and motor connections.",
+      "severity": "high"
+    },
+    {
+      "code": "E001",
+      "display": "E001: Couldn't find X zero signal",
+      "cause": "X-axis motor direction error, X-axis position sensor failure, or excessive load in X direction causing motor failure to move",
+      "solution": "Enter the manual frame shift interface and test X motor rotation. Enter Assist Settings > Input Test and manually trigger X-zero position sensor to verify detection. Turn off power and manually push press frame in X direction to check for mechanical obstruction.",
+      "severity": "high"
+    },
+    {
+      "code": "E002",
+      "display": "E002: Main motor error",
+      "cause": "Spindle motor circuit is open, encoder cable is not connected, or spindle motor is damaged",
+      "solution": "Check if motor cables are properly connected and encoder cable is connected. Test spindle manually by rotating to see if QEP signal changes on screen. Use Assist Settings > Test Interface to test spindle forward/reverse. If cables are fine, replace the spindle motor.",
+      "severity": "high"
+    },
+    {
+      "code": "E004",
+      "display": "E004: X-axis driver hardware over-current",
+      "cause": "Poor contact of X-axis motor base, damaged X-axis stepping motor, short circuit of motor cable, or motherboard hardware problem",
+      "solution": "Confirm the flashing mode of X stepping motor alarm indicator on motherboard is '1 green and 5 reds'. Reinsert X motor cable and restart. If problem persists, replace the X axis motor or motherboard.",
+      "severity": "high"
+    },
+    {
+      "code": "E005",
+      "display": "E005: Motor scissors are not in place",
+      "cause": "Encoder cable of motor with Z signal malfunctions, or parameter setting error",
+      "solution": "Check if the motor is properly connected or in good condition. Rotate the motor manually to check whether the W axis/axis limit signal indicator on motherboard changes. Check parameter settings for conflicts.",
+      "severity": "high"
+    },
+    {
+      "code": "E006",
+      "display": "E006: Motor foot in fault",
+      "cause": "No motor limit signal is detected when motor press foot is reset",
+      "solution": "Check motor press foot related base for looseness. Check whether the Z signal limit signal input changes in Assist Settings > Input Test.",
+      "severity": "high"
+    },
+    {
+      "code": "E007",
+      "display": "E007: Head board cannot be connected",
+      "cause": "Connection between head board and control board is out of order, or head board is damaged",
+      "solution": "Check whether the connection cable is properly inserted at both ends. Replace the connection cable or head board if problem persists.",
+      "severity": "high"
+    },
+    {
+      "code": "E008",
+      "display": "E008: Connecting the main control board",
+      "cause": "Connection between motherboard and screen is out of order, screen has a fault, or motherboard is damaged",
+      "solution": "Check whether both ends of the cable are properly connected and restart. Replace the screen cable or screen. If motherboard is damaged, contact manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "E009",
+      "display": "E009: Air pressure is insufficient",
+      "cause": "Air supply equipment exception causing insufficient air pressure, abnormal input of control board, or abnormal parameter settings/wiring error",
+      "solution": "Check whether barometric pressure is normal. Short-circuit the input and GND with tweezers and check if input changes in Assist Settings > Input Test. Verify parameter settings for pressure input (normally closed in normal condition).",
+      "severity": "high"
+    },
+    {
+      "code": "E010",
+      "display": "E010: Main motor direction error",
+      "cause": "Spindle rotation direction is wrong",
+      "solution": "Use parameter modification software to correct the spindle moving direction, or modify the spindle motor direction or spindle encoder direction in shaft operation mode in mechanical parameters.",
+      "severity": "high"
+    },
+    {
+      "code": "E011",
+      "display": "E011: Grab line motor is not in place",
+      "cause": "No motor limit signal is detected when motor press foot is reset",
+      "solution": "Check motor press foot related base for looseness. Check whether Z signal limit signal input changes in Assist Settings > Input Test. Verify parameter settings.",
+      "severity": "high"
+    },
+    {
+      "code": "E012",
+      "display": "E012: Input IO timeout error",
+      "cause": "No signal is detected at an input port within the expected time window",
+      "solution": "Enter Assist Settings > Input Test and manually trigger the position input signal to check whether it can be detected.",
+      "severity": "medium"
+    },
+    {
+      "code": "E013",
+      "display": "E013: Foot follow error",
+      "cause": "Press foot zero input port detects no signal",
+      "solution": "Check the IO port set for follower press foot alarm in parameter setup software. Manually trigger the IO port in Assist Settings > Input Test and check whether it can be detected.",
+      "severity": "medium"
+    },
+    {
+      "code": "E014",
+      "display": "E014: Electrical fault, please contact the manufacturer",
+      "cause": "Hardware failure in the electrical control system",
+      "solution": "Contact Shenzhen Xing Huo CNC Technology Co., Ltd. Service hotline: 800-800-9029.",
+      "severity": "critical"
+    }
+  ],
+  "alarmCodes": [
+    {
+      "code": "Machine Failure",
+      "display": "Machine Failure (operator report)",
+      "cause": "Operator has detected a mechanical or electrical failure",
+      "solution": "Operator presses 'Machine Failure' in Machine State screen → technician receives alert → arrives and clicks 'In Place' → after repair clicks 'Close Case'.",
+      "severity": "high"
+    },
+    {
+      "code": "Throw Line",
+      "display": "Throw Line (operator report)",
+      "cause": "Thread throwing problem detected by operator",
+      "solution": "Check thread tension, thread path, bobbin installation, and needle condition. Report via Machine State screen for technician assistance.",
+      "severity": "medium"
+    },
+    {
+      "code": "Skipped Stitch",
+      "display": "Skipped Stitch (operator report)",
+      "cause": "Machine is skipping stitches",
+      "solution": "Check needle condition, needle size match, thread tension settings, hook timing, and presser foot pressure. Report via Machine State screen.",
+      "severity": "medium"
+    },
+    {
+      "code": "Line Ball",
+      "display": "Line Ball (operator report)",
+      "cause": "Bird's nest / thread bunching under fabric",
+      "solution": "Check bobbin tension, top thread tension, and threading path. Re-thread the machine. Report via Machine State screen for technician assistance.",
+      "severity": "medium"
+    },
+    {
+      "code": "Break Stitch",
+      "display": "Break Stitch / Thread break (operator report)",
+      "cause": "Thread is breaking during sewing",
+      "solution": "Check needle for damage, thread path for snags, thread tension, and bobbin thread path. Replace needle if bent or blunt.",
+      "severity": "medium"
+    }
+  ],
+  "parameters": [
+    {
+      "id": "User Parameters",
+      "name": "User parameter group (frequently-used sewing parameters)",
+      "note": "Accessed from Menu > User Parameter. Controls max speed, stitch length, backstitch, thread settings, bottom thread statistics, processing statistics."
+    },
+    {
+      "id": "Machine Parameters",
+      "name": "Machine parameter group (assembler access only)",
+      "note": "Accessed from Menu > Machine Parameter (requires machine parameter password). Contains: Motor Setting, Spindle Setting, Delay Setting, Dynamic Presser Foot, Turning Point Speed, Swing Setting, Axis Resolution, Oil Supply Setting, Bond Polarity, Motor Clip Setting, Cutter Setting, Non Standard Setting, Rotation Setting, Head Offset, Automatic Trigger settings."
+    },
+    {
+      "id": "P-DynFoot",
+      "name": "Dynamic Foot Enable",
+      "range": "Ordinary / close / left right",
+      "default": "Ordinary",
+      "note": "Sets presser foot type. Use 'Ordinary' for standard machines."
+    },
+    {
+      "id": "P-FootType",
+      "name": "Foot Type",
+      "range": "Pneumatic / Motor",
+      "default": "Pneumatic",
+      "note": "Must match actual presser foot type installed on machine."
+    },
+    {
+      "id": "P-InflSlow",
+      "name": "Inflection Slow Speed",
+      "range": "Yes / No",
+      "default": "Yes",
+      "note": "Enables speed slowing down at inflection/turning point."
+    },
+    {
+      "id": "P-AirPressIn",
+      "name": "Air pressure input detection",
+      "range": "IN1-IN7",
+      "default": "Nil",
+      "note": "Set to the input port connected to the air pressure sensor. Normally closed — alarm triggers when pressure drops."
+    }
+  ],
+  "machineStateCategories": [
+    "Machine Failure",
+    "Throw Line",
+    "Skipped Stitch",
+    "Line Ball",
+    "Size (size/dimension issue)",
+    "Wait Template",
+    "Wait Material",
+    "Test Machine",
+    "Break Stitch",
+    "Personal Reason",
+    "Leave the post / Refueling"
+  ],
+  "alarmLogLocation": "Assist Settings > Test Transfer > Alarm Log. Logs format: date-time + error code (e.g. E003:Couldn't find Y zero signal). Can be exported to USB flash disk.",
+  "troubleshooting": [
+    {
+      "symptom": "E003 Y zero signal not found — frame won't reset or home",
+      "checks": [
+        "Enter Assist Settings > Input Test — check Y zero sensor status",
+        "Manually trigger the Y-zero limit sensor and verify the indicator changes on screen",
+        "Turn off power and manually push frame in Y direction to check for obstruction",
+        "Check Y-axis motor cable and encoder connection",
+        "If sensor reads OK but still errors, check Y-axis motor direction in machine parameters"
+      ]
+    },
+    {
+      "symptom": "Main motor error — machine won't start processing",
+      "checks": [
+        "Check all spindle motor cable connections",
+        "Check encoder cable connection at both motor and board ends",
+        "Manually rotate spindle and watch QEP value on screen — it should change",
+        "Use Assist Settings > Test Transfer > Test MainAxis to test spindle without load",
+        "If cables OK, replace spindle motor"
+      ]
+    },
+    {
+      "symptom": "Air pressure insufficient alarm on M9 template machine",
+      "checks": [
+        "Check air compressor and supply line pressure",
+        "Enter Assist Settings > Input Test and short-circuit the pressure input with tweezers to GND",
+        "Verify the input indicator changes — if yes, sensor/tubing is the issue",
+        "Check parameter for pressure input type (normally closed for alarm on loss of pressure)",
+        "Inspect pneumatic solenoid valve and air lines for leaks"
+      ]
+    },
+    {
+      "symptom": "Machine won't start processing — press frame not dropping",
+      "checks": [
+        "Check that the press frame (PRESS) button has been pressed to lower the frame",
+        "Check air supply pressure (if pneumatic foot type)",
+        "Enter Assist Settings > Output Test and test the frame output directly",
+        "If motor type foot: check foot motor cable and Z-signal encoder"
+      ]
+    },
+    {
+      "symptom": "File range out of bounds error on M9",
+      "checks": [
+        "Verify that the processing file's XY dimensions fit within the machine's travel range",
+        "Reduce the file size in the PC editing software",
+        "If file was created for a different machine size, recreate it for this machine's range",
+        "Check that absolute coordinates in the file are within the processing range"
+      ]
+    },
+    {
+      "symptom": "Alarm log shows repeated E003 errors",
+      "checks": [
+        "Check Y-axis position sensor (zero sensor) wiring and connector",
+        "Test sensor in Assist Settings > Input Test by moving frame to Y home position",
+        "Inspect Y-axis belt/screw for mechanical blockage",
+        "Check Y motor driver indicator LEDs for fault codes",
+        "If sensor is clean and cables OK, Y motor or driver board may be faulty"
+      ]
+    },
+    {
+      "symptom": "Machine state reporting — how to report a problem",
+      "checks": [
+        "Operator enters Menu > Machine State",
+        "Select the relevant status: Machine Failure / Throw Line / Skipped Stitch / Line Ball / Break Stitch / etc.",
+        "Click 'Report' — system sends alert to network server/console",
+        "Technician sees alert, arrives and clicks 'In Place'",
+        "After repair, technician clicks 'Close Case' to restore normal status"
+      ]
+    }
+  ]
+}

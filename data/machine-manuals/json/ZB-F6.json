@@ -1,0 +1,133 @@
+{
+  "model": "ZB-F6",
+  "manufacturer": "Jack (Zhongbang)",
+  "controllerType": "F6 Control Box (V1.0, 2025-07-09)",
+  "type": "Electronic control box for lockstitch / overlock sewing machines",
+  "source": "ZB-F6电控使用说明书V1.0英文-2025-7-9.pdf (F6 Control Box Manual Book, 9 pages, English)",
+  "note": "The ZB-F6 (F6) control box is a simple 2-button LED controller. Per J8 monitoring model code: 1/4/FF=F5, 2=20U, 3=8558G/8560G — meaning this controller firmware covers F5, 20U, 8558G and 8560G machine variants. See also ZB-F4.json for the similar earlier controller.",
+  "specs": {
+    "voltage220V": "AC 220±20% V, 50Hz/60Hz, max 550W",
+    "voltage110V": "AC 110±20% V, 60Hz, max 550W",
+    "operatingTemp": "0°C to 45°C",
+    "humidity": "30% to 95% (no dew/acid mist)"
+  },
+  "portWiring": {
+    "LEDAndComplementaryStitch": {
+      "pins": 4,
+      "pinout": [
+        {"pin": 1, "signal": "L5V", "function": "Head light power"},
+        {"pin": 2, "signal": "BZ", "function": "Complementary stitch signal"},
+        {"pin": 3, "signal": "DGND", "function": "Headlamp ground"},
+        {"pin": 4, "signal": "DGND", "function": "Headlamp ground"}
+      ]
+    },
+    "pedalAndUpdate": {
+      "pins": 6,
+      "pinout": [
+        {"pin": 1, "signal": "GND", "function": "5V Digital ground"},
+        {"pin": 2, "signal": "-", "function": "Not used"},
+        {"pin": 3, "signal": "VCC", "function": "+5V"},
+        {"pin": 4, "signal": "RX", "function": "UART signal receive"},
+        {"pin": 5, "signal": "TX", "function": "UART signal send"},
+        {"pin": 6, "signal": "Pedal", "function": "Pedal simulate signal"}
+      ]
+    }
+  },
+  "panel": {
+    "type": "2-button panel with 2-digit 7-segment LED display",
+    "display": "First digit shows 'P' in standby (needle stop position in second digit). Shows 'oK' on save/success. Shows error codes (E1, E2...). Speed shown as N×100rpm.",
+    "buttons": [
+      {
+        "name": "+ (Up/Speed+)",
+        "functions": [
+          "Short press: increase speed by 100RPM",
+          "Long press: continuous rapid increase",
+          "In F interface: navigate to next parameter number",
+          "Long press + in standby: enter needle stop position setting",
+          "Long press both + and - for 3s: enter parameter F interface",
+          "Press + when error shown: attempt error recovery / re-detect"
+        ]
+      },
+      {
+        "name": "- (Down/Speed-)",
+        "functions": [
+          "Short press: decrease speed by 100RPM",
+          "Long press: continuous rapid decrease",
+          "In F interface: show current parameter value / change value",
+          "Long press - for 3s in standby: restore factory settings (shows 'oK')",
+          "Long press both + and - for 3s: enter parameter F interface",
+          "When E5 shown: long press to close needle stop function",
+          "When E7 shown: long press to close safety switch function"
+        ]
+      }
+    ]
+  },
+  "parameterEntry": {
+    "speedAdjust": "Short press + or - in standby to adjust speed ±100RPM per press. Hold for continuous change. Auto-saved after 3 seconds.",
+    "needleStopPosition": "Long press + in standby to enter needle stop position setting. Saved automatically.",
+    "enterFInterface": "Long press both + and - simultaneously for about 3s in standby to enter F parameter interface (first digit shows 'F').",
+    "navigateF": "In F interface: press + to change parameter number; press - to show/modify value; press + to save (shows 'oK'); motor operation exits to standby.",
+    "factoryReset": "Long press - for 3s in standby. Digital tube shows 'oK' if successful.",
+    "enterMonitoringJ": "In F interface: long press - for 3s to enter J monitoring interface (first digit shows 'J'). In J interface: press + to change parameter number; press - to show value. In J5: press - again to show historical fault code. In J9: press - to adjust pedal standby range. Press + to save. Short press back-button to return. Short press - in J interface to return to P interface."
+  },
+  "parameters": [
+    {"code": "L", "name": "Max sewing speed", "default": 40, "range": "05-50", "description": "Displayed value × 100 = actual RPM. Increase/decrease by 500rpm per step."},
+    {"code": "M", "name": "Needle position switch", "default": 1, "range": "0-1", "description": "0=Off; 1=On"},
+    {"code": "d", "name": "Complementary stitch function switch", "default": 1, "range": "0-2", "description": "0=Off; 1=Half stitch; 2=One stitch"},
+    {"code": "G", "name": "Safety switch", "default": 1, "range": "0-1", "description": "0=Off; 1=On"},
+    {"code": "H", "name": "Dormancy time", "default": 3, "range": "0-6", "description": "Unit: 10 minutes. 0=Off"},
+    {"code": "C", "name": "Acceleration", "default": 5, "range": "0-9", "description": "Higher value = faster acceleration"},
+    {"code": "n", "name": "Point stitch", "default": 6, "range": "0-9", "description": "Larger value = larger point stitch interval"},
+    {"code": "V", "name": "Speed display enable", "default": 0, "range": "0-1", "description": "0=Off; 1=On"},
+    {"code": "R", "name": "Low voltage alarm value", "default": 0, "range": "0, 10-15", "description": "220V box: 0=Off; 10=100VAC; 11=110VAC; 12=120VAC; 13=130VAC; 14=140VAC; 15=150VAC. 110V box: 0=Off; 10=50VAC; 11=55VAC; 12=60VAC; 13=65VAC; 14=70VAC; 15=75VAC"},
+    {"code": "Y", "name": "High voltage alarm value", "default": 29, "range": "0, 26-31", "description": "220V box: 0=Off; 26=264VAC; 27=274VAC; 28=284VAC; 29=294VAC; 30=304VAC; 31=314VAC. 110V box: 0=Off; 26=132VAC; 27=137VAC; 28=142VAC; 29=147VAC; 30=152VAC; 31=157VAC"},
+    {"code": "A", "name": "Ridge crossing assistance", "default": 1, "range": "0-1", "description": "0=Off; 1=On"},
+    {"code": "b", "name": "Speed controller model selection", "default": 0, "range": "0-1", "description": "0=Computerized type (flat sewing computer model); 1=ZB simple type. After changing, power off and replace governor. If error on next power-on, check speed controller model match."},
+    {"code": "U", "name": "Upper position after start up", "default": 1, "range": "0-1", "description": "0=Off; 1=On"}
+  ],
+  "monitoring": [
+    {"code": "J0", "description": "Pedal voltage monitoring. Displayed value ÷ 10 = actual pedal voltage (V). Shown in both standby and running states."},
+    {"code": "J1", "description": "Speed. Displayed value × 100 = actual speed (RPM). Shown in both standby and running states."},
+    {"code": "J2", "description": "Power. Displayed value × 10 = actual power (W). Shown in both standby and running states."},
+    {"code": "J3", "description": "Input voltage. Displayed value × 10 = actual voltage (V). Shown in standby mode."},
+    {"code": "J4", "description": "Historical maximum voltage. Displayed value × 10 = actual highest input voltage recorded (V)."},
+    {"code": "J5", "description": "Historical error code. Shows latest 5 error codes. Press - again in J5 to switch to historical fault display. Displays '00' when no error history. Auto-returns to standby after 8s without input."},
+    {"code": "J6", "description": "Cumulative running time of control box. Displayed value × 100 = actual time (hours)."},
+    {"code": "J7", "description": "Aging monitoring (for manufacture test only)."},
+    {"code": "J8", "description": "Model code. 1/4/FF=F5; 2=20U; 3=8558G/8560G. Note: some firmware versions do not have J8 monitoring."},
+    {"code": "J9", "description": "Speed controller standby range adjustment. Shows middle voltage under current pedal standby state. Displayed value ÷ 10 = actual voltage. Press - to modify; press + to save ('oK'). Changing this adjusts the speed controller standby range."},
+    {"code": "JA", "description": "Fix version number of the electronic control software."}
+  ],
+  "errorCodes": [
+    {"code": "OF", "description": "Sleep mode (standby about 30 minutes) or supply voltage too low", "solution": "Press + or - to wake machine. If alarm remains, check if power supply voltage is normal."},
+    {"code": "E1", "description": "Motor stuck", "solution": "1. Turn hand wheel — check if machine head is stuck or dry/difficult to rotate. 2. Check motor plug-in is not loose or fallen off. 3. Check if material is too thick (insufficient torque)."},
+    {"code": "E2", "description": "Controller exception", "solution": "1. Turn off and power on again. 2. If alarm persists: check if motor load is too large, sewing material is too thick, or machine lacks lubrication. 3. Contact maintenance personnel if unresolved."},
+    {"code": "E4", "description": "Abnormal motor Hall signal", "solution": "Check if motor encoder plug connection is reliable, if encoder signal wire is broken, and if pin exits or deforms."},
+    {"code": "E5", "description": "Abnormal locator signal", "solution": "Turn handwheel. If alarm cannot be eliminated, power off and on again. Check encoder/positioner plug connection reliability. Abnormal Hall of motor positioner. Long press - for 3s when E5 shown to close needle stop function."},
+    {"code": "E6", "description": "Abnormal speed controller", "solution": "If E6 is flashing: check if speed controller type matches parameter b (default=computerized type). Adjust b parameter accordingly. If E6 is always on: check if speed controller is inserted and plug/pin is not loose or fallen off. Replace governor if alarm persists."},
+    {"code": "E7", "description": "Head safety switch alarm (machine head dump)", "solution": "Restore head position to normal, ensure safety switch is reset. Long press - to close safety switch alarm function if needed. Contact maintenance if alarm persists."},
+    {"code": "EA", "description": "Software over current", "solution": "Turn off power and power on again. Contact maintenance personnel if alarm cannot be eliminated."},
+    {"code": "Eb", "description": "System overvoltage", "solution": "Turn off power supply immediately. Check if voltage exceeds 294V (220V box) or 147V (110V box). Adjust to rated voltage before restarting."},
+    {"code": "EC", "description": "System undervoltage", "solution": "Cut off power supply immediately. Check if voltage is below 110V (220V box) or 55V (110V box). Adjust to rated voltage before restarting."},
+    {"code": "EJ", "description": "Current detection circuit fault", "solution": "Check if circuit board is clean. Check if power supply voltage is normal. Try turning power off and on again (check power board functions carefully)."},
+    {"code": "EZ", "description": "Complementary stitch button failure (button of machine head stuck in off position)", "solution": "Check if complementary stitch button of machine head can be turned on and off normally. If stuck in off position, replace machine head button. Note: alarm automatically turns off complementary stitch function but does not affect motor operation. Alarm clears automatically after 30s or press + to clear."}
+  ],
+  "alarmCodes": [],
+  "troubleshooting": [
+    {
+      "issue": "E6 alarm flashing (not solid)",
+      "cause": "Speed controller type does not match parameter b setting",
+      "solution": "Check parameter b value (0=computerized type, 1=ZB simple type) and adjust to match the installed speed controller."
+    },
+    {
+      "issue": "E6 alarm solid (not flashing)",
+      "cause": "Speed controller not plugged in or plug/pin loose",
+      "solution": "Check speed controller connection. Replace governor if alarm persists. Contact maintenance if still present."
+    },
+    {
+      "issue": "Error alarm cannot be cleared",
+      "cause": "Underlying fault still present",
+      "solution": "Press + to re-detect whether error exists. If cleared, error alarm releases. If not, alarm continues. For E5 or E7: long press - to disable needle stop or safety switch function."
+    }
+  ]
+}

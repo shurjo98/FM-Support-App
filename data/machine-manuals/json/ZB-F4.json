@@ -1,0 +1,191 @@
+{
+  "model": "ZB-F4",
+  "manufacturer": "Jack Sewing Machine Co., Ltd. / ZB",
+  "controllerType": "ZB-F4 Electronic Control Box (2-digit 7-segment LED display, mechanical speed governor)",
+  "manualVersion": "V1.0",
+  "type": "Lockstitch sewing machine electronic control box with mechanical speed governor",
+  "note": "File found in data source labeled '8558G' but the manual is titled 'ZB-F4 Electronic Control Manual Book'. The 8558G/8560G machine models can use the F5/F6 controller type (confirmed by J8 model code in F5/F6 manuals: code 3 = 8558G/8560G). This ZB-F4 is an older simpler speed governor controller used on compatible machines.",
+  "specs": {
+    "powerVoltage": "AC 220V (rated)",
+    "operatingTemperature": "-5°C to 40°C",
+    "display": "2-digit 7-segment LED digital tube ('P' + needle position indicator)",
+    "interface": "+ and - buttons",
+    "factoryResetMethod": "Press - for 3 seconds in P interface to restore factory defaults (shows 'oK' on success, 'Er' on failure)"
+  },
+  "errorCodes": [
+    {
+      "code": "0F",
+      "display": "0F",
+      "cause": "Machine has been in standby mode for about 30 minutes and entered sleep mode, OR supply voltage is too low",
+      "solution": "Press + or - to wake up the machine. If still shows OF, check the supply voltage.",
+      "severity": "low"
+    },
+    {
+      "code": "E1",
+      "display": "E1",
+      "cause": "Motor stuck — motor overloaded, motor plug loose or dropped, fabric too heavy for motor torque",
+      "solution": "Motor used too much — restart machine after several minutes. Check if fabric is much too heavy. Check if machine lacks oil. Check if the plug is loose or has dropped off.",
+      "severity": "high"
+    },
+    {
+      "code": "E2",
+      "display": "E2",
+      "cause": "Motor controller abnormal — machine overused or IGBT problem",
+      "solution": "Usually occurs because machine is used too much or there is an IGBT problem. If restart without result, contact agent to replace controller. Also check if plug is loose or has dropped.",
+      "severity": "high"
+    },
+    {
+      "code": "E4",
+      "display": "E4",
+      "cause": "Needle position abnormal — encoder plug not connected, encoder wire broken, or plug loose or deformed",
+      "solution": "Check if the plug is connected well. Check if the coder wire is broken. Check if the plug is loose or has shape changed.",
+      "severity": "high"
+    },
+    {
+      "code": "E5",
+      "display": "E5",
+      "cause": "Needle governor (locator/positioner) abnormal — Hall problem or positioner cable not connected",
+      "solution": "Check the plug connection. If Hall problem is causing E5, press - for 3 seconds to turn off needle stop function. To reset factory defaults when E5/E7 show: press - in P interface for 3 seconds.",
+      "severity": "high"
+    },
+    {
+      "code": "E6",
+      "display": "E6",
+      "cause": "Speed governor abnormal — plug not connected, coder wire broken",
+      "solution": "Check if the plug is connected. Check if the coder wire is broken or not.",
+      "severity": "high"
+    },
+    {
+      "code": "E7",
+      "display": "E7",
+      "cause": "Machine head protection / head safety switch activated — machine head is not steady",
+      "solution": "Check the machine head is steady. If user needs to disable this function before getting agent service, press - for 3 seconds to turn off the safety switch alarm.",
+      "severity": "high"
+    },
+    {
+      "code": "Eb",
+      "display": "Eb",
+      "cause": "System over-voltage — supply voltage has exceeded 264V",
+      "solution": "Immediately cut off the power. Check whether supply voltage has exceeded 264V. If yes, adjust voltage to rated voltage (220V), then start work. Alternatively, change parameter 'Y' to 0 to disable overvoltage alarm.",
+      "severity": "critical"
+    },
+    {
+      "code": "Ec",
+      "display": "Ec",
+      "cause": "System under-voltage — supply voltage is below 154V",
+      "solution": "Immediately cut off the power. Check whether supply voltage is below 154V. If yes, adjust voltage to rated voltage (220V) then start work. Alternatively, change parameter 'Y' to 0 to disable undervoltage alarm.",
+      "severity": "critical"
+    }
+  ],
+  "alarmCodes": [],
+  "parameters": [
+    {
+      "id": "L",
+      "name": "Max sewing speed",
+      "range": "05-50",
+      "default": 40,
+      "unit": "×100 RPM",
+      "note": "Increase/decrease by 500rpm per step. Value 35 = 3500 RPM."
+    },
+    {
+      "id": "M",
+      "name": "Needle position switch",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off", "1": "On" }
+    },
+    {
+      "id": "d",
+      "name": "Complementary stitch function switch",
+      "range": "0-2",
+      "default": 1,
+      "values": { "0": "Off", "1": "Half stitch", "2": "One stitch" }
+    },
+    {
+      "id": "G",
+      "name": "Safety switch",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off", "1": "On" }
+    },
+    {
+      "id": "H",
+      "name": "Dormancy time",
+      "range": "0-6",
+      "default": 3,
+      "unit": "×10 minutes",
+      "note": "0 = Off (no sleep)"
+    },
+    {
+      "id": "C",
+      "name": "Acceleration",
+      "range": "0-9",
+      "default": 5,
+      "note": "Higher value = faster acceleration"
+    },
+    {
+      "id": "n",
+      "name": "Point stitch interval",
+      "range": "0-9",
+      "default": 6,
+      "note": "Larger value = larger point stitch interval"
+    },
+    {
+      "id": "V",
+      "name": "Speed display enable",
+      "range": "0-1",
+      "default": 0,
+      "values": { "0": "Off", "1": "On" }
+    },
+    {
+      "id": "Y",
+      "name": "High voltage alarm value",
+      "range": "0, 26-31",
+      "default": 29,
+      "note": "0=Off. 26=264VAC, 27=274VAC, 28=284VAC, 29=294VAC, 30=304VAC, 31=314VAC."
+    },
+    {
+      "id": "b",
+      "name": "Speed controller model selection",
+      "range": "0-1",
+      "default": 0,
+      "values": { "0": "Computerized type", "1": "ZB simple type" }
+    }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "Machine has no reaction when power is turned on",
+      "checks": [
+        "Check if the power plug is connected to the socket tightly",
+        "Check if the fuse is burnt — open the control box cover, locate the fuse, and replace with same specification fuse",
+        "If fuse immediately burns again after replacement, contact local agent"
+      ]
+    },
+    {
+      "symptom": "Control box connected but motor doesn't work when pressing pedal",
+      "checks": [
+        "Check if the plug of the speed controller is connected to the socket in the control box correctly",
+        "Check if the speed controller is broken",
+        "Inspect the speed governor rocker arm position"
+      ]
+    },
+    {
+      "symptom": "Motor cannot stop without operating pedal",
+      "checks": [
+        "Check if the position of the magnetic steel coil has changed",
+        "Open the speed governor and adjust the position of the plastic rocker arm — the magnetic steel coil in the rocker arm must be just on the Hall sensor",
+        "Usually the machine cannot stop running if the Hall sensor alignment is off",
+        "If motor still runs, adjust the rocker arm clockwise"
+      ]
+    },
+    {
+      "symptom": "E5 needle governor error on ZB-F4",
+      "checks": [
+        "Check that the synchronizer/positioner cable is plugged into the controller",
+        "Check both upper and lower needle position signals are working",
+        "If positioner not needed: press - for 3 seconds to disable needle stop function",
+        "If factory reset needed (E5 or E7): press - for 3 seconds in P interface — shows 'oK' if successful"
+      ]
+    }
+  ]
+}

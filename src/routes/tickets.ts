@@ -8,6 +8,7 @@ import {
   setCachedAnswer,
 } from "../services/cacheService";
 import { generateAiSuggestion, type SuggestionLang } from "../services/aiService"; // <-- RUNTIME import
+import { lookupErrorCode, lookupTroubleshooting } from "../services/machineKnowledgeBase";
 import { notify } from "../services/notificationService";
 import { storeFile } from "../services/fileStorage";
 import type { Prisma } from "@prisma/client";
@@ -52,6 +53,28 @@ function serializeTicket(t: TicketWithRelations) {
     attachments: t.attachments.map((a) => ({ ...a, uploadedAt: a.uploadedAt.toISOString() })),
     createdAt: t.createdAt.toISOString(),
   };
+}
+
+// Looks up the reported problem against the machine's own manual (error
+// code first, then a symptom-based match) before falling back to the
+// generic canned suggestions. Free — no AI credit, no OpenAI call — since
+// it's a deterministic lookup against our own extracted manual data.
+function lookupManualAnswer(machineModel: string | undefined, description: string, lang: SuggestionLang): string | null {
+  if (!machineModel) return null;
+
+  const errMatches = lookupErrorCode(description, machineModel);
+  if (errMatches.length > 0) {
+    const m = errMatches[0]!;
+    return `${m.code}: ${m.cause}\n\n${lang === "bn" ? "সমাধান" : "Solution"}: ${m.solution}`;
+  }
+
+  const tsMatches = lookupTroubleshooting(description, machineModel);
+  if (tsMatches.length > 0) {
+    const m = tsMatches[0]!;
+    return `${m.symptom}\n\n${m.checks.map((c) => `- ${c}`).join("\n")}`;
+  }
+
+  return null;
 }
 
 function mkEventData(type: string, description: string, authorName?: string) {
@@ -130,9 +153,15 @@ router.post("/", async (req, res) => {
     let fromCache = false;
     let creditsUsed = 0;
 
-    const cached = await getCachedAnswer(cacheKey);
+    const manualAnswer = lookupManualAnswer(instance.machine?.model, description, suggestionLang);
+    const cached = manualAnswer ? null : await getCachedAnswer(cacheKey);
 
-    if (cached) {
+    if (manualAnswer) {
+      // matched the machine's own manual → free, no credit, no OpenAI call
+      suggestionText = manualAnswer;
+      fromCache = true;
+      creditsUsed = 0;
+    } else if (cached) {
       // cache hit → free
       suggestionText = cached.text;
       fromCache = true;

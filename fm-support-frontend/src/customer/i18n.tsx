@@ -134,7 +134,11 @@ const dict = {
   "purchases.searchLabel": { en: "Search by machine model or serial number", bn: "মেশিন মডেল বা সিরিয়াল নম্বর দিয়ে খুঁজুন" },
   "purchases.searchPlaceholder": { en: "e.g. A4C or A6-001-2025", bn: "যেমন: A4C বা A6-001-2025" },
   "purchases.none": { en: "No purchases found.", bn: "কোনো ক্রয় পাওয়া যায়নি।" },
+  "purchases.noneInRange": { en: "No purchases in this date range.", bn: "এই তারিখের মধ্যে কোনো ক্রয় নেই।" },
   "purchases.loading": { en: "Loading purchase history...", bn: "ক্রয় ইতিহাস লোড হচ্ছে..." },
+  "purchases.dateFrom": { en: "From date", bn: "শুরুর তারিখ" },
+  "purchases.dateTo": { en: "To date", bn: "শেষ তারিখ" },
+  "purchases.clearDates": { en: "Clear dates", bn: "তারিখ মুছুন" },
 
   "itemType.machine": { en: "Machine", bn: "মেশিন" },
   "itemType.needle": { en: "Needle", bn: "সুঁই" },
@@ -157,7 +161,11 @@ const dict = {
   "tickets.postComment": { en: "Post comment", bn: "মন্তব্য পোস্ট করুন" },
   "tickets.posting": { en: "Posting...", bn: "পোস্ট করা হচ্ছে..." },
   "tickets.none": { en: "No issues raised yet.", bn: "এখনো কোনো সমস্যা রিপোর্ট করা হয়নি।" },
+  "tickets.noneInRange": { en: "No tickets in this date range.", bn: "এই তারিখের মধ্যে কোনো টিকেট নেই।" },
   "tickets.loading": { en: "Loading ticket history...", bn: "টিকেট ইতিহাস লোড হচ্ছে..." },
+  "tickets.dateFrom": { en: "From date", bn: "শুরুর তারিখ" },
+  "tickets.dateTo": { en: "To date", bn: "শেষ তারিখ" },
+  "tickets.clearDates": { en: "Clear dates", bn: "তারিখ মুছুন" },
   "table.actions": { en: "Actions", bn: "অ্যাকশন" },
 
   "settings.name": { en: "Name", bn: "নাম" },

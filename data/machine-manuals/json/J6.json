@@ -1,0 +1,472 @@
+{
+  "model": "J6",
+  "manufacturer": "Jack",
+  "controllerType": "CNC Touchscreen HMI (7-inch color touchscreen)",
+  "type": "Fully automatic CNC pocket welting machine (Quick Reorder type) with X/Y servo axes and laser marker",
+  "source": "J6 Quick Reorder PocketWelting Machine Operation Manual V01-8 (41-page PDF; manual pages 1-37 available; Chapters 5-6 not present in this PDF)",
+  "note": "The J6 is a CNC template machine, not a standard lockstitch machine. Its 'parameters' are bag geometry values (mm dimensions) rather than electronic control parameters in the traditional sense. Pattern files are saved with names and numbers and loaded via RFID or barcode.",
+  "specs": {
+    "axes": "X axis (horizontal), Y axis (longitudinal), Z axis (servo spindle)",
+    "laserMarker": "Integrated laser for bag opening marking/positioning",
+    "steamCylinder": "Steam ironing cylinder for bag forming",
+    "insertKnife": "Automatic bag-opening knife",
+    "bagClothMotor": "Fabric positioning motor (bag cloth motor)",
+    "patternStorage": "On-board flash memory; USB import/export supported"
+  },
+  "bagPatternTypes": {
+    "TrueFalseBag": {
+      "description": "Standard double-layer pocket welting pattern. Bag opening with noose/zipper or without. Primary pattern type.",
+      "parameters": {
+        "A": "Sewing length",
+        "B": "Sewing width",
+        "C": "X-direction distance",
+        "C0": "X-direction distance (start)",
+        "C1": "X-direction distance",
+        "C2": "X-direction distance",
+        "C3": "X-direction distance (end)",
+        "D": "Y-direction distance",
+        "D0": "Y-direction distance (start)",
+        "D1": "Y-direction distance",
+        "D2": "Y-direction distance",
+        "D3": "Y-direction distance (end)",
+        "E": "Cutting start position",
+        "FL": "Code to left length",
+        "FR": "Code to right length",
+        "V1": "Y compensate above left",
+        "V2": "Y compensate above left",
+        "V3": "Y compensate above right",
+        "G": "Stagger distance",
+        "H": "MH/H Speed Offset Len — lateral distance for medium-to-high speed transition (0-100mm)"
+      }
+    },
+    "MoonToothBag": {
+      "description": "Moon-tooth shaped pocket welting pattern with curved bag mouth.",
+      "parameters": "Similar parameter set to TrueFalseBag with geometry specific to curved pattern"
+    }
+  },
+  "openBagDesignTemplates": [
+    {
+      "name": "Second Sew Have Noose",
+      "description": "Secondary sewing with zipper/noose attachment",
+      "parameters": {
+        "A": "Sewing length", "B": "Sewing width",
+        "C0-C3": "X-direction distances", "D0-D3": "Y-direction distances",
+        "E": "Cutting start position",
+        "FL": "Code to left length", "FR": "Code to right length",
+        "V1": "Y compensate above left", "V2": "Y compensate above left", "V3": "Y compensate above right",
+        "G": "Stagger distance"
+      }
+    },
+    {
+      "name": "Second Sew No Noose",
+      "description": "Secondary sewing without noose attachment",
+      "parameters": {
+        "A": "Sewing length", "B": "Sewing width",
+        "C0-C3": "X-direction distances", "D0-D3": "Y-direction distances",
+        "E": "Cutting start position",
+        "FL": "Code to left length", "FR": "Code to right length",
+        "V1-V3": "Y compensate values"
+      }
+    },
+    {
+      "name": "Four Sides Sew Left",
+      "description": "Four-sided sewing, left orientation",
+      "parameters": {
+        "A": "Sewing length", "B": "Sewing width",
+        "C": "X-direction distance", "D": "Y-direction distance",
+        "E": "Cutting start position",
+        "FL": "Code to left length", "FR": "Code to right length",
+        "V1-V3": "Y compensate values"
+      }
+    },
+    {
+      "name": "Four Sides Sew Right",
+      "description": "Four-sided sewing, right orientation",
+      "parameters": {
+        "A": "Sewing length", "B": "Sewing width",
+        "C": "X-direction distance", "D": "Y-direction distance",
+        "E": "Cutting start position",
+        "FL": "Code to left length", "FR": "Code to right length",
+        "V1-V3": "Y compensate values"
+      }
+    },
+    {
+      "name": "Three Sides Sew Up",
+      "description": "Three-sided sewing, top orientation",
+      "parameters": {
+        "A": "Sewing length", "B": "Sewing width",
+        "C2": "X-direction distance", "C3": "X-direction distance",
+        "D2": "Y-direction distance", "D3": "Y-direction distance",
+        "E": "Cutting start position",
+        "G": "Stagger distance",
+        "H": "MH/H Speed Offset Len (0-100mm)",
+        "V3": "Y Compensate Above Right (0-100mm)"
+      }
+    },
+    {
+      "name": "Three Sides Sew Right",
+      "description": "Three-sided sewing, right orientation",
+      "parameters": {
+        "A": "Sewing length", "B": "Sewing width",
+        "C-C3": "X-direction distances", "D-D3": "Y-direction distances",
+        "E": "Cutting start position",
+        "FL": "Code to left length", "FR": "Code to right length",
+        "V1-V3": "Y compensate values"
+      }
+    },
+    {
+      "name": "Three Sides Sew Left",
+      "description": "Three-sided sewing, left orientation",
+      "parameters": {
+        "A": "Sewing length", "B": "Sewing width",
+        "C-C3": "X-direction distances", "D-D3": "Y-direction distances",
+        "E": "Cutting start position",
+        "FL": "Code to left length", "FR": "Code to right length",
+        "V1-V3": "Y compensate values"
+      }
+    },
+    {
+      "name": "Seamless Seal Glue (Semi-Circle)",
+      "description": "Seamless oval/semi-circular pocket seal pattern using laser ring positioning",
+      "parameters": {
+        "A": "Sewing length",
+        "B": "Sewing width",
+        "G": "Laser end point offset length",
+        "H": "Laser point off ring width",
+        "E": "Sew end point offset length",
+        "FR": "Laser end point to right length",
+        "V1": "Laser Point To Ring Hight — height of laser point from ring (0.0-999.9mm)",
+        "V2": "Two Ring Len — longitudinal distance between laser ring and sewing ring (0.0-999.9mm)"
+      }
+    },
+    {
+      "name": "Once Sew No Noose",
+      "description": "Single-pass sewing without noose/zipper",
+      "parameters": {
+        "A": "Sewing length", "B": "Sewing width",
+        "C-C3": "X-direction distances", "D-D3": "Y-direction distances",
+        "E": "Cutting start position",
+        "FL": "Code to left length", "FR": "Code to right length",
+        "V1-V3": "Y compensate values"
+      }
+    },
+    {
+      "name": "Circle Once Sew",
+      "description": "Single-pass circular/oval pocket sewing",
+      "parameters": {
+        "A": "Sewing length", "B": "Sewing width",
+        "C": "X-direction distance",
+        "E": "Cutting start position",
+        "FL": "Code to left length", "FR": "Code to right length",
+        "V1": "Y compensate above left", "V2": "Y compensate above left", "V3": "Y compensate above right"
+      }
+    },
+    {
+      "name": "Circle Twice Sew",
+      "description": "Double-pass circular pocket sewing with dual laser endpoints",
+      "parameters": {
+        "A": "Sewing length", "B": "Sewing width",
+        "C": "X-direction distance",
+        "FD": "Code To Left Down Len",
+        "LD": "Laser End Point To Left Len — lateral distance of end point of left laser (0-100mm)",
+        "RD": "Laser End Point To Right Len — lateral distance of end point of right laser (0-100mm)",
+        "E": "Cutting Start Position",
+        "FL": "Code To Left Len", "FR": "Code To Right Len",
+        "V1": "Y Compensate Above Left", "V2": "Y Compensate Above Left", "V3": "Y Compensate Above Right"
+      }
+    },
+    {
+      "name": "Common Mode Dark-line",
+      "description": "Standard dark-line (concealed seam) pocket mode",
+      "parameters": {
+        "A": "Sewing length", "B": "Sewing width",
+        "C": "X-direction distance", "C1": "X-direction distance", "C2": "X-direction distance", "C3": "X-direction distance",
+        "D": "Y-direction distance", "D1": "Y-direction distance", "D2": "Y-direction distance", "D3": "Y-direction distance",
+        "E": "Cutting start position",
+        "H": "Start Stitch Offset Len (right)",
+        "FR": "Code To Left Len — horizontal distance from code to left (0-100mm)",
+        "FD": "Code To Left Down Len — horizontal distance from code to bottom left corner (0-100mm)"
+      }
+    },
+    {
+      "name": "Cotton Clothes Twice Sew Have Knot",
+      "description": "Secondary sewing for cotton jacket/coat with knot fastening",
+      "parameters": {
+        "A": "Sewing length", "B": "Sewing width",
+        "C": "X-direction distance", "C0": "X-direction distance", "C1": "X-direction distance",
+        "C2": "X-direction distance", "C3": "X-direction distance",
+        "D0": "Y-direction distance", "D1": "Y-direction distance", "D2": "Y-direction distance", "D3": "Y-direction distance",
+        "E": "Cutting start position",
+        "FL": "Code To Left Len", "FR": "Code To Right Len",
+        "V1": "Y Compensate Above Left", "V2": "Y Compensate Above Left", "V3": "Y Compensate Above Right",
+        "SL": "Sew Point To Left Len (left) — horizontal distance from sewing point to left end (0-100mm)",
+        "W": "Sew Width Space (rightup) — horizontal distance of sewing width interval top right (0-100mm)",
+        "V": "Sew Width Space (rightup) — longitudinal distance of sewing height interval top right (0-100mm)"
+      }
+    }
+  ],
+  "laserMiddleSet": {
+    "description": "Sets the shape of the intermediate laser marking between bag sections",
+    "types": [
+      {"type": "Line", "description": "Straight line laser mark"},
+      {"type": "Zig", "description": "Zigzag/herringbone laser mark"},
+      {"type": "Yes", "description": "S-shaped laser mark"}
+    ],
+    "parameters": {
+      "W": "Width of zigzag/S pattern",
+      "H": "Height of zigzag/S pattern",
+      "R": "Radius of zigzag/S pattern",
+      "Laser Middle Offset": "Lateral offset of the center laser line"
+    }
+  },
+  "mainInterface": {
+    "description": "Main interface button functions (buttons labeled A-P)",
+    "buttons": [
+      {"key": "A", "function": "Content — display the current sewing pattern"},
+      {"key": "B", "function": "Pattern — adjust sewing speed"},
+      {"key": "C", "function": "Speed — enter Menu mode"},
+      {"key": "D", "function": "Menu — enter XY origin detection interface"},
+      {"key": "E", "function": "XY origin detection — return to origin function"},
+      {"key": "F", "function": "Quick tool change — enter tension adjustment line interface"},
+      {"key": "G", "function": "Winding mode — enter winding mode to set winding core speed"},
+      {"key": "H", "function": "Home — return to origin"},
+      {"key": "I", "function": "Single stepping test — enter single step testing interface"},
+      {"key": "J", "function": "Enter sewing — enter the sewing interface"},
+      {"key": "K", "function": "Processing count — set the processing count value"},
+      {"key": "L", "function": "Clean up — Quick Clear Key"},
+      {"key": "M", "function": "Bottom line count — set baseline count value"},
+      {"key": "N", "function": "Pattern number — switch between saved patterns"},
+      {"key": "O", "function": "Shortcut Key - Bag Opening — enter quick bag opening design interface"},
+      {"key": "P", "function": "Shortcut Key - Pattern — enter pattern modification mode"}
+    ]
+  },
+  "sewingInterface": {
+    "description": "Sewing interface button functions (buttons labeled A-Q), accessed by pressing 'Enter Sewing' from main interface",
+    "buttons": [
+      {"key": "A", "function": "Speed — adjust sewing speed"},
+      {"key": "B", "function": "Medium pressure foot — lift/lower presser foot"},
+      {"key": "C", "function": "Medium pressure foot — display presser foot height numerically"},
+      {"key": "D", "function": "Menu — enter menu mode"},
+      {"key": "E", "function": "Needle machine — raise/lower needle"},
+      {"key": "F", "function": "Large pressure plate — lower/lift press plate"},
+      {"key": "G", "function": "Small pressure plate — lower small press foot/lift height numerically"},
+      {"key": "H", "function": "Head lifting and lowering — raise/lower needle"},
+      {"key": "I", "function": "Cutting — perform material discharge action"},
+      {"key": "J", "function": "Home — perform return to origin action"},
+      {"key": "K", "function": "Trim — perform thread cutting action"},
+      {"key": "L", "function": "Pattern — display current sewing pattern"},
+      {"key": "M", "function": "Shortcut Key - Bag Opening — enter quick pattern making interface for pocket design"},
+      {"key": "N", "function": "Bottom line count — set stitch count value"},
+      {"key": "O", "function": "Shortcut Key - Pattern — enter pattern modification mode"},
+      {"key": "P", "function": "Set line tension — enter thread tension adjustment interface"},
+      {"key": "Q", "function": "Exit sewing — return to main interface P1"}
+    ]
+  },
+  "menuMode": {
+    "options": ["Pantry data", "Writing data", "Deleting data", "Pantry function mode", "Data common mode", "Program mode", "Device detect", "Position test", "Tire test", "Para function", "Laser info"]
+  },
+  "windingMode": {
+    "description": "Bobbin winding function accessible from main interface",
+    "settings": {
+      "bobbinWindingSpeed": "Set target RPM (default shown: 1500 RPM)",
+      "bobbinWindingOperationSetting": "AL (auto-length mode)",
+      "bobbinWindingOperationTime": "Setting: 0030s, Remainder: 0030s (default 30 second timer)"
+    }
+  },
+  "modificationMode": {
+    "description": "Pattern modification mode for fine-tuning existing patterns. Accessible from main interface (button P) and sewing interface (button O).",
+    "typeSelect": ["ModStitch", "Modspeed", "ModCode"],
+    "operations": ["StartPoint", "DeleteStitch", "AddStitch", "MoveStitch", "FlexRange", "ModRange", "T_Pre", "Modify Stitch"],
+    "additionalControls": ["HoldPoint", "Thread", "Laser cut", "change feed to home position"],
+    "parameterDefinitions": {
+      "A": "Represents the length of the pocket",
+      "B": "Represents the width of the pocket",
+      "C": "Distance between the laser and the width edge of the fabric; larger value = laser farther from fabric",
+      "D": "Distance between the laser and the upper/lower edges of the fabric",
+      "E": "Cutting start position",
+      "FR": "Distance from the code to the right edge",
+      "H": "Distance from the code to the right edge",
+      "V": "Distance between the laser and the long edge of the fabric; larger value = laser farther from fabric"
+    },
+    "laserTypes": ["Type1", "Type2", "Type3", "Type4", "Type5", "Laser Change"],
+    "noMarTypes": ["Type1", "Type2", "Type3", "Type4", "Type5"],
+    "sewingType": ["Once", "Twice"],
+    "ringStitchLength": "Adjustable ring stitch length (shown as 2.5 in example)"
+  },
+  "counters": {
+    "upCounter": {
+      "description": "Processing counter — tracks number of completed pieces",
+      "settings": {
+        "SET": "Target count value (e.g., 01000)",
+        "NOW": "Current count value",
+        "CounterClose": "Enable/disable counter",
+        "ClearCurrent": "Clear the current count to zero"
+      }
+    },
+    "lineCounter": {
+      "description": "Bobbin/bottom thread usage counter",
+      "settings": {
+        "SET": "Target count value",
+        "NOW": "Current count value",
+        "CounterClose": "Enable/disable counter",
+        "ClearCurrent": "Clear current count to zero"
+      },
+      "note": "Set target count value in settings area to ensure production requirements are met. System counts during production process."
+    }
+  },
+  "deviceDetect": {
+    "description": "Device detection and diagnostic functions. Access from menu → Device detect.",
+    "functions": [
+      {
+        "name": "Led Detection",
+        "description": "LCD screen detection — start/stop screen detection and set detection time. Range 0.5-24 hours."
+      },
+      {
+        "name": "Panel Detection",
+        "description": "Touchscreen calibration — follow cursor and click to calibrate touchscreen step by step."
+      },
+      {
+        "name": "Input Detection",
+        "description": "View ON/OFF status of all input signals to confirm correct signal reception.",
+        "inputSignals": [
+          "Start switch/pedal",
+          "Clamp switch/pedal",
+          "Extend clamp/pedal",
+          "Halt switch",
+          "Thread sensor",
+          "X motor sensor",
+          "Y motor sensor",
+          "PF motor sensor",
+          "IN1 — Bottom line detection",
+          "IN2 — Sidespot key",
+          "IN3 — (spare)",
+          "IN4 — Trimming motor sensor",
+          "IN5 — Insert knife down-in position",
+          "IN6 — Steam motor sensor",
+          "IN7 — Laser lift plate in place",
+          "IN8 — Unload lift plate in place",
+          "IN9 — Bag cloth motor origin"
+        ]
+      },
+      {
+        "name": "Output Detection",
+        "description": "Test ON/OFF state of all output signals to confirm correct signal delivery.",
+        "outputSignals": [
+          "MAIN_OUT_TR — Thread trim solenoid",
+          "MAIN_OUT_LL — Thread release solenoid",
+          "MAIN_OUT_WI — Poke/wiper solenoid",
+          "MAIN_OUT_PF — Presser foot solenoid",
+          "MAIN_OUT_FU — Clamp solenoid",
+          "OUT1 — Laser",
+          "OUT2 — Laser up and down",
+          "OUT3 — Laser inhale",
+          "OUT4 — NO (normally open output)",
+          "OUT5 — Function C",
+          "OUT6 — Device expansion output",
+          "OUT7 — Steam cylinder",
+          "OUT8 — Trim blowing cylinder"
+        ]
+      },
+      {
+        "name": "XY Step Motor Test",
+        "description": "Enter XY origin detection interface to adjust XY axis click position and switches. Displays X position, Y position, X sensor status, Y sensor status, and origin offset (X/Y). Controls: Big Clamp, Small Clamp, X enable, Y enable."
+      },
+      {
+        "name": "Servo Test",
+        "description": "Main spindle motor speed detection and debugging. Set target speed (RPM), view actual speed, control start/stop/reset. Alarm displayed if set speed exceeds safety range.",
+        "controls": ["Target speed input (default 200 RPM)", "Actual speed display", "Start up", "Stop run", "Forward/reverse toggle"]
+      },
+      {
+        "name": "Servo Angle Detection",
+        "description": "Main spindle motor installation angle calibration. Displays electric value, mechanical value, needle bar highest position, take-up lever highest position. Use Servo Motor Free to release motor for manual adjustment.",
+        "procedure": [
+          "Install sensor on spindle and set reference point",
+          "Click 'Servo Motor Free' to release motor for free movement",
+          "Rotate main spindle to specific angle and read position data",
+          "Calibrate displayed values against actual position",
+          "Click 'Main Spindle Motor Lock' after adjustment",
+          "Verify all parameters are within tolerance"
+        ]
+      },
+      {
+        "name": "Continuous Run Detection",
+        "description": "Run automated continuous operation testing. Settings: Repeated interval (×100ms, 0-99), Home detection (0-2), Cycle count (0-9999)."
+      },
+      {
+        "name": "Network Setting",
+        "description": "Configure wireless network for remote control functionality."
+      },
+      {
+        "name": "Analog Gear Set",
+        "description": "Analog gear calibration setting."
+      },
+      {
+        "name": "Laser Offset",
+        "description": "Adjust laser coordinates relative to needle coordinates. Set the offset amount to align laser mark with sewing position."
+      }
+    ]
+  },
+  "operations": {
+    "createPattern": [
+      "1. Select the bag opening template from the opening-bag design interface.",
+      "2. Set corresponding values for needle spacing, length, width, etc. Use page turning button to modify other data items.",
+      "3. Click the preview button to enter the graphic preview interface. Click to exit.",
+      "4. Click Settings and adjust the XY position value of the pattern alignment point through the steering wheel.",
+      "5. Click OK to save the pattern.",
+      "6. Click OK on the write-mode dialog.",
+      "7. Set the name and number, click OK.",
+      "8. Pattern is now saved and displayed on main interface."
+    ],
+    "modifyPattern": [
+      "1. Enter modification mode from main interface (button P) or sewing interface (button O).",
+      "2. Select the laser type (Type1-Type5) and stitch type (Type1-Type5).",
+      "3. Select sewing type: Once or Twice.",
+      "4. Set graphic data such as backstitch count and starting stitch count.",
+      "5. Click Settings and use directional pad to adjust pattern alignment to target XY position.",
+      "6. Click Confirm.",
+      "7. Set name and number, click OK to save."
+    ],
+    "xyOriginSetup": "From main interface, press XY Origin button (D). Adjust X/Y position using directional keys. Save origin offset using Clear and Save buttons."
+  },
+  "errorCodes": [],
+  "alarmCodes": [],
+  "parameters": [],
+  "monitoring": [],
+  "troubleshooting": [
+    {
+      "issue": "Laser not firing or misaligned with sewing path",
+      "cause": "Laser offset not calibrated, or laser output IO not configured",
+      "solution": "Use Device Detect → Laser Offset to adjust laser vs needle coordinate offset. Verify OUT1 (Laser) output is active using Output Detection."
+    },
+    {
+      "issue": "XY axes not returning to origin",
+      "cause": "Origin sensors not detecting correctly, or XY offset set incorrectly",
+      "solution": "Use Device Detect → XY Step Motor Test to verify X sensor and Y sensor status. If sensors show OFF when frame is at origin, adjust sensor position mechanically."
+    },
+    {
+      "issue": "Pattern not sewing correctly / stitches misaligned",
+      "cause": "Pattern parameters (A/B/C/D) set incorrectly, or XY origin not set",
+      "solution": "1) Verify XY origin is set correctly. 2) Check pattern A (length) and B (width) values against actual fabric measurements. 3) Use Modification Mode preview to verify pattern shape before sewing."
+    },
+    {
+      "issue": "Thread breaking during sewing",
+      "cause": "Thread tension too high, speed too high for material, or thread sensor triggering false halt",
+      "solution": "Use sewing interface button P to adjust thread tension. Reduce sewing speed using interface button A. Check Thread sensor status in Input Detection."
+    },
+    {
+      "issue": "Clamp not holding fabric",
+      "cause": "Clamp solenoid fault or MAIN_OUT_FU not outputting",
+      "solution": "Use Device Detect → Output Detection to manually test MAIN_OUT_FU (Clamp) output. If output is OK but clamp doesn't engage, check solenoid or air pressure."
+    },
+    {
+      "issue": "Bag cloth not reaching origin position",
+      "cause": "Bag cloth motor origin sensor (IN9) not detecting correctly",
+      "solution": "Use Device Detect → Input Detection to verify IN9 (Bag cloth Motor origin) status changes when motor reaches home position. Adjust sensor position if needed."
+    },
+    {
+      "issue": "Steam cylinder not operating",
+      "cause": "OUT7 (Steam cylinder) output not configured or solenoid fault",
+      "solution": "Test OUT7 using Output Detection. Check steam cylinder solenoid and air pressure."
+    }
+  ]
+}

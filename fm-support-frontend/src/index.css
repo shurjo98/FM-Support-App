@@ -381,7 +381,9 @@ h1 {
   width: 96px;
   height: auto;
   margin-bottom: 8px;
-  filter: drop-shadow(0 4px 16px rgba(24, 144, 216, 0.5));
+  /* Force the (blue) logo mark to solid white so it reads cleanly against
+     the dark navy landing background, instead of blue-on-navy. */
+  filter: brightness(0) invert(1) drop-shadow(0 4px 16px rgba(24, 144, 216, 0.5));
 }
 
 .landing-page .subtitle {

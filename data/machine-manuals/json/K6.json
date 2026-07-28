@@ -1,0 +1,429 @@
+{
+  "model": "K6",
+  "manufacturer": "Jack Sewing Machine Co., Ltd.",
+  "controllerType": "K6 Electronic Control (ASD58, LCD operation panel with stepper motors)",
+  "type": "Coverseam / flatseam sewing machine electronic control box with stepper motor thread trimming and presser foot",
+  "specs": {
+    "productType": "ASD58",
+    "powerVoltage": "AC 220±20% V",
+    "powerFrequency": "50Hz/60Hz",
+    "maxOutputPower": "550W",
+    "display": "LCD operation panel with icons for sewing mode, parameters, presser foot, needle position, trimming, and step motor indicators",
+    "factoryResetMethod": "Long press the reset button on the panel for 3 seconds to restore the factory-saved parameters (one-key recovery)",
+    "oneKeySave": "Press P + presser foot combination key; item 024 appears; then long press right key to save parameters",
+    "softwareVersion": "Press P + scissors key to view software version. Press plus key to switch between electronic control and panel software versions.",
+    "stepperMotors": "Up to 2 stepper motors: for thread trimming/presser foot lifting and for adjusting stitch length. Configured via parameter 11F."
+  },
+  "errorCodes": [
+    {
+      "code": "Err-01",
+      "display": "Err-01",
+      "cause": "Hardware overcurrent",
+      "solution": "Turn off the power to the system and turn it back on after 30 seconds. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "critical"
+    },
+    {
+      "code": "Err-02",
+      "display": "Err-02",
+      "cause": "Power down",
+      "solution": "Turn off the power to the system and turn it back on after 30 seconds. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-03",
+      "display": "Err-03",
+      "cause": "System undervoltage — input power supply voltage is low (less than 176V)",
+      "solution": "Turn off the system power and check whether the input power voltage is low (less than 176V). If the power supply voltage is low, please restart the controller after the voltage returns to normal. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "critical"
+    },
+    {
+      "code": "Err-04",
+      "display": "Err-04",
+      "cause": "Overvoltage during shutdown — input voltage too high (above 264V)",
+      "solution": "Turn off the system power and check whether the input power voltage is too high (above 264V). If the power supply voltage is too high, please restart the controller after the voltage returns to normal. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "critical"
+    },
+    {
+      "code": "Err-05",
+      "display": "Err-05",
+      "cause": "Overvoltage during operation — supply voltage exceeds threshold while sewing",
+      "solution": "Turn off the system power and check whether the input power voltage is too high (above 264V). Restart after voltage returns to normal. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "critical"
+    },
+    {
+      "code": "Err-06",
+      "display": "Err-06",
+      "cause": "Electromagnet circuit failure — solenoid connection is loose or damaged",
+      "solution": "Turn off the power of the system and check whether the solenoid connection is correct, whether it is loose or damaged. If so, replace it in time. Restart the system after confirming that it is correct. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-07",
+      "display": "Err-07",
+      "cause": "Current detection circuit failure",
+      "solution": "Turn off the system power and reconnect power after 30 seconds. If the fault still occurs frequently after retrying several times, please replace the controller. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-08",
+      "display": "Err-08",
+      "cause": "Motor stalled — motor power input plug is off, loose, or broken; or foreign matter tangled on machine head",
+      "solution": "Turn off the system power. Check whether the motor power input plug is off, loose, or broken, and whether there is any foreign matter entangled on the machine head. After troubleshooting, restarting the system still does not work normally, please replace the controller. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-09",
+      "display": "Err-09",
+      "cause": "Brake circuit failure — white brake resistor connector on power supply board is loose or has fallen off",
+      "solution": "Turn off the system power. Check whether the white brake resistor connector on the power supply board is loose or has fallen off. Plug it in tightly and restart the system. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-10",
+      "display": "Err-10",
+      "cause": "HMI communication failure — connection between control panel and controller is disconnected, loose, or broken",
+      "solution": "Check whether the connection between the control panel and controller is off, loose, or broken. Restore it to normal and restart the system. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-11",
+      "display": "Err-11",
+      "cause": "Head stop needle signal failure — connection between head synchronization signal device and controller is loose",
+      "solution": "Check whether the connection between the head synchronization signal device and controller is loose. Restore it to normal and restart the system. If it still does not work, please replace the controller. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-12",
+      "display": "Err-12",
+      "cause": "Motor initial angle detection failure",
+      "solution": "Please try 2-3 times after power off. If the fault is still reported, please replace the controller. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-13",
+      "display": "Err-13",
+      "cause": "Motor HALL failure — motor sensor connector is off, loose, or damaged",
+      "solution": "Turn off the system power. Check whether the motor sensor connector is off, loose, or damaged. Restore it to normal and restart the system. If it still does not work, please replace the controller. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-14",
+      "display": "Err-14",
+      "cause": "DSP read and write EEPROM failure",
+      "solution": "Turn off the system power, restart after 30 seconds. If still does not work, replace the controller. Contact local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-15",
+      "display": "Err-15",
+      "cause": "Motor overspeed protection",
+      "solution": "Turn off the system power, restart after 30 seconds. If still does not work, replace the controller. Contact local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-16",
+      "display": "Err-16",
+      "cause": "Motor reverse — motor is running in the wrong direction",
+      "solution": "Turn off the system power, restart after 30 seconds. If still does not work, replace the controller. Contact local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-17",
+      "display": "Err-17",
+      "cause": "HMI reading and writing EEPROM failure",
+      "solution": "Turn off the system power, restart after 30 seconds. If still does not work, replace the controller. Contact local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-18",
+      "display": "Err-18",
+      "cause": "Motor overload",
+      "solution": "Turn off the system power, restart after 30 seconds. If still does not work, replace the controller. Contact local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-22",
+      "display": "Err-22",
+      "cause": "Broken wire detection — thread break detection triggered",
+      "solution": "Change the P18 parameter to 0 to disable broken wire detection if it is triggering falsely.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-27",
+      "display": "Err-27",
+      "cause": "Stepper motor failure — stepper motor stopped, zero position will alarm",
+      "solution": "When the stepper motor is stopped, the zero position will alarm and the electronic control can be restarted. If it still does not work normally, please replace the controller. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-28",
+      "display": "Err-28",
+      "cause": "Stepper motor failure — stepper motor stopped at incorrect zero position",
+      "solution": "When the stepper motor is stopped, the zero position will alarm and the electronic control can be restarted. If it still does not work normally, please replace the controller. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-31",
+      "display": "Err-31",
+      "cause": "Stepper board failure",
+      "solution": "When the stepper motor is stopped, the zero position will alarm and the electronic control can be restarted. If it still does not work normally, please replace the controller. If the above still cannot be resolved, please contact your local service provider or call 4008876858.",
+      "severity": "high"
+    }
+  ],
+  "alarmCodes": [
+    {
+      "code": "ALA-1",
+      "display": "ALA-1",
+      "cause": "Refueling time reminder — lubrication maintenance interval reached",
+      "solution": "247 parameters control the switch and time. Perform machine lubrication then reset the alarm.",
+      "severity": "low"
+    },
+    {
+      "code": "ALA-2",
+      "display": "ALA-2",
+      "cause": "Needle counting alarm — number of stitches has reached the upper limit set",
+      "solution": "Press the P key to cancel the alarm and restart the count.",
+      "severity": "low"
+    },
+    {
+      "code": "ALA-3",
+      "display": "ALA-3",
+      "cause": "Count number of thread trimming alarm — trimming count has reached the set upper limit",
+      "solution": "Press the P key to cancel the alarm and restart the count.",
+      "severity": "low"
+    },
+    {
+      "code": "ALA-5",
+      "display": "ALA-5",
+      "cause": "Needle lift lock status — alarm triggered after selecting stepper motor mode",
+      "solution": "After selecting the stepper motor it will give an alarm. Press the P key to clear.",
+      "severity": "low"
+    },
+    {
+      "code": "UP",
+      "display": "UP",
+      "cause": "Safety switch alarm — trimming cutter is not back in original place, or safety switch light does not turn on after cutter returns",
+      "solution": "Check whether the thread trimmer is back in place. If the safety switch light does not turn on after it is back in place, adjust the position of the induction bracket. If it still does not solve the problem, change the 2 in the P66 parameter to 0. If the above still fails, contact your local service provider or call 4008876858.",
+      "severity": "medium"
+    }
+  ],
+  "parameters": [
+    { "id": "P99", "name": "Voice selection", "range": "0/1/2", "default": 1, "values": {"0": "Voice off", "1": "Chinese", "2": "English"}, "note": "Non-voice panel: invalid" },
+    { "id": "P01", "name": "Maximum speed of free sewing (global maximum speed)", "range": "200-5500", "default": 4000, "unit": "RPM" },
+    { "id": "P02", "name": "Free stitch length adjustment", "range": "10-45", "default": 32 },
+    { "id": "P03", "name": "Top and bottom stop needle selection", "range": "0/1", "default": 0, "values": {"0": "Upper needle stop", "1": "Lower needle stop"} },
+    { "id": "P04", "name": "Front encryption stitch speed", "range": "200-3000", "default": 1800, "unit": "RPM" },
+    { "id": "P05", "name": "Back encryption sewing speed", "range": "200-3000", "default": 1800, "unit": "RPM" },
+    { "id": "P07", "name": "Number of front encrypted stitches", "range": "0-720", "default": 0, "note": "0 = no encryption stitch function. Setting a number enables encryption stitch at seam start." },
+    { "id": "P08", "name": "Number of post-encrypted stitches", "range": "0-720", "default": 0, "note": "0 = no encryption stitch function. Setting a number enables encryption stitch at seam end." },
+    { "id": "P09", "name": "Slow start seam switch", "range": "0/1", "default": 0, "values": {"0": "Off", "1": "On"} },
+    { "id": "P11", "name": "Front encryption stitch length adjustment", "range": "10-45", "default": 18 },
+    { "id": "P12", "name": "Rear encryption stitch length adjustment", "range": "10-45", "default": 18 },
+    { "id": "P18", "name": "Broken wire detection", "range": "0-10", "default": 0, "note": "0 = disabled. Set to 0 if Err-22 triggers falsely." },
+    { "id": "P19", "name": "No thread breakage detection for number of stitches before sewing", "range": "0-20", "default": 5 },
+    { "id": "P24", "name": "Pedal trimming position", "range": "0-1024", "default": 120 },
+    {
+      "id": "P27",
+      "name": "Adjust zero position of stepping motor for trimming and lifting presser foot",
+      "range": "0-400",
+      "default": 0,
+      "note": "0-200: Adjust zero position clockwise from origin (trimming direction). 400-201: Adjust zero position counterclockwise from origin (presser foot lifting direction)."
+    },
+    { "id": "P30", "name": "Motor low-speed afterburner function switch", "range": "0-31", "default": 0, "values": {"0": "Normal function"}, "note": "1-31: low-speed afterburner and excessively thick capacity gear" },
+    { "id": "P32", "name": "Encrypted seam electromagnet full output time", "range": "1-500", "default": 60, "unit": "ms" },
+    { "id": "P33", "name": "Encrypted seam electric railway closing time per cycle", "range": "0-100", "default": 6, "unit": "ms" },
+    { "id": "P37", "name": "Encryption seam electromagnet turn-on time per cycle", "range": "0-100", "default": 5, "unit": "ms" },
+    { "id": "P38", "name": "Trimming end delay (scissors reaching highest position plus dwell time)", "range": "1-999", "default": 120, "unit": "ms" },
+    { "id": "P39", "name": "Delay action time ms for dialing line", "range": "1-999", "default": 95, "unit": "ms", "note": "When stepper motor icon is displayed on screen: P39=110. When not displayed: P39=130. Can be adjusted individually." },
+    { "id": "P40", "name": "Dialing action time", "range": "1-9999", "default": 30, "unit": "ms" },
+    { "id": "P41", "name": "Blowing start delay time", "range": "0-9999", "default": 120, "unit": "ms" },
+    { "id": "P42", "name": "Blowing duration", "range": "1-9999", "default": 300, "unit": "ms" },
+    { "id": "P43", "name": "Thread sweeping and blowing selection function", "range": "0-30", "default": 2, "values": {"2": "Thread sweeping (scan line)", "8": "Blowing"} },
+    { "id": "P45", "name": "Trimming solenoid turn-on time per cycle", "range": "0-100", "default": 1, "unit": "ms" },
+    { "id": "P46", "name": "Closing time of thread trimming solenoid per cycle", "range": "0-100", "default": 2, "unit": "ms" },
+    { "id": "P50", "name": "Full output time of electromagnet for presser foot lifting", "range": "1-500", "default": 100, "unit": "ms" },
+    { "id": "P51", "name": "Presser foot lifting electromagnet turn-on time per cycle", "range": "0-100", "default": 15, "unit": "ms" },
+    { "id": "P52", "name": "Delay time of presser foot release", "range": "1-800", "default": 85, "unit": "ms" },
+    { "id": "P53", "name": "Presser foot switch", "range": "0/4", "default": 4, "values": {"0": "Do not lift", "4": "Lift"} },
+    { "id": "P54", "name": "Closing time of presser foot electromagnet per cycle", "range": "0-100", "default": 35, "unit": "ms" },
+    { "id": "P56", "name": "Automatically find needle position after power-on", "range": "0/1", "default": 1, "values": {"0": "Do not find", "1": "Find"} },
+    { "id": "P57", "name": "Protection time of electromagnet for presser foot lifting", "range": "0-600", "default": 200, "unit": "×100ms" },
+    { "id": "P60", "name": "Auto test speed", "range": "200-6000", "default": 4000, "unit": "RPM" },
+    {
+      "id": "P62",
+      "name": "Special operating mode",
+      "range": "0-4",
+      "default": 0,
+      "values": {
+        "0": "Operator selection (normal)",
+        "1": "Simple sewing mode",
+        "2": "Measure motor initial angle (do not remove belt)",
+        "3": "Calculate transmission ratio mode (need needle stop sensor, cannot remove belt)",
+        "4": "Automatic test mode 1 (auto test with needle stop position, run 5S, stop 5S)"
+      }
+    },
+    { "id": "P66", "name": "Safety switch function", "range": "0-2", "default": 2, "values": {"0": "Close", "2": "Open (enabled)"} },
+    { "id": "P71", "name": "Slow release lifter level adjustment", "range": "0-50", "default": 0, "note": "Smaller value = faster and quicker release (overclock open time)" },
+    { "id": "P76", "name": "Trimming solenoid full output time", "range": "1-500", "default": 200, "unit": "ms" },
+    { "id": "P80", "name": "Stepper motor change speed", "range": "200-4000", "default": 500, "unit": "RPM" },
+    { "id": "P81", "name": "Stepping motor lifting speed", "range": "200-4000", "default": 2000, "unit": "RPM" },
+    { "id": "P82", "name": "Stepper motor presser foot speed", "range": "200-4000", "default": 2000, "unit": "RPM" },
+    { "id": "P83", "name": "Stepper motor trimming speed", "range": "200-4000", "default": 2000, "unit": "RPM" },
+    { "id": "P84", "name": "Lifting speed of presser foot after stepper motor trimmer", "range": "200-4000", "default": 2000, "unit": "RPM" },
+    { "id": "P85", "name": "Stepper motor lifting angle", "range": "0-400", "default": 140, "unit": "degrees" },
+    { "id": "P86", "name": "Stepper motor trimming angle", "range": "0-400", "default": 130, "unit": "degrees", "note": "When P88=0 (fast mode), this parameter is invalid." },
+    {
+      "id": "P88",
+      "name": "Movement direction of stepping motor for thread trimming and presser foot lifting",
+      "range": "0-800",
+      "default": 0,
+      "values": {
+        "0": "Thread trimming and presser foot lifting is clockwise — fast mode (overall movement)",
+        "1": "After trimming, raise presser foot: thread trimmer clockwise, raise presser foot counterclockwise"
+      },
+      "note": "When parameter value >0, presser foot lifting will be delayed after thread trimmer. Used for stepping motor."
+    },
+    { "id": "PA6", "name": "Counting proportion of number of stitches of bottom thread", "range": "1-100", "default": 1 },
+    { "id": "PA7", "name": "Setting of total number of stitches of bobbin thread", "range": "1-9999", "default": 1 },
+    {
+      "id": "PA8",
+      "name": "Stitch counting mode",
+      "range": "0-6",
+      "default": 0,
+      "values": {
+        "0": "No stitch count",
+        "1": "Auto reset when incrementing to full",
+        "2": "Auto reset when decrementing to zero",
+        "3": "Increment to full, stop with error, manual reset",
+        "4": "Decrement to zero, stop with error, manual reset",
+        "5": "Decrease to zero, no shutdown after error, manual reset",
+        "6": "Decrease to zero, shutdown after error, manual reset"
+      }
+    },
+    { "id": "PA9", "name": "Proportion of piece counts", "range": "1-100", "default": 1 },
+    { "id": "PAA", "name": "Total number of pieces setting", "range": "1-9999", "default": 1 },
+    {
+      "id": "PAB",
+      "name": "Piece counting mode",
+      "range": "0-4",
+      "default": 0,
+      "values": {
+        "0": "Manual counting",
+        "1": "Automatic counting mode — incremental mode",
+        "2": "Automatic piece counting — decreasing mode",
+        "3": "Auto piece count to PAA value, motor stops rotating, manual reset — incremental mode",
+        "4": "Auto piece count reaches zero, motor stops rotating, manual reset — decrement mode"
+      }
+    },
+    {
+      "id": "11F",
+      "name": "Model selection",
+      "range": "0-360",
+      "default": 1,
+      "values": {
+        "0": "K5 (no stepper motor)",
+        "1": "Stepper motor for lifting presser foot and thread trimming",
+        "2": "Stepper motor for adjusting stitch length",
+        "3": "2 stepper motors"
+      }
+    },
+    {
+      "id": "158",
+      "name": "Adjust needle pitch stepper motor zero position",
+      "range": "0-400",
+      "default": 0,
+      "note": "0-200: Adjust zero position clockwise from origin (trimming direction). 400-201: Adjust counterclockwise from origin (presser foot lifting direction)."
+    }
+  ],
+  "monitoring": [
+    { "id": "010", "name": "Needle count" },
+    { "id": "011", "name": "Piece count" },
+    { "id": "012", "name": "Actual head speed" },
+    { "id": "013", "name": "Hall state" },
+    { "id": "01C", "name": "Steps of trimming stepper motor" },
+    { "id": "01D", "name": "Needle pitch stepper motor steps" },
+    { "id": "01E", "name": "Stepper motor history failure" },
+    { "id": "020", "name": "Bus voltage" },
+    { "id": "021", "name": "Head speed" },
+    { "id": "022", "name": "Phase current" },
+    { "id": "023", "name": "Initial angle" },
+    { "id": "024", "name": "Mechanical angle" },
+    { "id": "025", "name": "Pedal voltage sampling value" },
+    { "id": "026", "name": "Actual value of machine head transmission ratio" },
+    { "id": "027", "name": "Motor cumulative running time (hours)" },
+    { "id": "028", "name": "Sampling value of voltage of head interaction quantity" },
+    { "id": "029", "name": "DSP software version number" },
+    { "id": "02A", "name": "Analog input 1 sampled value" },
+    { "id": "02B", "name": "Analog input 2 sampled value" },
+    { "id": "02C", "name": "Error counter" },
+    { "id": "030-037", "name": "Historical fault codes" }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "Err-27/Err-28/Err-31 stepper motor or stepper board failure on K6",
+      "checks": [
+        "Turn off power and restart — stepper motor zero position alarm can often be cleared with a restart",
+        "Check all stepper motor cable connections",
+        "Inspect stepper motor for mechanical obstruction preventing it from reaching zero position",
+        "Check stepper board connections at both controller and stepper motor ends",
+        "If restart doesn't resolve it, replace the controller",
+        "Contact service provider or call 4008876858 if issue persists"
+      ]
+    },
+    {
+      "symptom": "Err-22 broken wire detection alarm on K6",
+      "checks": [
+        "If triggered falsely (no actual thread break): set P18 parameter to 0 to disable broken wire detection",
+        "If thread is genuinely breaking: check needle condition, thread path, thread tension, and bobbin",
+        "Check the thread breakage sensor wiring if P18 > 0 and detection is needed"
+      ]
+    },
+    {
+      "symptom": "UP safety switch alarm on K6 — machine won't run",
+      "checks": [
+        "Check that the thread trimmer scissors have returned fully to the home position after trimming",
+        "Verify the safety switch indicator light turns on when the cutter is in home position",
+        "If light doesn't turn on: adjust position of the induction bracket for the safety switch sensor",
+        "If still not resolved after adjusting bracket: change P66 parameter from 2 to 0 to disable safety switch",
+        "Contact service provider or call 4008876858 if above steps fail"
+      ]
+    },
+    {
+      "symptom": "Err-03 undervoltage on K6 coverseam machine",
+      "checks": [
+        "Turn off the system power",
+        "Check input power supply voltage with a multimeter — must be at least 176V (220V -20%)",
+        "Do not restart until voltage is stable and within 176V-264V range",
+        "Once voltage is normal, restart the controller",
+        "If error persists with correct voltage, contact service provider or call 4008876858"
+      ]
+    },
+    {
+      "symptom": "Err-08 motor stalled on K6",
+      "checks": [
+        "Turn off system power",
+        "Check motor power input plug — must be firmly seated, not loose, off, or broken",
+        "Check for foreign matter (thread, fabric) tangled around the motor shaft or machine head",
+        "Clear any obstruction, re-seat plugs, then restart",
+        "If motor still stalls, replace the controller"
+      ]
+    },
+    {
+      "symptom": "Stepper motor not trimming or not lifting presser foot correctly on K6",
+      "checks": [
+        "Check parameter 11F — must match the actual stepper motor configuration (1 = one stepper for trimming/lifting; 3 = two steppers)",
+        "Check P85 (stepper motor lifting angle) and P86 (trimming angle) — values may need tuning",
+        "Check P88 — direction setting must match actual installation",
+        "Inspect stepper motor cable connections",
+        "Use monitoring item 01C (trimming stepper steps) and 01D (needle pitch stepper steps) to verify operation"
+      ]
+    },
+    {
+      "symptom": "ALA-1 refueling alarm on K6",
+      "checks": [
+        "Perform lubrication maintenance on the machine as specified in the mechanical manual",
+        "After lubricating, reset the refueling alarm counter via the parameter that controls refueling interval"
+      ]
+    }
+  ]
+}

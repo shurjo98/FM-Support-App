@@ -1,0 +1,292 @@
+{
+  "model": "E4S",
+  "manufacturer": "Jack",
+  "controllerType": "Overlock Integrated Controller (part no. 121230002)",
+  "motorPartNumber": "121233001 (Hall servo motor)",
+  "type": "Power-saving integrated overlock machine (包缝机)",
+  "source": "Jack E4S Training Guidance 2025.2",
+  "specs": {
+    "maxSpeed": "5500 rpm",
+    "stitchLength": "0.8-5.0mm (basic: 0.8-4.6mm)",
+    "stitchWidth": "1.5-8.0mm",
+    "differentialRatio": "0.7-2.0",
+    "presserFootHeight": "5.0-7.0mm",
+    "needleType": "DC×27",
+    "dimensions": "525×360×510mm",
+    "weight": "27.9kg net / 35.88kg gross",
+    "motorMaxTorque": "4.0 N·m (stall current 15A)",
+    "noiseLevel": "≤79dB at 5500rpm (5-thread ≤81dB)",
+    "startResponse": "150ms at 5500rpm",
+    "brakeResponse": "within 350ms",
+    "needleBarHeight": {
+      "plainSeaming": "10.5mm from needle to needle plate",
+      "heavyDuty": "11.5mm from needle to needle plate"
+    },
+    "needleBarStroke": {
+      "plainSeaming": "24.5mm",
+      "heavyDuty": "26mm"
+    },
+    "modelVariants": [
+      "E4S-02×250 (2-needle, 5-thread)",
+      "E4S-3-12/233 (3-thread)",
+      "E4S-4-M03/333 (4-thread)",
+      "E4S-5-M05/355 (5-thread)"
+    ],
+    "keyImprovements": [
+      "150ms start response (improved from E4)",
+      "350ms brake response (improved from E4)",
+      "≤79dB noise level",
+      "8-12 layer denim capability",
+      "3-level mechanical feed dog adjustment (A/M/H)"
+    ]
+  },
+  "mechanicalLevels": {
+    "description": "3-level feed dog height adjustment lever for material thickness",
+    "A": "Thin material (lowest feed dog position)",
+    "M": "Standard material (middle position)",
+    "H": "Thick material — 8-12 layer denim (highest position)"
+  },
+  "panel": {
+    "type": "Blue box with LED digital tube display, 2-button only",
+    "buttons": [
+      "▲ (up) — speed increase / parameter select / save",
+      "▼ (down) — speed decrease / value adjust / factory reset (long press)"
+    ],
+    "display": "LED digital tube — shows speed, error codes, parameter values (e.g. 'F8' for F interface, 'T' for durability mode)"
+  },
+  "operations": {
+    "speedAdjust": "Short press ▲ to increase speed by 100rpm. Short press ▼ to decrease by 100rpm. Speed auto-saves approximately 3 seconds after last press.",
+    "needlePosition": "Long press ▲ for 3s in standby to toggle needle stop position up/down (auto-saved).",
+    "factoryReset": "Long press ▼ for 3s in standby. Display shows '88' or 'EE' during reset.",
+    "parameterEntry": "Press ▲ and ▼ simultaneously for 3s → F interface (display shows 'F8')."
+  },
+  "parameterEntry": {
+    "fInterface": "Hold ▲+▼ simultaneously for 3s → F interface. Short press ▲ to cycle through parameters (K→L→M→H→V→J→r→Y→w). Short press ▼ to enter value view. Short press ▼ again to adjust value. Short press ▲ to save (displays 'ok'). Returns to F interface. Motor automatically returns to standby.",
+    "durabilityMode": "In F interface, long press ▲ for 3s → display shows 'T' (durability mode). Short press ▲ to set durability parameters (run time, stop time). Short press ▼ to start durability test. Short press ▲ during test to return to standby."
+  },
+  "errorCodes": [
+    {
+      "code": "E1",
+      "description": "Motor stall",
+      "solution": "1) Check if machine head is stuck. 2) Check if workpiece is too thick (insufficient motor torque). 3) Check motor plug — loose connections. 4) Check circuit board."
+    },
+    {
+      "code": "E2",
+      "description": "Controller exception (power supply fault)",
+      "solution": "Check that power supply voltage is normal. Wait for power to turn on or reset. Carefully check power supply board functions."
+    },
+    {
+      "code": "E3",
+      "description": "Parameter save exception (EEPROM/DSP fault)",
+      "solution": "1) Shutdown and restart. 2) Restore factory settings (long press ▼ for ~3s). 3) If restart or factory restore fails, replace DSP (Single Chip Microcomputer) on circuit board."
+    },
+    {
+      "code": "E4",
+      "description": "Motor Hall signal abnormal",
+      "solution": "1) Check motor plug is not loose. 2) Check encoder signal cable — disconnected, withdrawn pin, or deformed. 3) Check motor itself — coil burnt or Hall sensor broken. 4) Check circuit board."
+    },
+    {
+      "code": "E5",
+      "description": "Positioner signal abnormal (encoder/position sensor fault)",
+      "solution": "1) Check encoder/positioner plug connection. 2) Check motor positioner Hall sensor. 3) If positioner is damaged or needle stop function not needed: after E5 displays, long press ▲ for ~3s to disable needle stop function."
+    },
+    {
+      "code": "E6",
+      "description": "Governor (speed regulator/pedal) abnormal",
+      "solution": "1) Check if governor is plugged in. 2) Check governor insert/pin for loose or detached condition. 3) Note: E6 also triggers when pedal is pressed if not fully connected — short press ▲ to clear false trigger."
+    },
+    {
+      "code": "Ea",
+      "description": "Hardware overcurrent",
+      "solution": "Check power supply voltage is normal. Wait for power to turn on/reset. Check power supply board carefully."
+    },
+    {
+      "code": "Eb",
+      "description": "System overvoltage",
+      "solution": "Check power supply voltage is normal. Wait for power to turn on/reset. Check power supply board carefully."
+    },
+    {
+      "code": "Ec",
+      "description": "System undervoltage",
+      "solution": "Check power supply voltage is normal. Wait for power to turn on/reset. Check power supply board carefully."
+    }
+  ],
+  "parameters": [
+    {
+      "code": "K",
+      "name": "LED Brightness Adjust",
+      "default": "2",
+      "range": "0-3",
+      "description": "0=off, 1=low brightness, 2=medium brightness, 3=maximum brightness",
+      "interface": "F"
+    },
+    {
+      "code": "L",
+      "name": "Maximum Speed",
+      "default": "50",
+      "range": "05-55",
+      "description": "Maximum speed in units of 100rpm (05=500rpm, 50=5000rpm, 55=5500rpm). Adjusts in 500rpm increments per step.",
+      "interface": "F"
+    },
+    {
+      "code": "M",
+      "name": "Needle Position Switch",
+      "default": "1",
+      "range": "0-1",
+      "description": "0=needle stop disabled, 1=needle stop enabled. If positioner damaged, set to 0 to suppress E5.",
+      "interface": "F"
+    },
+    {
+      "code": "H",
+      "name": "Sleep Time",
+      "default": "3",
+      "range": "0-6",
+      "description": "Auto sleep time. Unit: 10 minutes (e.g. 3=30min). Set 0 to disable sleep function.",
+      "interface": "F"
+    },
+    {
+      "code": "V",
+      "name": "Speed Display",
+      "default": "0",
+      "range": "0-1",
+      "description": "0=speed not shown on display during standby, 1=speed shown",
+      "interface": "F"
+    },
+    {
+      "code": "J",
+      "name": "Serial Number Query",
+      "default": "read-only",
+      "range": "cannot set",
+      "description": "Displays the 9 serial numbers from the machine label. Read-only.",
+      "interface": "F"
+    },
+    {
+      "code": "r",
+      "name": "Low Voltage Alarm Threshold",
+      "default": "15",
+      "range": "0, 14, 15",
+      "description": "0=alarm off, 14=alarm at 144V input, 15=alarm at 154V input",
+      "interface": "F"
+    },
+    {
+      "code": "Y",
+      "name": "Over Voltage Alarm Threshold",
+      "default": "26",
+      "range": "0, 26, 27",
+      "description": "0=alarm off, 26=alarm at 264V input, 27=alarm at 274V input",
+      "interface": "F"
+    },
+    {
+      "code": "w",
+      "name": "Power Display",
+      "default": "-",
+      "range": "1-99",
+      "description": "Real-time power consumption display (read-only). 1=≤10W, 9=≥990W.",
+      "interface": "F"
+    },
+    {
+      "code": "T-run",
+      "name": "Durable Mode Running Time",
+      "default": "3",
+      "range": "1-9",
+      "description": "Run time per cycle in durability test mode. Unit: seconds.",
+      "interface": "durability"
+    },
+    {
+      "code": "T-stop",
+      "name": "Durable Mode Stop Time",
+      "default": "3",
+      "range": "1-9",
+      "description": "Stop time per cycle in durability test mode. Unit: seconds.",
+      "interface": "durability"
+    }
+  ],
+  "troubleshooting": [
+    {
+      "issue": "E1 — Motor stall",
+      "cause": "Machine head stuck, material too thick for torque, motor plug loose, circuit board fault",
+      "solution": "Check head clearance and material thickness. Verify motor plug is fully seated. Use 3-level adjustment lever (A/M/H) to match material. Replace controller if all checks pass."
+    },
+    {
+      "issue": "E3 — Parameter save exception",
+      "cause": "EEPROM or DSP microcontroller failure",
+      "solution": "Restart first. If persisting, do factory reset (long press ▼ 3s). If still failing after reset, replace circuit board DSP chip."
+    },
+    {
+      "issue": "E4 — Motor Hall signal abnormal",
+      "cause": "Encoder cable damaged, connector withdrawn/deformed, Hall sensor broken, motor coil burnt",
+      "solution": "Inspect all encoder wiring and connectors for damage. Check motor physically. May require motor or controller replacement."
+    },
+    {
+      "issue": "E5 — Positioner signal abnormal",
+      "cause": "Position encoder disconnected, plug loose, or positioner damaged",
+      "solution": "Check and reseat positioner plug. If needle stop function is not required, long press ▲ for 3s after E5 to disable it (equivalent to setting parameter M=0)."
+    },
+    {
+      "issue": "E6 — Governor abnormal (false trigger when pressing pedal)",
+      "cause": "Governor connector not fully plugged in",
+      "solution": "Short press ▲ to clear false E6. Check governor plug for full seating. Inspect pin contacts."
+    },
+    {
+      "issue": "Ea / Eb / Ec — Power supply faults",
+      "cause": "Input voltage out of normal range or power supply board failure",
+      "solution": "Check input voltage. Normal operating range is approximately 154-264V based on alarm thresholds (r/Y parameters). Inspect power supply board."
+    },
+    {
+      "issue": "Maximum speed cannot reach 5500rpm",
+      "cause": "F interface parameter L is set below maximum",
+      "solution": "Enter F interface (▲+▼ held 3s), navigate to L parameter. Default is 50 (5000rpm). Increase to 55 for 5500rpm maximum."
+    },
+    {
+      "issue": "Needle not stopping at correct position",
+      "cause": "Needle position switch M=0 in F interface, or positioner fault (E5)",
+      "solution": "Enter F interface, set M=1 to enable needle stop. If E5 is showing, check positioner connection first."
+    },
+    {
+      "issue": "Machine enters sleep mode unexpectedly",
+      "cause": "Sleep time H parameter set too short",
+      "solution": "Enter F interface, increase H parameter (default 3=30min, max 6=60min). Set H=0 to disable sleep entirely."
+    },
+    {
+      "issue": "Fabric wrinkling or stretching during sewing",
+      "cause": "Differential ratio not adjusted for material",
+      "solution": "Adjust differential ratio mechanically (0.7-2.0 range). For wrinkle: increase differential (surplus setting). For stretch: decrease differential (deficit setting)."
+    },
+    {
+      "issue": "Poor performance on thick/multi-layer material",
+      "cause": "3-level feed dog lever not set for heavy material",
+      "solution": "Move adjustment lever to H position for thick/multi-layer material (up to 8-12 layers denim)."
+    }
+  ],
+  "mechanicalAdjustments": {
+    "needleBarHeight": {
+      "4thread": "Left needle to needle plate = 10.5mm when needle bar at highest point. Adjust via needle bar adjust screw.",
+      "5thread": "Left needle to needle plate = 11.5mm when needle bar at highest point."
+    },
+    "lowerLooper": {
+      "gap": "When needle bar at lowest: distance from lower looper tip to center of left needle = 3-3.5mm",
+      "clearance": "Clearance between looper needle and sewing needle = 0.03-0.05mm"
+    },
+    "upperLooper": {
+      "4thread": "At highest position: tip to left needle center = 5.4-5.7mm; height to throat plate = 11.5mm",
+      "5thread": "At highest position: tip to left needle center = 4.5-5.0mm; height to throat plate = 10.5mm",
+      "3thread": "Height from upper looper to throat plate = 10.5mm"
+    },
+    "lookerIntersection": {
+      "description": "When upper and lower loopers move to their intersection point",
+      "dGap": "0.2mm",
+      "cGap": "0.5mm"
+    },
+    "rearGuardNeedle": "When lower looper moves left-to-right to hook position, rear guard needle should be in contact with sewing needle.",
+    "frontNeedleGuard": "When rear guard is in contact with needle, gap between front guard and needle = 0.2-0.5mm",
+    "feedToothHeight": "0.8-1mm above needle plate surface when feed tooth at highest point",
+    "presserFootHeight": "5-7mm (adjustable via presser foot limit screw)",
+    "cuttingKnife": {
+      "lowerKnife": "Should be flat (flush) with needle plate surface",
+      "biteAmount": "Upper and lower knife overlap bite = 0.5-1mm"
+    },
+    "wireRodClearance": "When needle bar at lowest point: clearance between wire rod and housing = 7mm. Front needle guard must not touch wire rod.",
+    "stitchLengthAdjustment": "Press stitch length button and turn handwheel. Button at deepest position = maximum forward stitch length.",
+    "differentialAdjustment": "Turn differential wrench. Surplus (upward) = fabric stretch. Deficit (downward) = fabric contraction. Tighten fastening screws after adjustment."
+  }
+}

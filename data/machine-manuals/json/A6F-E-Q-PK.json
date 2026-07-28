@@ -1,0 +1,333 @@
+{
+  "model": "A6F-E / A6F-Q / A6F-PK",
+  "manufacturer": "Jack",
+  "controllerType": "A6F-E/Q/PK Electronic Control System (stepping motor variant)",
+  "type": "Computerized lockstitch machine with cloth puller stepping motor and back-tacking stepping motor",
+  "source": "Jack A6F-E/Q/PK款说明书 20230105 English (30 pages)",
+  "note": "This model series differs from the base A6F by adding: cloth puller stepping motor, back-tacking stepping motor, voice navigation, W sewing, multi-segment sewing, pattern freedom sewing, and tight seam function. Error codes E80-E107 are specific to stepping motor subsystems.",
+  "specs": {
+    "parameterLevels": 2,
+    "userParamRange": "P01-P43",
+    "techParamRange": "P44-P254",
+    "totalParams": 254
+  },
+  "panel": {
+    "type": "16-button panel",
+    "buttons": [
+      {
+        "name": "Stitch length +",
+        "click": "Increase stitch length",
+        "longPress": "Increase cloth puller stitch length (when cloth puller enabled)",
+        "note": "Dual function depending on cloth puller enable state"
+      },
+      {
+        "name": "Stitch length -",
+        "click": "Decrease stitch length",
+        "longPress": "Decrease cloth puller stitch length (when cloth puller enabled)"
+      },
+      {
+        "name": "Start back-tacking / Clamping without thrum",
+        "click": "Cycle start back-tacking: 1× → 2× → off",
+        "longPress": "Toggle clamping without thrum function"
+      },
+      {
+        "name": "End back-tacking / Cloth puller",
+        "click": "Cycle end back-tacking: 1× → 2× → off",
+        "longPress": "Toggle cloth puller function on/off"
+      },
+      {
+        "name": "Lock needle / Needle stop position",
+        "click": "Cycle needle lock: front → back → both → cancel",
+        "longPress": "Shift needle stop position up/down"
+      },
+      {
+        "name": "Clamping / Auto function",
+        "click": "Toggle clamp on/off",
+        "longPress": "Toggle auto function on/off"
+      },
+      {
+        "name": "Pattern sewing / Presser foot lifting",
+        "click": "Switch pattern sewing mode",
+        "longPress": "Toggle presser foot lifting function"
+      },
+      {
+        "name": "W sewing / Multi-segment",
+        "click": "Shift to W sewing mode",
+        "longPress": "Shift to multi-segment sewing mode"
+      },
+      {
+        "name": "Presser foot after trim / Presser foot after pause",
+        "click": "Toggle presser foot behavior after thread trim",
+        "longPress": "Toggle presser foot behavior after pause"
+      },
+      {
+        "name": "Free sewing / Thread trimming",
+        "click": "Shift to free sewing mode",
+        "longPress": "Toggle thread trimming function"
+      },
+      {
+        "name": "Boot speech / Voice",
+        "click": "Cycle boot speech setting",
+        "longPress": "Cycle voice navigation setting",
+        "inError": "Broadcast error codes via voice"
+      },
+      {
+        "name": "P (parameter edit)",
+        "inMain": "Long-press to enter parameter setting mode",
+        "inParameter": "Press to save current value and exit parameter"
+      },
+      {
+        "name": "+ (speed / parameter increase)",
+        "inMain": "Increase speed by 50 rpm",
+        "inParameter": "Increase parameter value"
+      },
+      {
+        "name": "- (speed / parameter decrease)",
+        "inMain": "Decrease speed by 50 rpm",
+        "inParameter": "Decrease parameter value"
+      },
+      {
+        "name": "Left / Right selection",
+        "function": "Navigate between parameter items (left/right)"
+      },
+      {
+        "name": "Reset",
+        "longPress": "Restore factory settings"
+      }
+    ]
+  },
+  "parameterEntry": {
+    "userParams": {
+      "range": "P01-P43",
+      "access": "Long-press P button in main screen → display shows parameter code → use Left/Right to navigate, +/- to adjust → press P to save and exit",
+      "description": "User-level parameters adjustable by operators"
+    },
+    "technicianParams": {
+      "range": "P44-P254",
+      "access": "Hold P button while powering on machine → display shows P92 → use Left/Right to navigate, +/- to adjust → press P to save and exit",
+      "description": "Technician-level parameters requiring service access. Entry confirmed by P92 display at boot."
+    },
+    "factoryReset": "Long-press Reset button to restore all factory defaults"
+  },
+  "features": [
+    "Cloth puller stepping motor with positioning sensor",
+    "Back-tacking stepping motor (electronically controlled back-tack timing)",
+    "Voice navigation (boot speech, error code broadcasting via voice)",
+    "W sewing mode (width sewing for special stitch patterns)",
+    "Multi-segment sewing mode",
+    "Pattern freedom sewing mode",
+    "Tight seam function",
+    "Auto function (automatic workflow control)",
+    "Free sewing mode",
+    "Two-level parameter access: User (P01-P43) and Technician (P44-P254)"
+  ],
+  "errorCodes": [
+    {
+      "code": "E01",
+      "description": "Over-voltage protection triggered",
+      "solution": "Check power supply voltage is within normal range. If voltage is normal, replace control box."
+    },
+    {
+      "code": "E02",
+      "description": "Low-voltage protection triggered",
+      "solution": "Check power supply voltage is within normal range. If voltage is normal, replace control box."
+    },
+    {
+      "code": "E03",
+      "description": "CPU communication error (panel to main board communication failure)",
+      "solution": "1) Check panel connector and cable for loose connections. 2) Restart machine. 3) If persists, replace control box."
+    },
+    {
+      "code": "E05",
+      "description": "Speed control unit (governor) connection abnormal",
+      "solution": "Check speed controller connector and cable. If connection is good, replace control box."
+    },
+    {
+      "code": "E07",
+      "description": "Main shaft motor rotating abnormally",
+      "solution": "1) Check if spindle is mechanically locked — try rotating handwheel by hand. 2) Check encoder connector and motor power cables. 3) Verify input voltage is normal. 4) Check if sewing speed is set too high."
+    },
+    {
+      "code": "E09",
+      "description": "Positioning signal error",
+      "solution": "Check motor encoder connector — may be loose or have fallen off. If connector is secure, replace motor."
+    },
+    {
+      "code": "E10",
+      "description": "Solenoid over-current protection",
+      "solution": "Check if solenoid is broken or shorted."
+    },
+    {
+      "code": "E11",
+      "description": "Positioning signal error",
+      "solution": "Check motor encoder connector — may be loose or have fallen off. If connector is secure, replace motor."
+    },
+    {
+      "code": "E14",
+      "description": "Encoder signal error",
+      "solution": "Check motor encoder connector for loose or damaged connection. If secure, replace motor."
+    },
+    {
+      "code": "E15",
+      "description": "Power module abnormal over-current protection",
+      "solution": "1) Power cycle the machine (turn off, wait, turn on). 2) If persists, replace control box."
+    },
+    {
+      "code": "E17",
+      "description": "Safety switch alarm (machine head open or safety switch triggered)",
+      "solution": "1) Check that machine head is fully closed. 2) Check ball switch inside control box."
+    },
+    {
+      "code": "E20",
+      "description": "Motor start failed",
+      "solution": "1) Check motor encoder connector. 2) Check motor power socket. 3) Restart machine. 4) If persists, replace motor."
+    },
+    {
+      "code": "E30",
+      "description": "Shutdown failure — machine reached password-locked time limit",
+      "solution": "Machine has reached its preset operating time under password lock. Contact service provider to unlock or extend."
+    },
+    {
+      "code": "E40",
+      "description": "Crystal oscillator of panel abnormal",
+      "solution": "Replace panel PCB."
+    },
+    {
+      "code": "E80",
+      "description": "Abnormal communication between main CPU and stepping motor driver CPU",
+      "solution": "Turn off machine and restart. If persists, check stepping motor driver board connections."
+    },
+    {
+      "code": "E82",
+      "description": "Back-tacking stepping motor overcurrent",
+      "solution": "1) Check stepping motor connector and wiring. 2) Restart machine."
+    },
+    {
+      "code": "E84",
+      "description": "Back-tacking stepping motor encoder Z signal abnormal",
+      "solution": "Check encoder wiring: black, blue, and pink wires for loose or damaged connections."
+    },
+    {
+      "code": "E85",
+      "description": "Back-tacking stepping motor encoder AB signal abnormal",
+      "solution": "1) Check encoder wiring: black, brown, and orange wires. 2) Check if outer ring of motor disc is covered in oil (clean if so)."
+    },
+    {
+      "code": "E86",
+      "description": "Back-tacking stepping motor failed to start",
+      "solution": "1) Check motor connector and power cable. 2) If connections are good, replace motor."
+    },
+    {
+      "code": "E87",
+      "description": "Back-tacking stepping motor locked-rotor (motor stalled or mechanically jammed)",
+      "solution": "Check if motor is mechanically locked or obstructed. If motor is free but error persists, replace motor."
+    },
+    {
+      "code": "E102",
+      "description": "Cloth puller stepping motor overcurrent",
+      "solution": "1) Check cloth puller motor connector and wiring. 2) Restart machine."
+    },
+    {
+      "code": "E103",
+      "description": "Cloth puller motor does not stop at specified position (positioning failure)",
+      "solution": "1) Check cloth puller sensor position and alignment. 2) Restart machine."
+    },
+    {
+      "code": "E104",
+      "description": "Cloth puller stepping motor encoder Z signal abnormal",
+      "solution": "Check cloth puller motor encoder connector for loose or damaged connection."
+    },
+    {
+      "code": "E105",
+      "description": "Cloth puller stepping motor encoder AB signal abnormal",
+      "solution": "Check cloth puller motor encoder connector for loose or damaged connection."
+    },
+    {
+      "code": "E106",
+      "description": "Cloth puller stepping motor failed to start",
+      "solution": "1) Check cloth puller motor connector and power cable. 2) If connections are good, replace motor."
+    },
+    {
+      "code": "E107",
+      "description": "Cloth puller stepping motor locked-rotor (motor stalled or mechanically jammed)",
+      "solution": "Check if cloth puller mechanism is mechanically jammed. If mechanism is free but error persists, replace motor."
+    }
+  ],
+  "parameters": [
+    {
+      "code": "P01-P43",
+      "name": "User Parameter Group",
+      "description": "User-level adjustable parameters. Access via long-press P button. Navigate with Left/Right, adjust with +/-. Save with P.",
+      "level": "User"
+    },
+    {
+      "code": "P44-P203",
+      "name": "Technician Parameter Group (Part 1)",
+      "description": "Technician-level parameters. Includes machine-specific settings for timing, solenoids, motor behavior, cloth puller, and back-tacking stepping motor configuration.",
+      "level": "Technician"
+    },
+    {
+      "code": "P204-P254",
+      "name": "Technician Parameter Group (Part 2)",
+      "description": "Additional technician parameters for advanced stepping motor configuration, cloth puller fine-tuning, and system behavior settings.",
+      "level": "Technician"
+    }
+  ],
+  "monitoring": [],
+  "troubleshooting": [
+    {
+      "issue": "Voice is announcing error codes",
+      "cause": "An error has been detected and the voice broadcast function is announcing it",
+      "solution": "Note the error code being announced. Refer to the error code table (E01-E107) for the specific cause and remedy. The voice function is activated by long-pressing the Boot Speech/Voice button."
+    },
+    {
+      "issue": "Back-tacking not working correctly",
+      "cause": "Back-tacking stepping motor error (E82-E87) or parameter setting issue",
+      "solution": "1) Check for error codes E82-E87 on display. 2) Verify back-tacking button cycles correctly (1×/2×/off). 3) Check P button technician parameters related to back-tacking motor steps/timing."
+    },
+    {
+      "issue": "Cloth puller not advancing fabric",
+      "cause": "Cloth puller stepping motor error (E102-E107) or cloth puller function disabled",
+      "solution": "1) Check error codes E102-E107. 2) Confirm cloth puller is enabled (long-press End back-tacking button toggles cloth puller). 3) Verify motor connector (12P port pins 2,8 for cloth puller DC motor)."
+    },
+    {
+      "issue": "Machine will not start / E30 error",
+      "cause": "Password lock time limit reached",
+      "solution": "Contact Jack service provider to reset or extend the machine's operating time license."
+    },
+    {
+      "issue": "E80 stepping motor CPU communication error",
+      "cause": "Communication failure between main control board and stepping motor driver module",
+      "solution": "Power cycle the machine. If error persists after restart, the stepping motor driver board or its communication cable may need replacement."
+    },
+    {
+      "issue": "E85 encoder AB signal error — back-tacking motor",
+      "cause": "Encoder wiring fault or oil contamination on motor disc outer ring",
+      "solution": "Check black, brown, orange wires on encoder. Visually inspect the outer ring of the motor encoder disc — clean if oil is present, as this blocks the optical sensor."
+    }
+  ],
+  "portWiring": {
+    "16P_function_port": {
+      "description": "16-pin function connector for sensors and accessories",
+      "pins": [
+        {"pins": "1 (signal), 9 (power), 8 (GND)", "function": "Cloth puller positioning sensor"},
+        {"pins": "2 (signal), 10 (GND)", "function": "Oil level sensor"},
+        {"pins": "4 (signal), 13 (GND)", "function": "Half-needle button"},
+        {"pins": "5 (signal), 13 (GND)", "function": "Back-tacking button"},
+        {"pins": "6 (signal), 13 (GND)", "function": "Darning stitch key"},
+        {"pins": "13 (GND), 14 (power)", "function": "LED work light"}
+      ]
+    },
+    "12P_function_port": {
+      "description": "12-pin function connector for solenoids and actuators",
+      "pins": [
+        {"pins": "6, 12", "function": "Presser foot electromagnet"},
+        {"pins": "4, 10", "function": "Clamping electromagnet"},
+        {"pins": "5, 11", "function": "Thread tension releasing electromagnet"},
+        {"pins": "3, 9", "function": "Thread wiping electromagnet"},
+        {"pins": "2, 8", "function": "Cloth puller DC motor"},
+        {"pins": "1, 7", "function": "Thread trimming electromagnet"}
+      ]
+    }
+  }
+}

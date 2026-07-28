@@ -1,0 +1,500 @@
+{
+  "model": "A5E-B",
+  "manufacturer": "Jack",
+  "controllerType": "A5E-B electric control box",
+  "manualVersion": "1.0",
+  "type": "Lockstitch sewing machine electronic controller with auto presser foot lifter",
+  "specs": {
+    "supplyVoltage": "AC 220 ±20%V or AC 110 ±20%V",
+    "frequency": "50Hz/60Hz",
+    "ratedPower": "550W",
+    "operatingTemp": "0°C to 45°C",
+    "humidity": "30% to 95% (non-condensing)",
+    "interfaces": {
+      "socket1": "Foot pedal, update & electronic knee socket",
+      "socket2": "Electromagnet, LED lamp and thickness sensor socket",
+      "socket3": "Air suction device, bird's nest interface and rear tugboat"
+    }
+  },
+  "errorCodes": [
+    {
+      "code": "Err-01",
+      "display": "Err-01",
+      "cause": "Arm shaft motor overcurrent (hardware) — encoder or electronic control damaged",
+      "solution": "Turn off system power, turn on again after 30 seconds. Check arm shaft motor encoder and electronic control for damage. Replace if damaged. Contact local service provider if still failing.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-02",
+      "display": "Err-02",
+      "cause": "Arm shaft motor overcurrent (software)",
+      "solution": "Turn off system power, turn on again after 30 seconds. Check arm shaft motor encoder and electronic control for damage. Contact local service if still failing.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-03",
+      "display": "Err-03",
+      "cause": "System undervoltage — input supply voltage too low (below 176V)",
+      "solution": "Disconnect controller power and check if input supply voltage is below 176V. Restart after voltage returns to normal. Contact local service provider if voltage is normal but problem persists.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-04",
+      "display": "Err-04",
+      "cause": "Overvoltage during shutdown — input power supply voltage too high (above 264V)",
+      "solution": "Disconnect controller power. Check if input voltage is above 264V. Restart after voltage returns to normal. Contact service if voltage is normal but problem persists.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-05",
+      "display": "Err-05",
+      "cause": "Overvoltage during operation — input power supply voltage too high (above 264V) while sewing",
+      "solution": "Disconnect controller power. Check if input voltage is above 264V. Restart after voltage normalizes. Contact service if problem persists.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-07",
+      "display": "Err-07",
+      "cause": "Arm shaft motor current detection circuit failure",
+      "solution": "Turn off system power, turn on again after 30 seconds. Try a few times. If fault occurs frequently, contact local service provider.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-08",
+      "display": "Err-08",
+      "cause": "Arm shaft motor stalled — foreign object wrapped around machine head, motor plug loose or broken, eccentric wheel stuck",
+      "solution": "Check for foreign objects or thread residue wrapped in rotating shuttle. Check if eccentric wheel is stuck. Disconnect power and check arm shaft motor power input plug. Restart after correction. Contact service if still failing.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-10",
+      "display": "Err-10",
+      "cause": "Panel communication failure — connection between operation panel and electric control dropped, loose, or broken",
+      "solution": "Check connection between operation panel and electric control. Restore and restart. Contact service if still failing.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-12",
+      "display": "Err-12",
+      "cause": "Arm shaft motor initial angle detection failure",
+      "solution": "Try 2-3 times again after power off. Contact local service provider if still failing.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-13",
+      "display": "Err-13",
+      "cause": "Arm shaft motor zero position fault — encoder damaged or in poor condition",
+      "solution": "Turn off system power, turn on again after 30 seconds. Check arm shaft motor encoder and electronic control for damage. Replace if needed. Contact service if still failing.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-14",
+      "display": "Err-14",
+      "cause": "Master control EEPROM components read/write failure",
+      "solution": "Turn off system power, turn on again after 30 seconds. Contact local service provider if still failing.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-15",
+      "display": "Err-15",
+      "cause": "Arm shaft motor overspeed protection — encoder damaged",
+      "solution": "Turn off system power, turn on again after 30 seconds. Check arm shaft motor encoder and electronic control for damage. Replace if needed. Contact service if still failing.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-16",
+      "display": "Err-16",
+      "cause": "Arm shaft motor reverse",
+      "solution": "Turn off system power, turn on again after 30 seconds. Check encoder and electronic control. Contact service if still failing.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-17",
+      "display": "Err-17",
+      "cause": "Panel date read/write failure",
+      "solution": "Turn off system power, turn on again after 30 seconds. Contact local service provider if still failing.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-18",
+      "display": "Err-18",
+      "cause": "Arm shaft motor overload — motor may be stalled",
+      "solution": "Check whether arm shaft motor is stalled. If not stalled, contact local service provider.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-19",
+      "display": "Err-19",
+      "cause": "Motor type mismatch",
+      "solution": "Turn off system power, turn on again after 30 seconds. Contact local service provider if still failing.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-20",
+      "display": "Err-20",
+      "cause": "Pedal error — pedal speed controller connection cable dropped, loose, or damaged",
+      "solution": "Check if pedal speed controller cable is loose or damaged. Restore and restart. Contact service if still failing.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-21",
+      "display": "Err-21",
+      "cause": "Backstitch step motor hardware overcurrent",
+      "solution": "Turn off system power, check reverse sew motor socket. Restart electric control. Contact local service if error is still reported.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-22",
+      "display": "Err-22",
+      "cause": "Backstitch step motor software overcurrent",
+      "solution": "Turn off system power, check reverse sew motor socket. Restart electric control. Contact local service if error is still reported.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-23",
+      "display": "Err-23",
+      "cause": "Backstitch step motor current detection circuit failure",
+      "solution": "Turn off system power, check socket of reverse sew motor, restart electric control. Contact local service if still reported.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-24",
+      "display": "Err-24",
+      "cause": "Backstitch step motor stalled",
+      "solution": "Turn off system power, check socket of reverse sew motor, restart electric control. Contact local service if still reported.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-28",
+      "display": "Err-28",
+      "cause": "Backstitch step motor zero position fault",
+      "solution": "Turn off system power, check socket of reverse sew motor, restart electric control. Contact local service if still reported.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-29",
+      "display": "Err-29",
+      "cause": "Reverse stitch stepping motor encoder AB signal abnormal",
+      "solution": "Turn off system power, check socket of reverse sew motor, restart electric control. Contact local service if still reported.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-30",
+      "display": "Err-30",
+      "cause": "Password lock shutdown alarm — machine use time limit has been reached",
+      "solution": "The machine has reached the set time. If further use is required, contact your local service provider.",
+      "severity": "medium"
+    }
+  ],
+  "alarmCodes": [
+    {
+      "code": "A-UP",
+      "display": "A-UP",
+      "cause": "Safety switch alarm — machine head is not in normal position",
+      "solution": "Return machine head to normal position to ensure safety switch rebounds.",
+      "severity": "medium"
+    },
+    {
+      "code": "ALR-1",
+      "display": "ALR-1",
+      "cause": "Machine head button with short circuit alarm",
+      "solution": "Turn off system power and change the light button of machine head.",
+      "severity": "medium"
+    },
+    {
+      "code": "ALR-2",
+      "display": "ALR-2",
+      "cause": "Needle count reaches full count (counter alarm)",
+      "solution": "Press P key briefly to cancel the alarm. Refer to parameter P43 description.",
+      "severity": "low"
+    },
+    {
+      "code": "ALR-3",
+      "display": "ALR-3",
+      "cause": "Piece count reaches full count (counter alarm)",
+      "solution": "Press P key briefly to cancel the alarm. Refer to parameter P90 description.",
+      "severity": "low"
+    },
+    {
+      "code": "ALR-11",
+      "display": "ALR-11",
+      "cause": "Thickness sensor is not connected — wiring terminal connection issue",
+      "solution": "Check if wiring terminal of thickness sensor is connected to electronic control unit. Press P key briefly to cancel alarm.",
+      "severity": "low"
+    },
+    {
+      "code": "ERR-43",
+      "display": "ERR-43",
+      "cause": "Communication alarm between adapter board and electronic control unit",
+      "solution": "Turn off system power and on again. If still occurs, check if electronic control unit is damaged or upgrade adapter board program to latest version. After 10 seconds on alarm screen, alarm auto-cancels. Can cancel by briefly pressing P key.",
+      "severity": "medium"
+    },
+    {
+      "code": "OFF",
+      "display": "OFF",
+      "cause": "Power off — power switch turned off or input voltage too low",
+      "solution": "After power switch is turned off, panel shows OFF and returns to normal when power is turned on again. Check if input voltage is too low.",
+      "severity": "low"
+    }
+  ],
+  "parameters": [
+    {
+      "id": "P00",
+      "name": "Start cspeed (low speed when starting)",
+      "range": "100-800",
+      "default": 200,
+      "unit": "RPM"
+    },
+    {
+      "id": "P01",
+      "name": "Max speed of free sewing",
+      "range": "200-5000",
+      "default": 3800,
+      "unit": "RPM"
+    },
+    {
+      "id": "P02",
+      "name": "Multi-segment sew speed",
+      "range": "200-5000",
+      "default": 3500,
+      "unit": "RPM"
+    },
+    {
+      "id": "P03",
+      "name": "Needle position",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "up", "1": "down" }
+    },
+    {
+      "id": "P04",
+      "name": "Front bar-tacking speed",
+      "range": "200-4000",
+      "default": 1800,
+      "unit": "RPM"
+    },
+    {
+      "id": "P05",
+      "name": "Back bar-tacking speed",
+      "range": "200-4000",
+      "default": 1800,
+      "unit": "RPM"
+    },
+    {
+      "id": "P07",
+      "name": "Soft start sew speed",
+      "range": "100-2000",
+      "default": 800,
+      "unit": "RPM"
+    },
+    {
+      "id": "P08",
+      "name": "Soft start sew stitch",
+      "range": "1-9",
+      "default": 2,
+      "unit": "Half stitch"
+    },
+    {
+      "id": "P09",
+      "name": "Soft start sew switch",
+      "range": "0-1",
+      "default": 0,
+      "values": { "0": "off", "1": "on" }
+    },
+    {
+      "id": "P15",
+      "name": "Mode of half stitch",
+      "range": "0-5",
+      "default": 0,
+      "values": { "0": "fill by time", "1": "fill half a stitch", "2": "fill one stitch (press down)", "3": "make up a stitch (lift)", "4": "multi-stitch repair section function", "5": "make up half stitch" }
+    },
+    {
+      "id": "P23",
+      "name": "Curve mode of pedal",
+      "range": "0-3",
+      "default": 0,
+      "values": { "0": "straight", "1": "slope", "2": "curve (square/extraction of root)", "3": "S curve" }
+    },
+    {
+      "id": "P31",
+      "name": "Trimming strength coefficient (motor force)",
+      "range": "10-60",
+      "default": 35
+    },
+    {
+      "id": "P35",
+      "name": "Thread clamp switch",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "off", "1": "on" }
+    },
+    {
+      "id": "P38",
+      "name": "Trimmer switch",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "off", "1": "on" }
+    },
+    {
+      "id": "P43",
+      "name": "Counter mode",
+      "range": "0-6",
+      "default": 0,
+      "values": { "0": "off", "1": "ascending cycle count", "2": "descending cycle count", "3": "ascending count to full — alarm and stop", "4": "descending to 0 — alarm and stop", "5": "ascending count to full — remind and keep running", "6": "descending to 0 — alarm and keep running" }
+    },
+    {
+      "id": "P56",
+      "name": "Connect power and finding needle position automatically",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "no", "1": "yes" }
+    },
+    {
+      "id": "P58",
+      "name": "Adjustment angle of up needle position",
+      "range": "0-359",
+      "default": 83,
+      "unit": "degrees"
+    },
+    {
+      "id": "P59",
+      "name": "Adjustment angle of down needle position",
+      "range": "0-359",
+      "default": 176,
+      "unit": "degrees"
+    },
+    {
+      "id": "P62",
+      "name": "Special running mode",
+      "range": "0-5",
+      "default": 0,
+      "values": { "0": "normal", "1": "easy sew", "2": "initial angle testing", "3": "automatic testing mode", "4": "Motor Test Mode", "5": "Electromagnet Test mode" }
+    },
+    {
+      "id": "P66",
+      "name": "Protection switch of machine head testing",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "off", "1": "on" }
+    },
+    {
+      "id": "P90",
+      "name": "Counter mode (piece count)",
+      "range": "0-10",
+      "default": 0,
+      "values": { "0": "off", "1": "ascending cycle count", "2": "descending cycle count", "3": "ascending to full — alarm and stop", "4": "descending to 0 — alarm and stop" }
+    },
+    {
+      "id": "P94",
+      "name": "Voice switch",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "off", "1": "on" }
+    },
+    {
+      "id": "P95",
+      "name": "Language switch",
+      "range": "0-15",
+      "default": 0,
+      "values": { "0": "English", "1": "Spanish", "2": "Portuguese", "3": "Russian", "4": "Arabic", "5": "Vietnamese", "6": "Persian", "7": "Bengali", "8": "Turkish", "9": "Indonesian", "10": "Polish", "11": "Italian", "12": "Thai language", "13": "Ukrainian", "14": "Chinese", "15": "Korean" }
+    },
+    {
+      "id": "P97",
+      "name": "Main part stitch length",
+      "range": "0-50",
+      "default": 35,
+      "note": "Actual stitch distance = value * 0.1"
+    },
+    {
+      "id": "P173",
+      "name": "Pause press foot height",
+      "range": "1-13",
+      "default": 9
+    },
+    {
+      "id": "P174",
+      "name": "Trim press foot height (after trimming)",
+      "range": "1-13",
+      "default": 9
+    },
+    {
+      "id": "P390",
+      "name": "Thickness function switch",
+      "range": "0-2",
+      "default": 0,
+      "values": { "0": "off (panel shortcut switch)", "1": "adaptive mode (high sensitivity)", "2": "over stem compensation mode" }
+    }
+  ],
+  "monitorParams": [
+    { "id": "M10", "name": "Stitches account number" },
+    { "id": "M11", "name": "Pieces account number" },
+    { "id": "M13", "name": "Panel version number" },
+    { "id": "M18", "name": "Main board version number for control box" },
+    { "id": "M20", "name": "Generatrix voltage" },
+    { "id": "M21", "name": "Machine speed" },
+    { "id": "M28", "name": "Sample pedal value of trimming" },
+    { "id": "M30-M37", "name": "Historical Error number" },
+    { "id": "M86", "name": "Stepping optical encoder counting, based on Z signal" },
+    { "id": "M98", "name": "Voltage value of thickness sensor" }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "Err-08 arm shaft motor stalled",
+      "checks": [
+        "Check for foreign objects or thread residue wrapped in rotating shuttle",
+        "Check if eccentric wheel of machine is stuck",
+        "Disconnect power and check arm shaft motor power input plug — should not be detached, loose, or damaged",
+        "Restart system after correction",
+        "Contact service if still failing"
+      ]
+    },
+    {
+      "symptom": "Err-03 undervoltage on startup",
+      "checks": [
+        "Check supply voltage is at least 176V",
+        "Check power outlet and cable condition",
+        "Try restarting after ensuring stable power supply"
+      ]
+    },
+    {
+      "symptom": "ERR-43 adapter board communication alarm",
+      "checks": [
+        "Turn off power and turn on again",
+        "Check if electronic control unit is damaged",
+        "Consider upgrading adapter board program to latest version",
+        "Alarm auto-cancels after 10 seconds or press P key to cancel"
+      ]
+    },
+    {
+      "symptom": "A-UP safety switch alarm",
+      "checks": [
+        "Return machine head to its normal upright position",
+        "Ensure the safety switch rebounds correctly"
+      ]
+    },
+    {
+      "symptom": "ALR-11 thickness sensor not connected",
+      "checks": [
+        "Check thickness sensor wiring terminal connection to electronic control unit",
+        "Ensure connector is firmly seated",
+        "Press P key to cancel alarm"
+      ]
+    },
+    {
+      "symptom": "Machine thread trimming not working correctly",
+      "checks": [
+        "Check P38 trimmer switch is set to 1 (on)",
+        "Check P31 trimming strength coefficient — may need adjustment",
+        "Check P35 thread clamp switch is enabled"
+      ]
+    },
+    {
+      "symptom": "Presser foot not lifting or lifting incorrectly",
+      "checks": [
+        "Check P173 pause press foot height setting",
+        "Check P174 trim press foot height setting",
+        "Verify presser foot motor connections are secure"
+      ]
+    }
+  ]
+}

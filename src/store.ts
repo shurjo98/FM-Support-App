@@ -70,7 +70,8 @@ export const machines: Machine[] = [
     organizationId: "org1",
     productLine: "SEWING",
     category: "lockstitch",
-    imageUrl: "/public/machines/lockstitch/A10_plus.png",
+    imageUrl: "/public/img/Lockstitch_Machines_Files/A4C/A4C.png",
+    description: "One Day One Threading (NTB System) — quick-rethread lockstitch machine.",
   },
   {
     id: "m2",
@@ -79,7 +80,8 @@ export const machines: Machine[] = [
     organizationId: "org1",
     productLine: "AUTOMATED",
     category: "template",
-    imageUrl: "/public/machines/template/j5.png",
+    imageUrl: "/public/img/Special_Machine_Files/M9-A/M9_A.png",
+    description: "Anti-thread-breakage template machine — threading once a day only.",
   },
   {
     id: "m3",
@@ -88,7 +90,8 @@ export const machines: Machine[] = [
     organizationId: "org2",
     productLine: "SEWING",
     category: "overlock",
-    imageUrl: "/public/machines/overlock/C5.png",
+    imageUrl: "/public/img/Overlock_Machine_Files/C5C/C5C.png",
+    description: "High-efficiency computerized overlock machine — suitable for T-shirts, underwear, casual jeans, and other mid-to-high-level clothing.",
   },
   {
     id: "m4",
@@ -97,7 +100,8 @@ export const machines: Machine[] = [
     organizationId: "org1",
     productLine: "AUTOMATED",
     category: "interlock",
-    imageUrl: "/public/machines/Interlock/K10.png",
+    imageUrl: "/public/img/Interlock_Machine_Files/K7/K7.png",
+    description: "Full-speed cross-seam interlock machine for a full range of fabrics.",
   },
   {
     id: "m5",
@@ -106,8 +110,8 @@ export const machines: Machine[] = [
     organizationId: "org1",
     productLine: "SEWING",
     category: "lockstitch",
-    imageUrl: "/public/machines/lockstitch/A4.png",
-    description: "Entry-level direct-drive lockstitch machine for everyday garment sewing.",
+    imageUrl: "/public/img/Lockstitch_Machines_Files/JK-8558G/8558G.png",
+    description: "Power-saving chain stitch lockstitch machine — suitable for umbrella, denim, T-shirt, and other chain-stitching work.",
   },
   {
     id: "m6",
@@ -116,7 +120,7 @@ export const machines: Machine[] = [
     organizationId: "org1",
     productLine: "SEWING",
     category: "lockstitch",
-    imageUrl: "/public/machines/lockstitch/A5E.png",
+    imageUrl: "/public/img/Lockstitch_Machines_Files/AMH2/a5e-bnx.png",
     description: "Energy-saving lockstitch machine with integrated control box.",
   },
   {
@@ -126,8 +130,8 @@ export const machines: Machine[] = [
     organizationId: "org2",
     productLine: "SEWING",
     category: "lockstitch",
-    imageUrl: "/public/machines/lockstitch/A60.png",
-    description: "Computerized lockstitch machine with touchscreen panel.",
+    imageUrl: "/public/img/Lockstitch_Machines_Files/JK-5559f-W/5559f.png",
+    description: "Computerized edge-cutter lockstitch machine — suitable for shirts, suits, pants, down jackets, and similar garments.",
   },
   {
     id: "m8",
@@ -136,7 +140,7 @@ export const machines: Machine[] = [
     organizationId: "org2",
     productLine: "SEWING",
     category: "lockstitch",
-    imageUrl: "/public/machines/lockstitch/A6f.png",
+    imageUrl: "/public/img/lockstitch machine/A6F.png",
     description: "High-speed lockstitch machine for lightweight to medium fabrics.",
   },
   {
@@ -146,8 +150,8 @@ export const machines: Machine[] = [
     organizationId: "org3",
     productLine: "SEWING",
     category: "lockstitch",
-    imageUrl: "/public/machines/lockstitch/A8_plus.png",
-    description: "Premium auto-trimmer lockstitch machine for heavier production lines.",
+    imageUrl: "/public/img/Heavy_Duty_Machine/2002G/2002G.png",
+    description: "Heavy-duty computerized lockstitch machine with big stitch length — suitable for tents, automotive supplies, home textiles, cardigans, slippers, non-woven bags, caps, and other sewn products.",
   },
   {
     id: "m10",
@@ -156,7 +160,7 @@ export const machines: Machine[] = [
     organizationId: "org2",
     productLine: "SEWING",
     category: "overlock",
-    imageUrl: "/public/machines/overlock/C5s.png",
+    imageUrl: "/public/img/overlock/C5S.png",
     description: "Compact overlock machine with digital display.",
   },
   {
@@ -166,8 +170,7 @@ export const machines: Machine[] = [
     organizationId: "org2",
     productLine: "SEWING",
     category: "overlock",
-    imageUrl: "/public/machines/overlock/C6.png",
-    images: ["/public/machines/overlock/C6.png", "/public/machines/overlock/C6_1.png"],
+    imageUrl: "/public/img/overlock/C6.png",
     description: "Direct-drive overlock machine with energy-saving motor.",
   },
   {
@@ -177,8 +180,7 @@ export const machines: Machine[] = [
     organizationId: "org3",
     productLine: "SEWING",
     category: "overlock",
-    imageUrl: "/public/machines/overlock/C8.png",
-    images: ["/public/machines/overlock/C8.png", "/public/machines/overlock/C8_1.png"],
+    imageUrl: "/public/img/overlock/C60.png",
     description: "Heavy-duty overlock machine for high-volume finishing lines.",
   },
   {
@@ -188,30 +190,30 @@ export const machines: Machine[] = [
     organizationId: "org1",
     productLine: "SEWING",
     category: "overlock",
-    imageUrl: "/public/machines/overlock/2O1A0069.png",
+    imageUrl: "/public/img/Overlock_Machine_Files/C7/C7.png",
     description: "Standard 5-thread overlock machine for safety-stitch seams.",
   },
   {
     id: "m14",
-    name: "Jack J6 Template Machine",
-    model: "J6",
+    name: "Jack M7 Template Machine",
+    model: "M7",
     // org3 otherwise has zero AUTOMATED machines, which would dead-end its
     // IE on the Automated Machines report-issue flow.
     organizationId: "org3",
     productLine: "AUTOMATED",
     category: "template",
-    imageUrl: "/public/machines/template/j6.png",
-    description: "Large-bed automated template machine for pattern sewing on heavy panels.",
+    imageUrl: "/public/img/Special_Machine_Files/M7/M7.png",
+    description: "Super high-speed template machine for pattern sewing on heavy panels — built for extra daily output.",
   },
   {
     id: "m15",
-    name: "Jack Automatic Pocket Welting Machine",
-    model: "T3",
+    name: "Jack J6 Pocket Welting Machine",
+    model: "J6",
     organizationId: "org2",
     productLine: "AUTOMATED",
     category: "welting",
-    imageUrl: "/public/categories/welting.png",
-    description: "Fully automated pocket welting machine with touchscreen program control.",
+    imageUrl: "/public/img/Special_Machine_Files/J6/J6.png",
+    description: "Efficient pocket welting machine — the pioneer of full-automatic pocket welting machines, with touchscreen program control.",
   },
 ];
 
@@ -224,7 +226,7 @@ export const needleProducts: NeedleProduct[] = [
     name: "DBx1 Round Point",
     system: "DBx1 (System 16x231)",
     brand: "Groz-Beckert",
-    imageUrl: "/public/needles/packing_image_1.png",
+    imageUrl: "/public/img/Groz_Beckert_Needles/DBx1/needle.png",
     description: "Standard lockstitch needle for general apparel sewing.",
   },
   {
@@ -232,7 +234,7 @@ export const needleProducts: NeedleProduct[] = [
     name: "DCx27 Light Ball Point",
     system: "DCx27",
     brand: "Groz-Beckert",
-    imageUrl: "/public/needles/packing_image_1 (1).png",
+    imageUrl: "/public/img/Groz_Beckert_Needles/DCx27/needle.png",
     description: "Overlock/safety-stitch needle for knit fabrics.",
   },
   {
@@ -240,7 +242,7 @@ export const needleProducts: NeedleProduct[] = [
     name: "UY128GAS Curved Point",
     system: "UY128GAS",
     brand: "Groz-Beckert",
-    imageUrl: "/public/needles/packing_image_1 (2).png",
+    imageUrl: "/public/img/Groz_Beckert_Needles/UYx128/needle.png",
     description: "Coverstitch/interlock needle for automated machines.",
   },
   {
@@ -248,7 +250,7 @@ export const needleProducts: NeedleProduct[] = [
     name: "TQx7 Heavy Duty",
     system: "TQx7",
     brand: "Groz-Beckert",
-    imageUrl: "/public/needles/packing_image_1 (3).png",
+    imageUrl: "/public/img/Groz_Beckert_Needles/TVx7/needle.png",
     description: "Heavy-duty needle for template and pattern machines.",
   },
   {
@@ -256,7 +258,7 @@ export const needleProducts: NeedleProduct[] = [
     name: "DPx5 Leather Point",
     system: "DPx5",
     brand: "Groz-Beckert",
-    imageUrl: "/public/needles/packing_image_1 (4).png",
+    imageUrl: "/public/img/Groz_Beckert_Needles/DPx17/needle.png",
     description: "Leather/upholstery point needle for thick or heavy material stitching.",
   },
 ];

@@ -1,0 +1,115 @@
+{
+  "model": "8558G",
+  "manufacturer": "Jack",
+  "controllerType": "ZB-F4 Electronic Control",
+  "type": "Computerized lockstitch machine",
+  "source": "8558G电控使用说明书英文版 (ZB-F4 Electronic Control Manual Book, 5 pages)",
+  "note": "The 8558G machine uses the ZB-F4 electronic control box. The ZB-F4 is a simple mechanical-style controller with a 7-segment LED display and two buttons (+/-). For full ZB-F4 controller details, see ZB-F4.json.",
+  "specs": {
+    "operatingTemp": "-5°C to 40°C",
+    "voltage": "AC 220V (rated)",
+    "overvoltageLimit": "264V",
+    "undervoltageLimit": "154V"
+  },
+  "panel": {
+    "type": "LED 7-segment display with 2 buttons",
+    "display": "2-digit 7-segment LED. Shows speed (e.g. 35 = 3500 rpm), error codes (E1, E2...), 'P' for parameter mode, 'ok' for success, 'Er' for failure",
+    "buttons": [
+      {
+        "name": "+ (plus)",
+        "functions": [
+          "Short press: increase speed by 100 rpm",
+          "Hold 3s in P mode: enter needle position adjust (display shows upper or lower position)",
+          "Press when error shown: attempt error recovery"
+        ]
+      },
+      {
+        "name": "- (minus)",
+        "functions": [
+          "Short press: decrease speed by 100 rpm",
+          "Hold 3s in P mode: restore factory defaults (display shows 'ok' if success, 'Er' if fail)",
+          "Hold 3s when E5 shown: disable needle stop function"
+        ]
+      }
+    ]
+  },
+  "operations": {
+    "speedAdjust": "Panel shows 'P'. Press + or - to adjust speed. Value saved after 3 seconds. Example: 35 displayed = 3500 rpm.",
+    "needlePositionAdjust": "Panel shows 'P', press + for 3 seconds, then adjust up/down needle stop position.",
+    "factoryReset": "Panel shows 'P', press - for 3 seconds. 'ok' = success. 'Er' = failure (check other causes).",
+    "errorRecovery": "When error code shows, press + to attempt recovery. If error clears, returns to P. If not, error code remains."
+  },
+  "errorCodes": [
+    {
+      "code": "0F",
+      "description": "Sleep mode — machine has been in standby for ~30 minutes and entered sleep mode, or voltage is too low",
+      "solution": "Press + or - to wake the machine. If '0F' remains, check voltage."
+    },
+    {
+      "code": "E1",
+      "description": "Motor stuck or motor plug loose/disconnected",
+      "solution": "1) Motor used too much — restart after several minutes. 2) Check if fabric is too heavy. 3) Check machine lacks oil. 4) Check if plug is loose or dropped."
+    },
+    {
+      "code": "E2",
+      "description": "Motor controller abnormal",
+      "solution": "1) Usually caused by overuse or IGBT problem. Restart. 2) If restart fails, contact agent to replace. 3) Check plug loose or dropped."
+    },
+    {
+      "code": "E4",
+      "description": "Needle position abnormal",
+      "solution": "Check if plug is connected well, coder wire is broken, or plug is loose/deformed."
+    },
+    {
+      "code": "E5",
+      "description": "Needle governor abnormal",
+      "solution": "1) Check plug connected well. 2) Check if Hall sensor problem. 3) If E5 is due to Hall problem, press - for 3 seconds to turn off needle stop function."
+    },
+    {
+      "code": "E6",
+      "description": "Speed governor abnormal",
+      "solution": "1) Check if plug is connected. 2) Check if coder wire is broken."
+    },
+    {
+      "code": "E7",
+      "description": "Machine head protection of safety switch triggered",
+      "solution": "Check machine head is steady. User can turn off this function by pressing - for 3 seconds (before changing from agent)."
+    },
+    {
+      "code": "Eb",
+      "description": "System over-voltage",
+      "solution": "Cut power immediately. Check if supply voltage exceeds 264V. Adjust voltage to rated value (220V) or change parameter Y to 0."
+    },
+    {
+      "code": "Ec",
+      "description": "System under-voltage",
+      "solution": "Cut power immediately. Check if supply voltage is under 154V. Adjust voltage to rated value (220V) or change parameter Y to 0."
+    }
+  ],
+  "alarmCodes": [],
+  "parameters": [],
+  "monitoring": [],
+  "troubleshooting": [
+    {
+      "issue": "No reaction when turning on power control box",
+      "cause": "Power plug not connected, fuse burnt",
+      "solution": "Check if power plug is connected to socket tightly. If fuse is burnt, open control box cover, locate and replace fuse with same specification."
+    },
+    {
+      "issue": "Control box connected but motor doesn't work when pressing pedal",
+      "cause": "Speed controller plug not connected or speed controller broken",
+      "solution": "Check if plug of speed controller is connected to socket in control box correctly. Check if speed controller is broken."
+    },
+    {
+      "issue": "Motor cannot stop without operation",
+      "cause": "Position of magnetic steel coil changed",
+      "solution": "Open the speed governor. Adjust position of plastic rocker arm so magnetic steel coil in rocker arm is on the Hall sensor. If motor still runs, adjust rocker arm clockwise."
+    },
+    {
+      "issue": "Fuse burns immediately on power-on",
+      "cause": "Internal fault",
+      "solution": "Replace with same specification fuse. If problem persists, contact local agent."
+    }
+  ],
+  "relatedController": "ZB-F4"
+}

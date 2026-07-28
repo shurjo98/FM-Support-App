@@ -1,0 +1,246 @@
+{
+  "model": "M5",
+  "manufacturer": "Xinghuo (Shenzhen Xing Huo CNC Technology)",
+  "controllerType": "Xinghuo CS01 Generation-II HMI",
+  "manualVersion": "V1.1",
+  "manualDate": "February 2018",
+  "type": "Fully automatic template sewing machine",
+  "specs": {
+    "supplyVoltage": "Single-phase AC 220V",
+    "frequency": "50/60 Hz",
+    "power": "1.0 to 2.0 kW (depending on configuration)",
+    "display": "7-inch color LCD touch screen",
+    "fileStorage": "Up to 128M (999 processing files)",
+    "fileFormats": ".KLW and .SLW processing files",
+    "workEnvironment": "5 to 40°C, 30%-90% humidity (non-condensing)",
+    "groundingResistance": "Less than 100 ohms, wire length within 20m, cross-section >1.0 sq mm"
+  },
+  "errorCodes": [
+    {
+      "code": "Pressure box didn't put down",
+      "display": "Pressure box didn't put down",
+      "cause": "The press frame was not dropped before resetting, processing, file capture and file modification",
+      "solution": "Click the '压框' (PRESS) key to drop the frame, then retry the operation.",
+      "severity": "medium"
+    },
+    {
+      "code": "These is no reset",
+      "display": "There is no reset",
+      "cause": "Machine has not been reset before processing",
+      "solution": "Click the '复位' (Reset) key to reset the machine before starting.",
+      "severity": "medium"
+    },
+    {
+      "code": "X-axis drive open circuit",
+      "display": "X-axis drive open circuit",
+      "cause": "X-axis motor is not connected, or loose motor interface",
+      "solution": "Turn off the power and check the X-axis motor line for connection anomaly. Reconnect the motor cable and restart.",
+      "severity": "high"
+    },
+    {
+      "code": "The bottom thread has been used up",
+      "display": "The bottom thread has been used up",
+      "cause": "The bottom thread required by the pre-processed file is longer than the remaining bottom thread (total length in statistics minus initial length setting)",
+      "solution": "Use the bottom thread statistics function to replace the bottom thread and modify relevant length information. If not using the function, click the bobbin icon to disable the bottom thread tracking.",
+      "severity": "medium"
+    },
+    {
+      "code": "The quantity of work is full",
+      "display": "The quantity of work is full",
+      "cause": "In the processing statistics interface, the current value of count by piece has increased to the total count by piece target",
+      "solution": "Modify the current value of count by piece or the total count by piece so the current is less than the target. If statistics function is not needed, click the counter icon to disable it.",
+      "severity": "low"
+    },
+    {
+      "code": "File range out of bounds",
+      "display": "File range out of bounds",
+      "cause": "The length and width of the processing file exceed the processing range, or the absolute coordinates of the file are beyond the processing range",
+      "solution": "Reduce the size of the processing file, or import the processing file generated directly through the upper computer software to correct the coordinate references.",
+      "severity": "medium"
+    },
+    {
+      "code": "Opening state",
+      "display": "Opening state",
+      "cause": "The touch key on the top panel has been pressed, causing the top panel to open",
+      "solution": "Click the 'top panel' key on the touch keypad to close the panel and clear the alarm.",
+      "severity": "low"
+    },
+    {
+      "code": "No working file",
+      "display": "No working file",
+      "cause": "The lock file flag is open — a file is not properly selected or locked",
+      "solution": "Check whether the graphic interface shows a lock file flag. If so, click the lock file button to clear it and select a valid working file.",
+      "severity": "medium"
+    },
+    {
+      "code": "The main motor error",
+      "display": "The main motor error",
+      "cause": "Spindle motor circuit is open, encoder cable is not connected, or spindle motor is damaged",
+      "solution": "Check if motor cables are properly connected and encoder cable is connected. If cables are fine, replace the spindle motor. Test the spindle in powered-on state, or manually rotate the motor to check if QEP changes on screen.",
+      "severity": "high"
+    },
+    {
+      "code": "Connecting the main control board",
+      "display": "Connecting the main control board",
+      "cause": "Connection between motherboard and screen is out of order, the screen has a fault, or the motherboard is damaged",
+      "solution": "Check whether both ends of cable are properly connected and restart. Replace the screen cable or screen to test. If motherboard is suspected damaged, contact manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "Couldn't find X zero signal",
+      "display": "Couldn't find X zero signal",
+      "cause": "X motor direction error, X motor position sensor failure, or excessive load in X direction causing motor failure to move",
+      "solution": "Enter the manual frame shift interface and test X motor rotation. Enter the input test interface and manually trigger position input signal to verify detection. Turn off power and manually push press frame to check if load is too large or stuck.",
+      "severity": "high"
+    },
+    {
+      "code": "Motor scissors are not in place",
+      "display": "Motor scissors are not in place",
+      "cause": "Encoder cable of motor with Z signal malfunctions, or parameter setting error",
+      "solution": "Check if the motor is properly connected or in good condition. Rotate the motor manually to check whether the W axis/axis limit signal indicator on motherboard changes. Check parameter settings for conflicts.",
+      "severity": "high"
+    },
+    {
+      "code": "The main motor direction error",
+      "display": "The main motor direction error",
+      "cause": "Spindle rotation direction is wrong",
+      "solution": "Use parameter modification software to correct the spindle moving direction, or modify the spindle motor direction or spindle encoder direction in shaft operation mode in mechanical parameters.",
+      "severity": "high"
+    },
+    {
+      "code": "X-axis driver hardware over-current",
+      "display": "X-axis driver hardware over-current",
+      "cause": "Poor contact of X-axis motor base, damaged X-axis stepping motor, short circuit of motor cable, or motherboard hardware problem",
+      "solution": "Confirm the flashing mode of X stepping motor alarm indicator on motherboard is '1 green and 5 reds'; if not it's a false alarm. Reinsert X motor cable and restart. If problem persists, replace the X axis motor or motherboard.",
+      "severity": "high"
+    },
+    {
+      "code": "Motor foot in fault",
+      "display": "Motor foot in fault",
+      "cause": "No motor limit signal is detected when motor press foot is reset",
+      "solution": "Check motor press foot related base for looseness. Check whether the Z signal limit signal input changes in the input test interface.",
+      "severity": "high"
+    },
+    {
+      "code": "Head board cannot be connected",
+      "display": "Head board cannot be connected",
+      "cause": "Connection between head board and control board is out of order, or head board is damaged",
+      "solution": "Check whether the connection is abnormal or replace the connection cable. If problem persists, replace the head board.",
+      "severity": "high"
+    },
+    {
+      "code": "Air pressure is insufficient",
+      "display": "Air pressure is insufficient",
+      "cause": "Air supply equipment exception causing insufficient air pressure, abnormal input of control board, or abnormal parameter settings/wiring error",
+      "solution": "Check whether barometric pressure is normal. Short-circuit the input and GND with tweezers and check if input changes in Assist Settings > Input Test. Verify parameter settings — in normal condition input is normally closed; insufficient pressure opens the circuit and LED lights alarm.",
+      "severity": "high"
+    },
+    {
+      "code": "Electrical fault, please contact the manufacturer",
+      "display": "Electrical fault, please contact the manufacturer",
+      "cause": "Hardware failure in the electrical control system",
+      "solution": "Contact the manufacturer (Shenzhen Xing Huo CNC Technology Co., Ltd.) for repair.",
+      "severity": "critical"
+    },
+    {
+      "code": "Grab line motor is not in place",
+      "display": "Grab line motor is not in place",
+      "cause": "No motor limit signal is detected when motor press foot is reset",
+      "solution": "Check motor press foot related base for looseness. Check whether Z signal limit signal input changes in the input test interface. Check whether parameters are improper.",
+      "severity": "high"
+    },
+    {
+      "code": "Input IO1 timeout error",
+      "display": "Input IO1 timeout error",
+      "cause": "No signal is detected at this input port",
+      "solution": "Enter the input test interface and manually trigger the position input signal to check whether it can be detected.",
+      "severity": "medium"
+    },
+    {
+      "code": "Foot follow error",
+      "display": "Foot follow error",
+      "cause": "Press foot zero input port detects no signal",
+      "solution": "Check the IO port set for follower press foot alarm in parameter setup software. Manually trigger the IO port and check whether it can be detected.",
+      "severity": "medium"
+    }
+  ],
+  "alarmCodes": [],
+  "parameters": [
+    {
+      "id": "User Parameters",
+      "name": "User parameter group (frequently-used sewing parameters)",
+      "note": "Accessed from main menu. Controls max speed, stitch length, backstitch, thread settings, production statistics, etc."
+    },
+    {
+      "id": "Machine Parameters",
+      "name": "Machine parameter group (accessible to machine assemblers only)",
+      "note": "Controls drive settings, axis parameters, spindle calibration. Not accessible to operators."
+    }
+  ],
+  "monitorParams": [
+    {
+      "id": "Alarm Log",
+      "name": "Alarm log — viewable from Assist Settings > Test Transmission > Alarm Log. Exportable to USB flash disk."
+    },
+    {
+      "id": "Machine State",
+      "name": "Machine status reporting interface — operator can report Equipment Failure, Throw Line, Slip Stitch, Line Ball, Size, Wait Template, Wait Material, Test Machine, Receiving Material. Technician confirms arrival with 'In Place' and resolves with 'Close Case'."
+    }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "Main motor error — machine won't start",
+      "checks": [
+        "Check all motor cable connections at both ends",
+        "Check encoder cable connection",
+        "Test spindle manually by rotating to see if QEP signal changes on screen",
+        "If cables OK, replace the spindle motor",
+        "Use Assist Settings > Test Interface to test spindle forward/reverse"
+      ]
+    },
+    {
+      "symptom": "X-axis or Y-axis not finding zero (home) position",
+      "checks": [
+        "Enter manual frame shift interface and test X/Y motor rotation",
+        "Enter Assist Settings > Input Test and manually trigger position sensors",
+        "Turn off power and manually push the frame to check for mechanical obstruction",
+        "Verify motor cables and encoder connections"
+      ]
+    },
+    {
+      "symptom": "Press frame not dropping or air pressure alarm",
+      "checks": [
+        "Check air compressor and supply line pressure",
+        "Check pneumatic solenoid valve wiring",
+        "Enter Assist Settings > Input Test and check pressure sensor input",
+        "Verify parameter for pressure input is set to normally closed"
+      ]
+    },
+    {
+      "symptom": "File range out of bounds on template machine",
+      "checks": [
+        "Check that processing file dimensions fit within the machine's XY travel range",
+        "Reduce the processing file size in the editing software",
+        "If file was created on a larger machine, recreate it for this machine's range"
+      ]
+    },
+    {
+      "symptom": "Machine state reporting — Equipment Failure",
+      "checks": [
+        "Operator presses 'Equipment Failure' in Machine State screen",
+        "Technician receives alert via LAN",
+        "Technician arrives and clicks 'In Place'",
+        "After repair, click 'Close Case' to restore normal status"
+      ]
+    },
+    {
+      "symptom": "System upgrade fails or progress stuck",
+      "checks": [
+        "Confirm correct upgrade file type (.fcav for interface, .TFL for motherboard)",
+        "Ensure USB flash disk is properly inserted before entering upgrade page",
+        "Never turn off power during upgrade",
+        "If progress bar stays at 1%, check screen-to-motherboard cable connection"
+      ]
+    }
+  ]
+}

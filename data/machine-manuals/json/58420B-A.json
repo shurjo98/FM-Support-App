@@ -1,0 +1,579 @@
+{
+  "model": "58420B-A",
+  "manufacturer": "Jack",
+  "controllerType": "58420B-A Series Controller (C3 heat sink, enhanced IGBT)",
+  "type": "Direct-drive double-needle lockstitch machine (tent/denim market)",
+  "source": "Jack 58420B-A Series Training Courseware 2025.2",
+  "specs": {
+    "maxSpeed": "3200 rpm",
+    "factorySpeed": "2800 rpm",
+    "motorPower": "750W",
+    "motorType": "Φ105, 26mm thick, >8N·m torque direct drive",
+    "stitchLength": "4/5/7mm (model dependent)",
+    "presserFootHeight": "7mm (hand control) / 13mm (knee control)",
+    "needleType": "DP×5 11-16# (thin material) / DP×5 14-22# (thick material)",
+    "needleBarStroke": "33.4mm",
+    "dimensions": "725×320×675mm",
+    "weight": "46kg net / 56.5kg gross",
+    "models": [
+      "JK-58420B-A-003C (clothing, oil-less)",
+      "JK-58450B-A-003C (clothing, oil-less)",
+      "JK-58750B-A-003C (clothing, oil-less)",
+      "JK-58750B-A-005C (clothing, oil-less)",
+      "JK-58720B-A-005 (clothing, oil-less)",
+      "JK-58420B-A-005C-Y (denim, auto oil supply)",
+      "JK-58450B-A-005C-Y (denim, auto oil supply)",
+      "JK-58720B-A-003C-Y (tent, auto oil supply)",
+      "JK-58720B-A-005C-Y (tent, auto oil supply)"
+    ],
+    "keyImprovements": [
+      "Lower shaft counterweight: Z-vibration ≤250μm, reduced ~40%",
+      "12mm closed presser foot for tent fabrics",
+      "DLC/QPQ surface treatment on take-up lever",
+      "Φ105 motor (22mm→26mm thick, >8N·m torque)",
+      "4 automatic oil supply model variants (-Y suffix)"
+    ]
+  },
+  "panel": {
+    "type": "9-button LED digital tube panel",
+    "buttons": [
+      "P - Parameter entry key",
+      "S - Parameter view/save key",
+      "+ (▲) - Parameter increase / speed up",
+      "- (▼) - Parameter decrease / speed down",
+      "◄ - Left shift (scroll parameter bit left)",
+      "► - Right shift (scroll parameter bit right)",
+      "Reset - Restore factory settings (hold 3s in standby)",
+      "Needle Position - Toggle needle up/down stop mode",
+      "Stop - Toggle stop/run mode"
+    ],
+    "displayIndicators": {
+      "needleUp": "Upper segment of rightmost digital display lit",
+      "needleDown": "Lower segment of rightmost digital display lit",
+      "noNeedleStop": "Neither segment lit on rightmost display",
+      "stopMode": "Third digital tube upper segment lit horizontally",
+      "normalMode": "Third digital tube not lit horizontally"
+    }
+  },
+  "operations": {
+    "speedAdjust": "Short press + or - in standby (±100 rpm per press)",
+    "stopMode": "Short press Stop button to toggle; third digital tube horizontal = stop mode (machine will not run)",
+    "needlePosition": "Short press Needle Position to cycle: up → down → off",
+    "factoryReset": "Long press Reset for 3s in standby to restore factory defaults",
+    "internalSpeedLimit": "Hold P + Needle Position after power on → enter password → access PE0 parameter (limits max adjustable speed)"
+  },
+  "parameterEntry": {
+    "user": "Long press P in standby → user parameter mode. Short press S to enter value. Use ◄/► to select digit. Use +/- to change value. Press S to save (shows 'ok'). Press P to exit.",
+    "technician": "Hold P + S while turning on machine. Adjustment method same as user parameters.",
+    "monitoring": "Long press P + Needle Position key in standby → monitoring mode. Use ◄/► to select item. Use +/- to scroll items. Press S to view value. Press S again to return. Press P to exit.",
+    "rnd": "Hold P + Stop button while turning on machine. Enter P-E1 password (default 718) to access R&D parameters."
+  },
+  "errorCodes": [
+    {
+      "code": "Err-01",
+      "description": "Hardware overcurrent",
+      "solution": "Power off, wait 30s, restart. If controller still does not work properly, replace controller and notify manufacturer."
+    },
+    {
+      "code": "Err-02",
+      "description": "Software overcurrent",
+      "solution": "Power off, wait 30s, restart. If controller still does not work properly, replace controller and notify manufacturer."
+    },
+    {
+      "code": "Err-03",
+      "description": "System undervoltage",
+      "solution": "Disconnect controller power. Check if input voltage is below 154V. Restart after voltage returns to normal. If still faulty, replace controller."
+    },
+    {
+      "code": "Err-04",
+      "description": "Overpressure during system shutdown",
+      "solution": "Disconnect controller power. Check if input voltage exceeds 264V. Restart after voltage returns to normal. If still faulty, replace controller."
+    },
+    {
+      "code": "Err-05",
+      "description": "Overvoltage during system operation",
+      "solution": "Disconnect controller power. Check if input voltage exceeds 264V. Restart after voltage returns to normal. If still faulty, replace controller."
+    },
+    {
+      "code": "Err-07",
+      "description": "Current detection circuit failure",
+      "solution": "Power off, restart after 30s to see if it works. Try again several times. If fault occurs frequently, replace controller."
+    },
+    {
+      "code": "Err-08",
+      "description": "Motor stall",
+      "solution": "Disconnect controller power. Check if motor input plug is detached, loose, or damaged. Check for foreign matter wrapped around machine head. If still faulty after restart, replace controller."
+    },
+    {
+      "code": "Err-12",
+      "description": "Spindle motor initial angle detection fault",
+      "solution": "Enter parameter settings to check initial angle. Power off and retry 2-3 times. If fault persists, replace controller."
+    },
+    {
+      "code": "Err-13",
+      "description": "Spindle motor zero position fault",
+      "solution": "Power off, check spindle motor encoder connector (loose or detached). Restore to normal and restart. Replace spindle motor encoder if needed. If still faulty, replace controller."
+    },
+    {
+      "code": "Err-14",
+      "description": "Main control storage component read/write failure",
+      "solution": "Power off, restart after 30s. If still faulty, replace controller."
+    },
+    {
+      "code": "Err-15",
+      "description": "Spindle motor overspeed protection",
+      "solution": "Power off, restart after 30s. If still faulty, replace controller."
+    },
+    {
+      "code": "Err-16",
+      "description": "Spindle motor reverse",
+      "solution": "Power off, restart after 30s. If still faulty, replace controller."
+    },
+    {
+      "code": "Err-18",
+      "description": "Spindle motor overload",
+      "solution": "Check if spindle motor is blocked. If not blocked, replace controller."
+    },
+    {
+      "code": "Err-19",
+      "description": "Motor type does not match",
+      "solution": "Power off, restart after 30s. If still faulty, replace controller."
+    },
+    {
+      "code": "Err-20",
+      "description": "Speed controller not plugged in",
+      "solution": "Power off, check speed regulator connector (not plugged in, loose, or detached). Replace speed regulator if needed."
+    }
+  ],
+  "alarmCodes": [
+    {
+      "code": "OFF",
+      "description": "Power off / supply voltage too low",
+      "solution": "Check supply voltage."
+    },
+    {
+      "code": "OF",
+      "description": "Motor sleep — machine idle ~55 minutes without running",
+      "solution": "Press any key to wake machine. Decimal point of last digital tube flashes during sleep. Adjust P55 to change sleep time or set to 0 to disable."
+    },
+    {
+      "code": "A-UP",
+      "description": "Lift switch alarm — machine head tipped over",
+      "solution": "Straighten machine head and restore flip switch to normal. Long press S key to clear alarm and turn off tipping detection function."
+    },
+    {
+      "code": "ALR-1",
+      "description": "Machine head button short circuit alarm",
+      "solution": "Turn off system power and replace the headlight button."
+    }
+  ],
+  "parameters": [
+    {
+      "code": "P00",
+      "name": "Start Sewing Speed",
+      "default": "200",
+      "range": "200-800",
+      "unit": "r/min",
+      "description": "Starting speed when pedal is first pressed",
+      "level": "user"
+    },
+    {
+      "code": "P01",
+      "name": "Maximum Speed",
+      "default": "2800",
+      "range": "200-3500",
+      "unit": "r/min",
+      "description": "Maximum sewing speed setting (ceiling determined by P68 and P-E0)",
+      "level": "user"
+    },
+    {
+      "code": "P03",
+      "name": "Needle Stop Positioning",
+      "default": "DN",
+      "range": "UP / DN",
+      "description": "UP: needle stops in up position; DN: needle stops in down position",
+      "level": "user"
+    },
+    {
+      "code": "P07",
+      "name": "Slow Start Sewing Speed",
+      "default": "400",
+      "range": "200-3500",
+      "unit": "r/min",
+      "description": "Speed during slow-start stitches at sewing begin",
+      "level": "user"
+    },
+    {
+      "code": "P08",
+      "name": "Number of Stitches at Slow Start",
+      "default": "2",
+      "range": "1-9",
+      "description": "Number of slow-start stitches before reaching full speed",
+      "level": "user"
+    },
+    {
+      "code": "P09",
+      "name": "Slow Start Switch",
+      "default": "ON",
+      "range": "ON / OFF",
+      "description": "ON: slow start enabled; OFF: disabled",
+      "level": "user"
+    },
+    {
+      "code": "P12",
+      "name": "Half-Stitch Delay Time",
+      "default": "150",
+      "range": "1-180",
+      "unit": "ms",
+      "description": "Delay time for half-stitch positioning",
+      "level": "user"
+    },
+    {
+      "code": "P13",
+      "name": "One-Stitch Delay Time",
+      "default": "180",
+      "range": "150-250",
+      "unit": "ms",
+      "description": "Delay time for single-stitch positioning",
+      "level": "user"
+    },
+    {
+      "code": "P14",
+      "name": "Stitch Compensation Speed",
+      "default": "200",
+      "range": "200-500",
+      "unit": "r/min",
+      "description": "Speed used during stitch compensation",
+      "level": "user"
+    },
+    {
+      "code": "P15",
+      "name": "Stitch Compensation Function",
+      "default": "0",
+      "range": "0-3",
+      "description": "0: Time-based; 1: Half stitch; 2: One stitch; 3: Off",
+      "level": "user"
+    },
+    {
+      "code": "P24",
+      "name": "Pedal Full-Back Voltage Value",
+      "default": "150",
+      "range": "0-4095",
+      "description": "Analog voltage threshold for reverse pedal backstitch activation",
+      "level": "user"
+    },
+    {
+      "code": "P30",
+      "name": "Thick Material Assist Force Switch",
+      "default": "0",
+      "range": "0-2",
+      "description": "0: Normal; 1: Motor assist for thick material; 2: Motor assist + reverse pull control",
+      "level": "user"
+    },
+    {
+      "code": "P55",
+      "name": "Sleep Time",
+      "default": "0",
+      "range": "0-60",
+      "unit": "min",
+      "description": "Auto sleep time after idle. Set 0 to disable sleep function.",
+      "level": "technician"
+    },
+    {
+      "code": "P56",
+      "name": "Auto Find Upper Position After Power On",
+      "default": "ON",
+      "range": "ON / OFF",
+      "description": "ON: searches for upper needle position at startup; OFF: skip search",
+      "level": "technician"
+    },
+    {
+      "code": "P58",
+      "name": "Upper Stop Needle Adjustment Angle",
+      "default": "67",
+      "range": "0-359",
+      "unit": "degrees",
+      "description": "Fine-tune angle for needle-up stop position",
+      "level": "technician"
+    },
+    {
+      "code": "P59",
+      "name": "Down Stop Needle Adjustment Angle",
+      "default": "165",
+      "range": "0-359",
+      "unit": "degrees",
+      "description": "Fine-tune angle for needle-down stop position",
+      "level": "technician"
+    },
+    {
+      "code": "P60",
+      "name": "Test Speed",
+      "default": "2800",
+      "range": "200-3200",
+      "unit": "r/min",
+      "description": "Running speed for aging/durability tests",
+      "level": "technician"
+    },
+    {
+      "code": "P61",
+      "name": "Aging Operation Time",
+      "default": "3",
+      "range": "1-255",
+      "unit": "s",
+      "description": "Run time per cycle in aging mode",
+      "level": "technician"
+    },
+    {
+      "code": "P62",
+      "name": "Special Operation Mode",
+      "default": "0",
+      "range": "0-3",
+      "description": "0: Normal; 1: Aging (Zobow workshop); 2: Reserve; 3: Automatic test mode",
+      "level": "technician"
+    },
+    {
+      "code": "P63",
+      "name": "Aging Stop Time",
+      "default": "2",
+      "range": "1-255",
+      "unit": "s",
+      "description": "Stop time per cycle in aging mode",
+      "level": "technician"
+    },
+    {
+      "code": "P64",
+      "name": "User Parameters Operation",
+      "default": "0",
+      "range": "0-2",
+      "description": "0: No operation; 1: Save current parameters as user defaults; 2: Restore saved user parameters",
+      "level": "technician"
+    },
+    {
+      "code": "P65",
+      "name": "Restore Factory Settings",
+      "default": "0",
+      "range": "0-1",
+      "description": "0: No operation; 1: Restore factory settings. Can only restore up to 3 times per power cycle; power off and restart to reset count.",
+      "level": "technician"
+    },
+    {
+      "code": "P66",
+      "name": "Safety Switch",
+      "default": "ON",
+      "range": "ON / OFF",
+      "description": "ON: machine head tipping safety switch enabled; OFF: disabled",
+      "level": "technician"
+    },
+    {
+      "code": "P68",
+      "name": "Maximum Speed Limit",
+      "default": "2800",
+      "range": "200-2800",
+      "unit": "r/min",
+      "description": "Maximum speed limit for sewing operation. Upper ceiling set by R&D parameter P-E0 (factory default 2800, hardware max 3200).",
+      "level": "technician"
+    },
+    {
+      "code": "P72",
+      "name": "Pedal Forward Operation Start Position",
+      "default": "400",
+      "range": "0-4095",
+      "description": "Analog value threshold for pedal forward start, relative to return position",
+      "level": "technician"
+    },
+    {
+      "code": "P73",
+      "name": "Pedal Low Speed Operation End Position",
+      "default": "800",
+      "range": "0-4095",
+      "description": "Analog value where low-speed zone ends, relative to return position",
+      "level": "technician"
+    },
+    {
+      "code": "P74",
+      "name": "Pedal Analog Value Maximum",
+      "default": "4000",
+      "range": "0-4095",
+      "description": "Maximum analog value from pedal sensor",
+      "level": "technician"
+    },
+    {
+      "code": "P75",
+      "name": "Pedal Return Position Setting",
+      "default": "1650",
+      "range": "0-4095",
+      "description": "Analog value for pedal neutral/return position",
+      "level": "technician"
+    },
+    {
+      "code": "P84",
+      "name": "Safety Switch Alarm Confirmation Time",
+      "default": "300",
+      "range": "1-500",
+      "unit": "ms",
+      "description": "Delay after machine head dumps before safety alarm triggers",
+      "level": "technician"
+    },
+    {
+      "code": "P85",
+      "name": "Safety Switch Alarm Recovery Time",
+      "default": "50",
+      "range": "1-500",
+      "unit": "ms",
+      "description": "Recovery delay after machine head is restored to upright position",
+      "level": "technician"
+    },
+    {
+      "code": "P96",
+      "name": "Undervoltage Alarm",
+      "default": "OFF",
+      "range": "ON / OFF",
+      "description": "Enable or disable undervoltage alarm reporting",
+      "level": "technician"
+    },
+    {
+      "code": "P97",
+      "name": "Overvoltage Alarm",
+      "default": "ON",
+      "range": "ON / OFF",
+      "description": "Enable or disable overvoltage alarm reporting",
+      "level": "technician"
+    },
+    {
+      "code": "P-E0",
+      "name": "Internal Speed Limit (Maximum)",
+      "default": "2800",
+      "range": "2000-3200",
+      "unit": "r/min",
+      "description": "Factory-level parameter that sets the upper ceiling for the P68 maximum speed limit. Used to lock maximum speed for specific market/application.",
+      "level": "rnd",
+      "entry": "Hold P + Stop at machine startup, enter P-E1 password (default 718). Also accessible via P + Needle Position shortcut at startup."
+    },
+    {
+      "code": "P-E1",
+      "name": "R&D Password",
+      "default": "718",
+      "range": "0-999",
+      "description": "Password required to enter R&D parameter mode (P + Stop at startup)",
+      "level": "rnd"
+    }
+  ],
+  "monitoring": [
+    {
+      "code": "M17",
+      "name": "Aging 15 Minute Mark",
+      "description": "1 = 15-minute aging complete; 0 = not yet complete"
+    },
+    {
+      "code": "M18",
+      "name": "Controller Software Version",
+      "description": "Displays controller software version number"
+    },
+    {
+      "code": "M19",
+      "name": "Controller Software Repair Version",
+      "description": "Displays controller software repair/patch version number"
+    },
+    {
+      "code": "M20",
+      "name": "Busbar Voltage",
+      "description": "Real-time bus voltage display"
+    },
+    {
+      "code": "M21",
+      "name": "Machine Head Speed",
+      "description": "Real-time machine head speed (rpm)"
+    },
+    {
+      "code": "M25",
+      "name": "Pedal Forward Maximum Analog Value",
+      "description": "AD value for pedal at maximum forward position"
+    },
+    {
+      "code": "M26",
+      "name": "Pedal Return Center Analog Value",
+      "description": "AD value for pedal at return/neutral center position"
+    },
+    {
+      "code": "M28",
+      "name": "Pedal Reverse Analog Value",
+      "description": "AD value for pedal in reverse (backstitch) position"
+    },
+    {
+      "code": "M30-M37",
+      "name": "Historical Fault Codes",
+      "description": "Last 8 fault codes stored in history. E7 (dump error) is not recorded. E-00 displayed when no fault codes present."
+    },
+    {
+      "code": "M49",
+      "name": "Password Monitoring Value",
+      "description": "Displays the encrypted value corresponding to P-E1 password"
+    }
+  ],
+  "troubleshooting": [
+    {
+      "issue": "Err-01 or Err-02 (overcurrent fault)",
+      "cause": "Hardware or software overcurrent protection triggered",
+      "solution": "Power off for 30 seconds, then restart. If recurring, replace controller."
+    },
+    {
+      "issue": "Err-03 (undervoltage)",
+      "cause": "Input power supply voltage below 154V",
+      "solution": "Check power supply. Wait for voltage to normalize, then restart. Replace controller if fault persists after normal voltage restored."
+    },
+    {
+      "issue": "Err-04 or Err-05 (overvoltage)",
+      "cause": "Input power supply voltage above 264V",
+      "solution": "Check power supply. Wait for voltage to normalize, then restart."
+    },
+    {
+      "issue": "Err-08 (motor stall)",
+      "cause": "Motor blocked by obstruction, plug loose, or damaged",
+      "solution": "Check motor power plug connection. Check for foreign matter around machine head. Restart after clearing obstruction. Replace controller if needed."
+    },
+    {
+      "issue": "Err-13 (encoder zero position fault)",
+      "cause": "Spindle motor encoder connector loose, detached, or encoder failed",
+      "solution": "Check and reseat encoder connector. Replace spindle motor encoder if damaged."
+    },
+    {
+      "issue": "Err-20 (speed controller not connected)",
+      "cause": "Speed regulator connector not plugged in or loose",
+      "solution": "Check and reseat speed regulator connector. Replace speed regulator if needed."
+    },
+    {
+      "issue": "A-UP alarm (machine head tipped)",
+      "cause": "Machine head tilt safety switch triggered",
+      "solution": "Straighten machine head, restore flip switch. Long press S to clear alarm. Long press S again to disable tipping detection if switch is faulty."
+    },
+    {
+      "issue": "OF display (sleep mode active)",
+      "cause": "Machine idle for approximately 55 minutes",
+      "solution": "Press any key to wake. Set P55 to desired auto-sleep time (in minutes) or 0 to disable sleep."
+    },
+    {
+      "issue": "ALR-1 (headlight button short circuit)",
+      "cause": "Short circuit in machine head button/headlight",
+      "solution": "Power off immediately, replace the headlight button."
+    },
+    {
+      "issue": "Maximum speed cannot be increased beyond current limit",
+      "cause": "P68 technician parameter and/or P-E0 R&D parameter restricting speed",
+      "solution": "Check P68 (technician mode) — default 2800rpm. To increase above 2800rpm, access R&D mode (P + Stop at startup, default password 718) and raise P-E0 up to 3200rpm, then increase P68 accordingly."
+    },
+    {
+      "issue": "Machine does not run (stop mode active)",
+      "cause": "Stop mode enabled via Stop button",
+      "solution": "Short press Stop button to toggle back to normal sewing mode. Third digital tube horizontal lit = stop mode."
+    }
+  ],
+  "mechanicalAdjustments": {
+    "needleBarHeight": "When needle bar at lowest, needle chuck should be 12.3mm from needle plate. Second scale on needle bar should be flush with needle bar sleeve.",
+    "hookThreadAdjustment": "When needle bar rises 1-1.5mm above needle hole from lowest point, hook tip should align with center of needle. Gap between hook and needle must be maintained.",
+    "hookThreadGap": "Thread dividing hook gap approximately 0.2mm when at farthest point. Too small = abnormal noise; too large = thread jam.",
+    "toothHeight": "Feed dog tooth ~1mm above needle plate at highest point",
+    "toothAlignment": "Needle must insert into center of tooth hole without touching front/back of tooth or left/right of needle plate",
+    "hookOilAdjustment": "Hook total oil volume screw controls both hooks; individual left/right hook screws control independently. Adjust based on fabric type.",
+    "reverseForwardOverlap": "Loosen eccentric fixing screw; turn eccentric in A direction to increase reverse stitch, B direction to decrease, until lengths overlap"
+  }
+}

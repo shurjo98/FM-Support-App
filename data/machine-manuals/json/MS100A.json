@@ -1,0 +1,80 @@
+{
+  "model": "MS100A",
+  "manufacturer": "Jack (with Xinghuo CNC controller)",
+  "controllerType": "Xinghuo 全自动缝纫控制系统 (Fully Automatic Sewing Control System) 二代人机界面 (Gen-II HMI) V1.4",
+  "type": "Automatic template sewing machine with CNC controller",
+  "source": "Electric control manual MS100A_v1.4.pdf (深圳市星火数控技术有限公司, 2019年10月 V1.4, Chinese only)",
+  "note": "The MS100A machine uses the Xinghuo (星火) Fully Automatic Sewing Control System Gen-II HMI (二代人机界面). This is the V1.4 (2019) version of the same Xinghuo controller platform documented in XH-AutoSewing.json. The controller features a 7-inch color touchscreen, XY servo axes, and supports .SLW format pattern files. For full parameter and error code details, refer to XH-AutoSewing.json. Key differences noted in this V1.4 manual: supports Vietnamese, Japanese, Korean and Chinese/English display (not the same language list as the newer version).",
+  "specs": {
+    "voltage": "Single phase AC 220V / 50-60Hz",
+    "power": "1.0-2.0 KW depending on machine configuration",
+    "display": "7-inch color touchscreen",
+    "storage": "128MB internal, up to 999 files",
+    "fileFormats": [".SLW (pattern files)", ".xhp (parameter files)"],
+    "importFormats": ["AutoCAD .dxf", "CorelDRAW", ".dst", ".dsb", ".ai", ".plt", ".edi", ".tzf"],
+    "workingTemp": "5-40°C",
+    "workingHumidity": "30%-90% no condensation",
+    "groundingRequirement": "resistance < 100 ohm, wire length < 20m, cross-section > 1.0 sq mm"
+  },
+  "panel": {
+    "type": "7-inch color LCD touchscreen with physical buttons (PAUSE, OPEN/顶板, PRESS/压框, START/启动)",
+    "physicalButtons": [
+      {"name": "PAUSE (暂停)", "function": "Pause current operation"},
+      {"name": "OPEN / 顶板", "function": "Open/raise top plate (template holder)"},
+      {"name": "PRESS / 压框", "function": "Lower press frame"},
+      {"name": "START / 启动", "function": "Start sewing"}
+    ],
+    "mainScreenElements": [
+      "Current processing file name and dimensions",
+      "Lock file icon",
+      "Threading (穿线) button",
+      "Main shaft speed display and increase/decrease",
+      "Bobbin thread usage counter",
+      "Production count display",
+      "Processing file preview area",
+      "Internal file list",
+      "Total stitch count and current stitch count",
+      "Trial sew (试缝) button",
+      "Quick rewind/advance (线段快退/快进) buttons",
+      "Single stitch advance/retreat buttons",
+      "Jump-to-stitch setting",
+      "Network connection status",
+      "Main menu (主菜) button",
+      "Datum (基准) alignment button",
+      "Press frame (压框) and press foot (压脚) buttons"
+    ]
+  },
+  "mainMenuItems": [
+    {"name": "文件管理 (File Management)", "function": "Import/export/delete files to/from internal memory and USB"},
+    {"name": "文件编辑 (File Edit)", "function": "Create new or edit existing sewing patterns (capture mode: point, line, rectangle, arc, circle, curve, multi-segment)"},
+    {"name": "参数文件 (Parameter Files)", "function": "Import/export/delete/write .xhp parameter files"},
+    {"name": "用户参数 (User Parameters)", "function": "Adjust common user parameters for processing requirements"},
+    {"name": "机械参数 (Machine Parameters)", "function": "Machine assembly personnel use only"},
+    {"name": "辅助设置 (Auxiliary Settings)", "function": "Processing auxiliary setup and testing (I/O test, winding, manual jog, baseline calibration)"},
+    {"name": "网络文件 (Network Files)", "function": "Download shared processing files from server"},
+    {"name": "机器状态 (Machine Status)", "function": "Remote management and reporting machine status for troubleshooting"}
+  ],
+  "operations": {
+    "fileLock": "Tap 锁文件 icon to lock current file and prevent accidental file changes. Auto-template recognition only works when file is locked.",
+    "templateRecognition": "Two modes: by file name (RFID/IC card reader) or by file number (barcode scanner). Set in user parameters → other settings → template recognition method.",
+    "datum": "Tap 基准 to enter baseline point setup. Align sewing path to physical template position. Supports dual datum points.",
+    "trialSew": "Tap 试缝 (trial sew) to trace XY pattern path without main shaft rotating — for verifying needle position.",
+    "winding": "Enter test interface, set winding speed (default 1500 rpm), tap 允许, then START to begin winding. Tap STOP or 返回 to stop.",
+    "figureEdit": {
+      "scale": "Scale figure width and height by percentage",
+      "extend": "Add or remove stitches at start/end of each segment",
+      "setStitchLength": "Modify stitch pitch length for entire figure"
+    }
+  },
+  "fileManagement": {
+    "internalStorage": "Up to 999 files, max 128MB total. File names: up to 15 Chinese chars or 30 ASCII chars. Format: .SLW only.",
+    "usbStorage": "Insert USB to access USB file management. Copy/import .SLW and .xhp files. Parameter files shown when entering via parameter file management."
+  },
+  "errorCodes": [],
+  "alarmCodes": [],
+  "parameters": [],
+  "monitoring": [],
+  "troubleshooting": [],
+  "relatedController": "XH-AutoSewing",
+  "note2": "For complete parameter tables (User Parameters Chapters 6, Machine Parameters Chapter 7) and error/alarm codes (Appendix 1), see XH-AutoSewing.json which documents the same Xinghuo controller platform."
+}

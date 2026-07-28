@@ -1,0 +1,314 @@
+{
+  "model": "K5-UT",
+  "manufacturer": "Jack Sewing Machine Co., Ltd.",
+  "controllerType": "K5 Electronic Control (AHE59, LCD operation panel)",
+  "manualDate": "2020-06-20",
+  "type": "Flatseam / specialized sewing machine electronic control box",
+  "specs": {
+    "productType": "AHE59",
+    "powerVoltage": "AC 220±20% V",
+    "powerFrequency": "50Hz/60Hz",
+    "maxOutputPower": "550W",
+    "display": "LCD panel with icons for sewing mode, presser foot, needle position, trimming, soft start, voice, and segment display",
+    "factoryResetMethod": "Long press factory reset touch switch on panel for 3 seconds to restore factory program",
+    "monitorAccess": "Press P + light level/shear line button together to enter monitoring mode (shortcut)",
+    "trimmingAccess": "Press P + (+) button together to enter trimming mode (shortcut)"
+  },
+  "errorCodes": [
+    {
+      "code": "Err-01",
+      "display": "Err-01",
+      "cause": "Hardware overcurrent",
+      "solution": "Turn off the power switch and restart after 30 seconds. If the controller still does not work, please replace it and inform the manufacturer.",
+      "severity": "critical"
+    },
+    {
+      "code": "Err-02",
+      "display": "Err-02",
+      "cause": "Software flow",
+      "solution": "Turn off the power switch and restart after 30 seconds. If the controller still does not work, please replace it and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-03",
+      "display": "Err-03",
+      "cause": "Under-voltage — input power supply voltage is low (less than 176V)",
+      "solution": "Disconnect the power to the controller. Check the input power supply voltage (not less than 176V). If the power supply voltage is low, start the controller after it recovers the voltage. If the controller still does not work, please inform the manufacturer and replace the controller.",
+      "severity": "critical"
+    },
+    {
+      "code": "Err-04",
+      "display": "Err-04",
+      "cause": "Over-voltage when the machine is off — input voltage too high (higher than 264V)",
+      "solution": "Disconnect the controller power and check if the input voltage is too high (higher than 264V). If yes, please restart the controller when the normal voltage is resumed. If the controller still does not work when the voltage is at normal level, please replace the controller and inform the manufacturer.",
+      "severity": "critical"
+    },
+    {
+      "code": "Err-05",
+      "display": "Err-05",
+      "cause": "Over-voltage in operation — supply voltage exceeds threshold during sewing",
+      "solution": "Turn off the system power and restart after 30 seconds. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "critical"
+    },
+    {
+      "code": "Err-06",
+      "display": "Err-06",
+      "cause": "Solenoid circuit fault — solenoid connection is loose or damaged",
+      "solution": "Turn off the system power. Check if the solenoid connection is loose or damaged, change it in time. Restart the system after confirmation. If it still does not work, please inform the manufacturer and replace the controller.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-07",
+      "display": "Err-07",
+      "cause": "Motor current measuring failure",
+      "solution": "Turn off the system power, restart after 30 seconds to see if it works well. If such failure happens frequently, seek technical support.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-08",
+      "display": "Err-08",
+      "cause": "Sewing motor blocked — motor power input plug is off, loose, or broken; or foreign matter tangled on the machine head",
+      "solution": "Turn off the system power. Check whether the motor power input plug is off, loose, or broken, or if there is something tangled on the machine head. Correct these issues then restart. If it still does not work, please inform the manufacturer and replace the controller.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-09",
+      "display": "Err-09",
+      "cause": "Brake circuit fault — white braking resistor connector on power board is loose or has fallen off",
+      "solution": "Turn off the system power. Check carefully if the white braking resistor connector on the power board is loose or fall off. Plug it in tightly then restart the system. If it still does not work, please inform the manufacturer and replace the controller.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-10",
+      "display": "Err-10",
+      "cause": "Communication failure — connection between control panel and controller is off, loose, or broken",
+      "solution": "Check carefully if the connection between the control panel and controller is off, loose, or broken. Restore it to normal and restart. If it still does not work, please inform the manufacturer and replace the controller.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-11",
+      "display": "Err-11",
+      "cause": "Machine head needle positioning failure — connection line between machine head synchronizer and controller is loose or disconnected",
+      "solution": "Check if the connection line between machine head synchronizer and controller is loose. Restore it and restart the system. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-12",
+      "display": "Err-12",
+      "cause": "Initial motor electrical angle failure",
+      "solution": "Try 2 to 3 more times after power down. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-13",
+      "display": "Err-13",
+      "cause": "Motor HALL failure — motor sensor plug is loose or has dropped off",
+      "solution": "Turn off the system power. Check if the motor sensor plug is loose or dropped off. Restore it and restart the system. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-14",
+      "display": "Err-14",
+      "cause": "DSP Read/Write EEPROM failure",
+      "solution": "Turn off the system power, restart after 30 seconds. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-15",
+      "display": "Err-15",
+      "cause": "Motor over-speed protection",
+      "solution": "Turn off the system power, restart after 30 seconds. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-16",
+      "display": "Err-16",
+      "cause": "Motor reversion — motor is running in the wrong direction",
+      "solution": "Turn off the system power, restart after 30 seconds. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-17",
+      "display": "Err-17",
+      "cause": "HMI Read/Write EEPROM failure",
+      "solution": "Turn off the system power, restart after 30 seconds. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-18",
+      "display": "Err-18",
+      "cause": "Motor overload",
+      "solution": "Turn off the system power, restart after 30 seconds. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "high"
+    }
+  ],
+  "alarmCodes": [
+    {
+      "code": "ALA-2",
+      "display": "ALA-2",
+      "cause": "Stitch counter alarm — the stitch counter has reached the set upper limit",
+      "solution": "Press the factory reset key to cancel the alarm and reset the counter.",
+      "severity": "low"
+    },
+    {
+      "code": "ALA-3",
+      "display": "ALA-3",
+      "cause": "Trimming counter alarm — the trimming counter has reached the set upper limit",
+      "solution": "Press the factory reset key to cancel the alarm and reset the counter.",
+      "severity": "low"
+    },
+    {
+      "code": "PodoFF",
+      "display": "PodoFF",
+      "cause": "Power is off alarm",
+      "solution": "Please wait for 30 seconds, then turn on the power switch.",
+      "severity": "low"
+    },
+    {
+      "code": "Safety switch alarm",
+      "display": "Safety switch alarm",
+      "cause": "Trimming cutter is not back in original position, or safety switch still alarming after cutter returns",
+      "solution": "Check the trimming cutter is back in the original place. After checking, if still showing safety alarm, adjust the position of the sensor holder. If still cannot be solved, enter P66 parameter and change value from 2 to 0 to disable the safety switch.",
+      "severity": "medium"
+    },
+    {
+      "code": "SLEEP",
+      "display": "SLEEP",
+      "cause": "Dormancy — machine has been idle and entered sleep mode, or controller fault",
+      "solution": "Shut down the system power supply. Wait 30 seconds then reconnect the power supply. If the controller still does not work, replace the controller and notify the manufacturer.",
+      "severity": "low"
+    }
+  ],
+  "parameters": [
+    { "id": "P99", "name": "Language selection", "range": "0-2", "default": 1, "values": {"0": "Voice off", "1": "Chinese", "2": "English"}, "note": "Non-voice panel: invalid" },
+    { "id": "P01", "name": "Maximum speed of free sewing (global maximum speed)", "range": "200-5000", "default": 4000, "unit": "RPM" },
+    { "id": "P03", "name": "Needle stop position selection", "range": "0/1", "default": 0, "values": {"0": "Up", "1": "Down"} },
+    { "id": "P04", "name": "Start encryption sewing speed", "range": "200-3000", "default": 1800, "unit": "RPM" },
+    { "id": "P05", "name": "End encryption sewing speed", "range": "200-3000", "default": 1800, "unit": "RPM" },
+    { "id": "P07", "name": "Start encryption stitches number", "range": "0-200", "default": 0, "note": "0 = no encryption stitch function. Setting a number enables encryption stitch at seam start." },
+    { "id": "P08", "name": "End encryption stitches number", "range": "0-200", "default": 0, "note": "0 = no encryption stitch function. Setting a number enables encryption stitch at seam end." },
+    { "id": "P09", "name": "Soft start switch", "range": "0/1", "default": 0, "values": {"0": "Off", "1": "On"} },
+    { "id": "P10", "name": "Quantity of meter to adjust", "range": "0-4", "default": 0 },
+    { "id": "P16", "name": "Lift foot response time after sensor detects cloth", "range": "1-3000", "default": 50, "unit": "ms" },
+    { "id": "P17", "name": "Automatic induction presser foot sensor setting", "range": "0-99", "default": 0, "note": "Between the maximum and minimum value of 02C parameter display" },
+    { "id": "P24", "name": "Trimming point of pedal", "range": "0-1024", "default": 150 },
+    { "id": "P27", "name": "Presser foot sensor mode setting", "range": "0-3", "default": 1, "values": {"0": "Off", "1": "Turn on only after trimming", "2": "Always ON"} },
+    { "id": "P30", "name": "Feedforward torque of motor", "range": "0-31", "default": 0, "values": {"0": "Normal functions"}, "note": "1-31: feedforward torque level (increases low-speed torque)" },
+    { "id": "P32", "name": "Encryption seam solenoid full open time", "range": "1-500", "default": 60, "unit": "ms" },
+    { "id": "P33", "name": "Encryption seam solenoid off time per cycle", "range": "0-100", "default": 6, "unit": "ms" },
+    { "id": "P37", "name": "Encryption seam solenoid on time per cycle (clamp strength)", "range": "0-100", "default": 5, "unit": "ms" },
+    { "id": "P38", "name": "Flat seaming shear velocity (under-knife maintain time)", "range": "1-999", "default": 120, "unit": "ms" },
+    { "id": "P39", "name": "Scavenging action time delay (on-knife note: also flat seaming machine cut line)", "range": "1-999", "default": 180, "unit": "ms" },
+    { "id": "P40", "name": "Duration and linear velocity scan line (on-knife, also flat seaming machine cut line)", "range": "1-999", "default": 30, "unit": "ms" },
+    { "id": "P41", "name": "Blowing begin delay time", "range": "0-9999", "default": 120, "unit": "ms" },
+    { "id": "P42", "name": "Blowing duration", "range": "1-9999", "default": 300, "unit": "ms" },
+    { "id": "P43", "name": "Sweep line / blowing function selection", "range": "0-25", "default": 2, "values": {"2": "Scavenging (sweep line)", "8": "Blowing"} },
+    { "id": "P45", "name": "Trimming electromagnet per cycle opening time", "range": "0-100", "default": 1, "unit": "ms" },
+    { "id": "P46", "name": "Trimming electromagnet per cycle closing time", "range": "0-100", "default": 2, "unit": "ms" },
+    { "id": "P49", "name": "Trimming speed", "range": "100-500", "default": 300, "unit": "RPM" },
+    { "id": "P50", "name": "Presser foot lifting electromagnet full output time", "range": "1-500", "default": 100, "unit": "ms" },
+    { "id": "P51", "name": "Presser foot lifting electromagnet per cycle opening time", "range": "0-100", "default": 15, "unit": "ms" },
+    { "id": "P52", "name": "Running delay time when presser foot comes down", "range": "1-800", "default": 150, "unit": "ms" },
+    { "id": "P53", "name": "Presser foot lifting function selection", "range": "0/1", "default": 1, "values": {"0": "Off", "1": "On"} },
+    { "id": "P54", "name": "Presser foot lifting electromagnet per cycle closing time", "range": "0-100", "default": 35, "unit": "ms" },
+    { "id": "P56", "name": "Run to up needle position after power on", "range": "0/1", "default": 1, "values": {"0": "No action", "1": "Action"} },
+    { "id": "P57", "name": "Presser foot lifting electromagnet protection time", "range": "0-600", "default": 200, "unit": "×100ms" },
+    { "id": "P60", "name": "Maximum speed of constant sewing (auto test speed)", "range": "200-5500", "default": 4000, "unit": "RPM" },
+    {
+      "id": "P62",
+      "name": "Special mode",
+      "range": "0-4",
+      "default": 0,
+      "values": {
+        "0": "Normal mode (operator selection)",
+        "1": "Simply sewing mode",
+        "2": "Motor initial angle measurement (do not remove belt)",
+        "3": "Auto setting pulley ratio by CPU (synchronizer needed, belt not removed)",
+        "4": "Auto test mode 1 — needle stop position auto test, run 5S, stop 5S"
+      }
+    },
+    { "id": "P66", "name": "Safety switch function set", "range": "0/2", "default": 2, "values": {"0": "Off", "2": "On"} },
+    { "id": "P71", "name": "Slow release lifter level adjustment (OC open time)", "range": "0-50", "default": 0, "note": "Smaller value = faster and more quickly released" },
+    { "id": "P76", "name": "Trimming electromagnet full output time", "range": "1-500", "default": 60, "unit": "ms" },
+    { "id": "P98", "name": "Voice volume", "range": "0-4", "default": 4, "note": "4 = maximum volume (factory default)" },
+    { "id": "PA0", "name": "Lift foot release down delay time after cloth removed (sensing on)", "range": "1-9999", "default": 0, "unit": "ms" },
+    { "id": "PA1", "name": "Lift foot release down delay time with cloth present (sensing on)", "range": "0-600", "default": 50, "unit": "ms" },
+    { "id": "PA5", "name": "Voice settings", "range": "0-3", "default": 0, "values": {"0": "All on (buttons, parameters, errors)", "1": "Buttons, parameters, errors", "2": "Buttons, errors", "3": "Switch on, buttons, errors"} },
+    { "id": "PA6", "name": "Stitch counter mode setting ratio", "range": "1-100", "default": 1 },
+    { "id": "PA7", "name": "Stitch counter mode total stitches setting", "range": "1-9999", "default": 1 },
+    { "id": "PA8", "name": "Stitch counter mode", "range": "0-6", "default": 0 },
+    { "id": "PA9", "name": "Pieces counter mode setting ratio", "range": "1-100", "default": 1 },
+    { "id": "PAA", "name": "Pieces counter mode total stitches setting", "range": "1-9999", "default": 1 },
+    { "id": "PAB", "name": "Pieces counter mode setting", "range": "0-4", "default": 0 }
+  ],
+  "monitoring": [
+    { "id": "010", "name": "Stitch counter" },
+    { "id": "011", "name": "Counter for sewing pieces" },
+    { "id": "012", "name": "Head real speed" },
+    { "id": "013", "name": "State of encoder" },
+    { "id": "020", "name": "DC voltage" },
+    { "id": "021", "name": "Machine speed" },
+    { "id": "022", "name": "Phase current" },
+    { "id": "023", "name": "Initial electrical angle" },
+    { "id": "024", "name": "Machine angle" },
+    { "id": "025", "name": "Sampling voltage of pedal" },
+    { "id": "026", "name": "Ratio between motor and machine" },
+    { "id": "027", "name": "Total used time of motor (hours)" },
+    { "id": "028", "name": "Sampling voltage of interaction" },
+    { "id": "029", "name": "Software version" },
+    { "id": "02A", "name": "Analog input 1" },
+    { "id": "02B", "name": "Analog input 2" },
+    { "id": "02C", "name": "Error counter" },
+    { "id": "030-037", "name": "History record of error codes" }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "Err-03 undervoltage on K5-UT",
+      "checks": [
+        "Disconnect power to controller completely",
+        "Check input power supply voltage with a multimeter — must be at least 176V (220V rated -20%)",
+        "Do not restart until voltage is within 176V-264V range",
+        "Once voltage is normal, restart the controller",
+        "If error persists with correct voltage, replace the controller"
+      ]
+    },
+    {
+      "symptom": "Err-08 motor blocked on K5-UT",
+      "checks": [
+        "Turn off system power completely",
+        "Check motor power input plug — must be firmly seated and not loose, off, or broken",
+        "Check for foreign matter (thread, fabric) tangled around the motor or machine head",
+        "Clear any obstruction and reconnect loose plugs, then restart",
+        "If motor is still blocked after plug checks, replace the controller"
+      ]
+    },
+    {
+      "symptom": "Err-11 machine head needle positioning failure on K5-UT",
+      "checks": [
+        "Check all connection lines between the machine head synchronizer and the controller",
+        "Reconnect any loose connectors at both the machine head end and the controller end",
+        "Restart the system",
+        "If problem persists, replace the controller"
+      ]
+    },
+    {
+      "symptom": "Safety switch alarm on K5-UT — machine won't start",
+      "checks": [
+        "Verify the trimming cutter has returned fully to its original home position after the last trimming operation",
+        "If cutter is in place but alarm remains, adjust the position of the induction sensor bracket",
+        "If still not resolved after adjusting sensor bracket, change P66 parameter from 2 to 0 to disable the safety switch alarm",
+        "Contact local service provider if above steps fail"
+      ]
+    },
+    {
+      "symptom": "Err-06 solenoid circuit fault on K5-UT",
+      "checks": [
+        "Turn off system power",
+        "Inspect all solenoid connections — check for loose, damaged, or disconnected wires",
+        "Reconnect or replace any damaged solenoid connectors",
+        "Restart and verify the error is cleared",
+        "If error returns, contact manufacturer for controller replacement"
+      ]
+    }
+  ]
+}

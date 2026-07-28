@@ -6,9 +6,9 @@ import { useLang, type TranslationKey } from "./i18n";
 import FeaturedCards from "./FeaturedCards";
 
 const PRODUCT_LINES: { section: CustomerSection; nameKey: TranslationKey; image: string }[] = [
-  { section: "sewing", nameKey: "nav.sewing", image: "/public/categories/lockstitch.png" },
-  { section: "automated", nameKey: "nav.automated", image: "/public/machines/Interlock/K10.png" },
-  { section: "needles", nameKey: "nav.needles", image: "/public/needles/packing_image_1.png" },
+  { section: "sewing", nameKey: "nav.sewing", image: "/public/img/Lockstitch_Machines_Files/JK-8558G/8558G.png" },
+  { section: "automated", nameKey: "nav.automated", image: "/public/img/Interlock_Machine_Files/K7/K7.png" },
+  { section: "needles", nameKey: "nav.needles", image: "/public/img/Groz_Beckert_Needles/DBx1/needle.png" },
 ];
 
 const STATUS_COLORS: Record<string, string> = {

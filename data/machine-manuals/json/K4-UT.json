@@ -1,0 +1,613 @@
+{
+  "model": "K4-UT",
+  "manufacturer": "Jack Sewing Machine Co., Ltd.",
+  "controllerType": "Integrated LCD electronic control (built into machine head, blue panel)",
+  "type": "K4-UT electromechanical integrated small square head high speed computer stretch sewing machine (interlock)",
+  "note": "K4-UT is Jack's first integrated stretch sewing machine — the electronic control is built directly into the machine head (no separate under-table box). UT suffix = Electric automatic thread trimming. UL = Electric auto trim (no cutting), UTL = Pneumatic auto trim. Voice navigation with Chinese/English/multilingual support. Based on 8669BDII/35AC(UT) model.",
+  "specs": {
+    "maxSpeed": "5500 rpm",
+    "factorySpeed": "4000 rpm",
+    "needleGauge": "1.5-4.5 mm",
+    "widthOfStitch": "5.6 / 6.4 mm",
+    "differentialRatio": "0.8-1.3",
+    "presserFootHeight": "6.2 mm (with upper decorative thread)",
+    "needleModel": "UY128GAS",
+    "needleBarStroke": "33.4 mm",
+    "threadTrimmingRange": "2.0-4.5 mm",
+    "motorMaxTorque": "4.2 N.m",
+    "machineTorque": "0.45 N.m",
+    "volume": "670×445×595 mm",
+    "weight": "54/64 kg",
+    "display": "LCD display area (blue integrated panel)",
+    "panelKeys": "Reset | Voice switch | Lifting foot mode | LED+trimming switch | Cursor keys (◄/►) | Speed control (+/-) | P (parameter setting)",
+    "monitoringAccess": "Press P + Lifting foot key together to enter detection mode",
+    "factoryResetMethod": "Long press Reset button 1.5s to restore user-saved parameters; press Left + Right together 1.5s to restore full factory defaults"
+  },
+  "errorCodes": [
+    {
+      "code": "Err-01",
+      "display": "Err-01",
+      "cause": "Hardware over current",
+      "solution": "Check the voltage; reset the machine or restart. If cannot solve the problem, contact local agent or call 4008876858.",
+      "severity": "critical"
+    },
+    {
+      "code": "Err-02",
+      "display": "Err-02",
+      "cause": "Software over current",
+      "solution": "Check the voltage; reset the machine or restart. If cannot solve the problem, contact local agent or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-03",
+      "display": "Err-03",
+      "cause": "System under voltage — input supply voltage too low (less than 176V)",
+      "solution": "Turn off system power and check if input supply voltage is low (<176V). Restart controller after voltage returns to normal. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "critical"
+    },
+    {
+      "code": "Err-04",
+      "display": "Err-04",
+      "cause": "Stop over voltage — input supply voltage too high (more than 264V)",
+      "solution": "Turn off system power and check if input supply voltage is high (>264V). Restart controller after voltage returns to normal. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "critical"
+    },
+    {
+      "code": "Err-05",
+      "display": "Err-05",
+      "cause": "Runtime over voltage — supply voltage too high during operation",
+      "solution": "Turn off system power and check input supply voltage. Restart after voltage returns to normal. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "critical"
+    },
+    {
+      "code": "Err-06",
+      "display": "Err-06",
+      "cause": "Electromagnet circuit failure — connection loose, disconnected, or damaged",
+      "solution": "Turn off system power. Check if the electromagnet connection is correct, if it is loose or damaged. If damaged, replace it in time. Restart after confirming correct. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-07",
+      "display": "Err-07",
+      "cause": "Current detection loop failure — circuit fault",
+      "solution": "Turn off system power and turn back on after 30 seconds. Retry several times. If the fault occurs frequently, replace the controller. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-08",
+      "display": "Err-08",
+      "cause": "Motor stalled — machine head stuck or motor plug/sensor connection loose",
+      "solution": "Check whether machine head is stuck or not, or rotates very tough. Check whether motor plug and sensor connection are loose or not. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-09",
+      "display": "Err-09",
+      "cause": "Brake circuit failure — white brake resistor connector on power board loose",
+      "solution": "Turn off system power. Check if the white brake resistor connector on the power board is loose or not plugged in. Plug in and restart. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-10",
+      "display": "Err-10",
+      "cause": "HMI communication failure — control panel and controller connection disconnected, loose, or broken",
+      "solution": "Check if the connection between the control panel and the controller is disconnected, loose, or broken, and return to normal before restarting the system. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-11",
+      "display": "Err-11",
+      "cause": "Head stop signal failure — synchronization signal device connection loose or faulty",
+      "solution": "Check if the connection between the head synchronization signal device and the controller is loose; return to normal and restart. If still does not work properly, replace the controller. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-12",
+      "display": "Err-12",
+      "cause": "Motor initial angle detection failure — angle calibration failed",
+      "solution": "Try again 2-3 times after power off. If the fault still reports, replace the controller. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-13",
+      "display": "Err-13",
+      "cause": "Motor HALL failure — motor sensor connector disconnected, loose, or damaged",
+      "solution": "Turn off system power. Check if the motor sensor connector is disconnected, loose, or damaged. Return to normal and restart. If still does not work properly, replace the controller. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-14",
+      "display": "Err-14",
+      "cause": "DSP read and write EEPROM failure",
+      "solution": "Turn off system power, turn back on after 30 seconds. If still does not work properly, replace the controller. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-15",
+      "display": "Err-15",
+      "cause": "Motor overspeed protection",
+      "solution": "Turn off system power, turn back on after 30 seconds. If still does not work properly, replace the controller. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-16",
+      "display": "Err-16",
+      "cause": "Motor reversal — motor running in wrong direction",
+      "solution": "Turn off system power, turn back on after 30 seconds. If still does not work properly, replace the controller. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-17",
+      "display": "Err-17",
+      "cause": "HMI read and write EEPROM failure — panel memory fault",
+      "solution": "Turn off system power, turn back on after 30 seconds. If still does not work properly, replace the controller. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-18",
+      "display": "Err-18",
+      "cause": "Motor overload",
+      "solution": "Turn off system power, turn back on after 30 seconds. If still does not work properly, replace the controller. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "high"
+    }
+  ],
+  "alarmCodes": [
+    {
+      "code": "ALA-2",
+      "display": "ALA-2",
+      "meaning": "Counting number alarm — needle count has reached upper limit",
+      "solution": "Press P to cancel the alarm and recount.",
+      "severity": "info"
+    },
+    {
+      "code": "ALA-3",
+      "display": "ALA-3",
+      "meaning": "Counting number alarm — cut line count has reached upper limit",
+      "solution": "Press P to cancel the alarm and recount.",
+      "severity": "info"
+    },
+    {
+      "code": "POWOFF",
+      "display": "POWOFF",
+      "meaning": "Power failure reminder — abnormal power loss detected",
+      "solution": "Please wait 30 seconds before turning the power switch back on.",
+      "severity": "warning"
+    },
+    {
+      "code": "ARM UP",
+      "display": "ARM UP",
+      "meaning": "Safety switch alarm — thread cutter not in place or safety switch not detecting correctly",
+      "solution": "Check if the thread cutter is in place. If the safety switch light does not illuminate after returning to position, adjust the position of the sensor bracket. If cannot be solved, set P66 parameter from 2 to 0. If cannot solve, contact local agent or call 4008876858.",
+      "severity": "warning"
+    }
+  ],
+  "parameters": [
+    {
+      "id": "P99",
+      "name": "Voice choice",
+      "range": "0/1/2",
+      "default": 1,
+      "values": { "0": "Turn off voice", "1": "Chinese", "2": "English" }
+    },
+    {
+      "id": "P01",
+      "name": "Free seam maximum speed (global maximum speed)",
+      "range": "200-5500",
+      "default": 4000,
+      "unit": "RPM"
+    },
+    {
+      "id": "P03",
+      "name": "Upper and lower needle selection (needle stop position)",
+      "range": "0/1",
+      "default": 0,
+      "values": { "0": "Upper needle (stops up)", "1": "Lower needle (stops down)" }
+    },
+    {
+      "id": "P04",
+      "name": "Front encryption slot speed",
+      "range": "200-3000",
+      "default": 1800,
+      "unit": "RPM"
+    },
+    {
+      "id": "P05",
+      "name": "Post-encryption slot speed",
+      "range": "200-3000",
+      "default": 1800,
+      "unit": "RPM"
+    },
+    {
+      "id": "P07",
+      "name": "Number of pre-encrypted stitches",
+      "range": "0-200",
+      "default": 0,
+      "note": "0 = no encryption stitch function; any non-zero value enables encryption stitching"
+    },
+    {
+      "id": "P08",
+      "name": "Number of post-encrypted stitches",
+      "range": "0-200",
+      "default": 0,
+      "note": "0 = no encryption stitch function; any non-zero value enables encryption stitching"
+    },
+    {
+      "id": "P09",
+      "name": "Slow starter switch",
+      "range": "0/1",
+      "default": 0,
+      "values": { "0": "Switch off", "1": "Switch on" }
+    },
+    {
+      "id": "P10",
+      "name": "Piece count mode",
+      "range": "0-4",
+      "default": 0,
+      "values": {
+        "0": "Manual counting",
+        "1": "Automatic meter mode — incremental mode",
+        "2": "Automatic piece counting mode — subtraction mode",
+        "3": "Automatic piece count to PAA value; motor stops rotating; manual reset — incremental mode",
+        "4": "Automatic piece counts to zero; motor stops rotating; manual reset — decrement mode"
+      }
+    },
+    {
+      "id": "P16",
+      "name": "Induction presser response time",
+      "range": "1-3000",
+      "default": 50,
+      "note": "Adjust the response time; the induction presser detects the corresponding time after cloth is detected"
+    },
+    {
+      "id": "P17",
+      "name": "Auto-sensing lifter sensitivity setting",
+      "range": "0-99",
+      "default": 0,
+      "note": "Between the maximum and minimum values of the parameter displayed in monitor 02C"
+    },
+    {
+      "id": "P24",
+      "name": "Pedal trimming position",
+      "range": "0-1024",
+      "default": 150
+    },
+    {
+      "id": "P27",
+      "name": "Lifting foot sensing mode selection",
+      "range": "0/1/2",
+      "default": 1,
+      "values": { "0": "Switch off", "1": "Effective after trimming", "2": "Both effective" }
+    },
+    {
+      "id": "P30",
+      "name": "Motor low speed afterburner function switch",
+      "range": "0-31",
+      "default": 0,
+      "values": { "0": "Normal function", "1-31": "Low speed afterburner" }
+    },
+    {
+      "id": "P32",
+      "name": "Encrypted seam electromagnet full output time",
+      "range": "1-500",
+      "default": 60,
+      "unit": "ms"
+    },
+    {
+      "id": "P33",
+      "name": "Encrypted sewing iron cycle off time per cycle",
+      "range": "0-100",
+      "default": 6,
+      "unit": "ms"
+    },
+    {
+      "id": "P37",
+      "name": "Encryption slot electromagnet per cycle open time (clamping force)",
+      "range": "0-100",
+      "default": 5,
+      "unit": "ms"
+    },
+    {
+      "id": "P38",
+      "name": "Cutting speed — lower knife (knife down time)",
+      "range": "1-999",
+      "default": 120,
+      "unit": "ms"
+    },
+    {
+      "id": "P39",
+      "name": "Sweep delay action time — upper knife",
+      "range": "1-999",
+      "default": 160,
+      "note": "This item is also the thread trimming on the interlock sewing machine"
+    },
+    {
+      "id": "P40",
+      "name": "Sweep speed (sweep duration) — upper knife",
+      "range": "1-9999",
+      "default": 30,
+      "note": "This item is also the thread trimming on the interlock sewing machine"
+    },
+    {
+      "id": "P41",
+      "name": "Hair start delay time",
+      "range": "0-9999",
+      "default": 120,
+      "unit": "ms"
+    },
+    {
+      "id": "P42",
+      "name": "Air duration",
+      "range": "1-9999",
+      "default": 300,
+      "unit": "ms"
+    },
+    {
+      "id": "P43",
+      "name": "Sweep thread and blow wind selection function",
+      "range": "0-25",
+      "default": 2,
+      "values": { "2": "Sweep thread", "8": "Blow wind" }
+    },
+    {
+      "id": "P45",
+      "name": "Wire-cut electromagnet turn-on time per cycle",
+      "range": "0-100",
+      "default": 1,
+      "unit": "ms"
+    },
+    {
+      "id": "P46",
+      "name": "Wire trimming electromagnet cycle off time",
+      "range": "0-100",
+      "default": 2,
+      "unit": "ms"
+    },
+    {
+      "id": "P49",
+      "name": "Cutting speed",
+      "range": "100-500",
+      "default": 300
+    },
+    {
+      "id": "P50",
+      "name": "Lifting foot electromagnet full output time",
+      "range": "1-500",
+      "default": 100,
+      "unit": "ms"
+    },
+    {
+      "id": "P51",
+      "name": "Lifting foot electromagnet per cycle open time",
+      "range": "0-100",
+      "default": 15,
+      "unit": "ms"
+    },
+    {
+      "id": "P52",
+      "name": "Presser foot delay time",
+      "range": "1-800",
+      "default": 150,
+      "unit": "ms"
+    },
+    {
+      "id": "P53",
+      "name": "Lifting foot switch",
+      "range": "0/1",
+      "default": 1,
+      "values": { "0": "No lift", "1": "Lift" }
+    },
+    {
+      "id": "P54",
+      "name": "Lifting foot electromagnet per cycle off time",
+      "range": "0-100",
+      "default": 35,
+      "unit": "ms"
+    },
+    {
+      "id": "P56",
+      "name": "Power on automatically find needle position",
+      "range": "0/1",
+      "default": 1,
+      "values": { "0": "Do not find", "1": "Find" }
+    },
+    {
+      "id": "P57",
+      "name": "Lifting foot electromagnet protection time",
+      "range": "0-600",
+      "default": 200,
+      "unit": "×100ms"
+    },
+    {
+      "id": "P60",
+      "name": "Fixed length seam speed (automatic test speed)",
+      "range": "200-5500",
+      "default": 4000,
+      "unit": "RPM"
+    },
+    {
+      "id": "P62",
+      "name": "Special operation mode",
+      "range": "0-4",
+      "default": 0,
+      "values": {
+        "0": "Operator selection (normal)",
+        "1": "Simple sewing mode",
+        "2": "Measuring motor initial angle (no need to remove belt)",
+        "3": "Calculating transmission ratio mode (requires needle stop sensor; belt cannot be removed)",
+        "4": "Automatic test mode 1 (with stop needle position, run 5S, stop 5S)"
+      },
+      "note": "Set to 2 temporarily to check/calibrate motor initial angle; return to 0 after calibration"
+    },
+    {
+      "id": "P66",
+      "name": "Safety switch function",
+      "range": "0-2",
+      "default": 2,
+      "values": { "0": "Off (disable safety switch)", "2": "Turn on safety switch function" },
+      "note": "Set to 0 if ARM UP alarm cannot be resolved by mechanical adjustment"
+    },
+    {
+      "id": "P71",
+      "name": "Slow release pressure level adjustment",
+      "range": "0-50",
+      "default": 0,
+      "note": "Smaller value = faster release (overclocking open time)"
+    },
+    {
+      "id": "P76",
+      "name": "Trimming electromagnet full output time",
+      "range": "1-500",
+      "default": 60,
+      "unit": "ms"
+    },
+    {
+      "id": "P98",
+      "name": "Volume adjustment",
+      "range": "0-4",
+      "default": 4,
+      "note": "4 is maximum volume; changes will occur after factory settings are restored"
+    },
+    {
+      "id": "PA0",
+      "name": "Delay time of presser foot after removing fabric (induction on)",
+      "range": "0-9999",
+      "default": 0,
+      "unit": "ms"
+    },
+    {
+      "id": "PA1",
+      "name": "Delay time of presser foot with cloth (induction on)",
+      "range": "0-9999",
+      "default": 50,
+      "unit": "×0.1s"
+    },
+    {
+      "id": "PA5",
+      "name": "Voice selection",
+      "range": "0-3",
+      "default": 0,
+      "values": {
+        "0": "Boot voice + button voice + parameter voice + fault voice",
+        "1": "Only boot voice",
+        "2": "Only button voice and fault voice",
+        "3": "Boot voice + button voice + fault voice"
+      }
+    },
+    {
+      "id": "PA6",
+      "name": "Base line ratio",
+      "range": "1-100",
+      "default": 1
+    },
+    {
+      "id": "PA7",
+      "name": "Bottom line total stitch setting",
+      "range": "1-9999",
+      "default": 1
+    },
+    {
+      "id": "PA8",
+      "name": "Counting number mode",
+      "range": "0-6",
+      "default": 0,
+      "values": {
+        "0": "No counting of needles",
+        "1": "Increasing full automatic reset",
+        "2": "Decrementing to zero automatic reset",
+        "3": "Increasing full; error stopping; manual reset",
+        "4": "Decrementing to zero; error shutdown; manual reset",
+        "5": "Hand increase full; error does not stop; stop after thread trimming; manual reset",
+        "6": "Decrement to zero; error does not stop; stop after trimming; manual reset"
+      }
+    },
+    {
+      "id": "PA9",
+      "name": "Number of pieces counted",
+      "range": "1-100",
+      "default": 1
+    },
+    {
+      "id": "PAA",
+      "name": "Total number of pieces",
+      "range": "1-9999",
+      "default": 1
+    },
+    {
+      "id": "PAB",
+      "name": "Number of pieces count mode",
+      "range": "0-4",
+      "default": 0,
+      "values": {
+        "0": "Manual count",
+        "1": "Automatic meter mode — incremental mode",
+        "2": "Automatic piece count mode — subtraction mode",
+        "3": "Automatic piece count to PAA value; motor stops rotating; manual reset — incremental mode",
+        "4": "Automatic piece count to zero; motor stops rotating; manual reset — decrement mode"
+      }
+    }
+  ],
+  "monitoring": [
+    { "id": "010", "name": "Needle count" },
+    { "id": "011", "name": "Number of pieces" },
+    { "id": "012", "name": "Actual speed of the nose" },
+    { "id": "013", "name": "Hall state" },
+    { "id": "020", "name": "Bus voltage" },
+    { "id": "021", "name": "Head speed" },
+    { "id": "022", "name": "Phase current" },
+    { "id": "023", "name": "Initial angle", "note": "Requirement: 340°±5°. If out of range, adjust P302 then use P62=2 to remeasure" },
+    { "id": "024", "name": "Mechanical angle", "note": "Used to set upper needle stop position (see section 3.3)" },
+    { "id": "025", "name": "Pedal voltage sample value" },
+    { "id": "026", "name": "Head gear ratio actual value" },
+    { "id": "027", "name": "Motor cumulative running time (hours)" },
+    { "id": "028", "name": "Head interaction voltage sample value" },
+    { "id": "029", "name": "DSP software version number" },
+    { "id": "02A", "name": "Analog input 1 sample value" },
+    { "id": "02B", "name": "Analog input 2 sample value" },
+    { "id": "02C", "name": "Error counter" },
+    { "id": "030-037", "name": "Historical fault codes (stores last 8 errors)" }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "Check/calibrate motor initial angle (motor angle at 023 not 340°±5°)",
+      "checks": [
+        "Long press P key to enter parameter 062 (or open machine and press P key to enter parameter 143)",
+        "Adjust parameter from 0 to 2 to save",
+        "Lightly step on pedal; after motor stops rotating, press P key + lift foot button to enter monitoring mode",
+        "Check monitor 023 — requirement is 340 degrees ±5 degrees",
+        "If out of range, change parameter 302 to adjust the value displayed in monitor 023",
+        "After change, set P62 (or 143) parameter from 2 to 0; restart the electronic control to check normal running",
+        "If parameter 302 was adjusted, press P to save parameters"
+      ]
+    },
+    {
+      "symptom": "Upper needle stop position incorrect (needle bar not stopping at highest point)",
+      "checks": [
+        "Press P key + presser key to enter monitoring mode; adjust to monitor 024",
+        "Turn handwheel clockwise to stop needle bar at highest position (do not turn back and forth)",
+        "Press P key + scissors key when parameter display value is 0",
+        "Step on pedal to check if needle is at highest position",
+        "If adjusted correctly, press and hold right arrow key for 3 seconds to save parameters"
+      ]
+    },
+    {
+      "symptom": "ARM UP safety switch alarm that won't clear",
+      "checks": [
+        "Check if thread cutter is in correct position",
+        "If safety switch light does not illuminate after returning to position, adjust sensor bracket position",
+        "If adjustment fails, set P66 parameter from 2 to 0 to disable safety switch function temporarily",
+        "Contact local service agent or call 4008876858 if still cannot resolve"
+      ]
+    },
+    {
+      "symptom": "Err-08 motor stalled on K4-UT interlock machine",
+      "checks": [
+        "Check if machine head is stuck or difficult to rotate by hand",
+        "Check machine head lubrication — interlock machines require regular oiling",
+        "Check if motor plug (10-core cable) is loose or disconnected",
+        "Check if motor sensor connector is firmly seated",
+        "Verify sewing material is not too thick for the machine's capacity",
+        "Try rotating handwheel manually to check for mechanical binding"
+      ]
+    }
+  ]
+}

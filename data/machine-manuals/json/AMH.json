@@ -1,0 +1,441 @@
+{
+  "model": "AMH",
+  "manufacturer": "Jack",
+  "controllerType": "A5E-A Electronic Control Box",
+  "type": "Computerized lockstitch machine with backstitch stepping motor",
+  "source": "Operation Manual of AMH Electrical Control V1.1_20230928 (A5E-A electric control box manual, 16 pages)",
+  "note": "The AMH machine uses the A5E-A electronic control box. Features a 20-button panel. Has backstitch stepping motor (Err-21 to Err-29). User parameters P00-P43 (long-press P), Technician parameters P47-P304 (hold P at power-on).",
+  "specs": {
+    "voltage": "AC 220±20% V or AC 110±20% V",
+    "frequency": "50Hz/60Hz",
+    "ratedPower": "550W",
+    "parameterLevels": 2,
+    "userParamRange": "P00-P43",
+    "techParamRange": "P47-P304"
+  },
+  "portWiring": {
+    "pedalAndUpdate": {
+      "pins": 6,
+      "pinout": [
+        {"pin": 1, "signal": "GND", "function": "Ground"},
+        {"pin": 2, "signal": "-", "function": "—"},
+        {"pin": 3, "signal": "VCC", "function": "+5V"},
+        {"pin": 4, "signal": "RX", "function": "UART Rx"},
+        {"pin": 5, "signal": "TX", "function": "UART Tx"},
+        {"pin": 6, "signal": "Pedal", "function": "Pedal Signal"}
+      ]
+    },
+    "suctionSolenoid": {
+      "pins": 4,
+      "pinout": [
+        {"pin": 1, "signal": "GND", "function": "Ground"},
+        {"pin": 2, "signal": "VCC", "function": "L+5V"},
+        {"pin": 3, "signal": "VDD", "function": "30V"},
+        {"pin": 4, "signal": "EM-XF", "function": "Solenoid value"}
+      ]
+    },
+    "machineHeadSolenoid": {
+      "pins": 14,
+      "pinout": [
+        {"pin": 1, "signal": "VDD", "function": "+30V"},
+        {"pin": 2, "signal": "VDD", "function": "+30V"},
+        {"pin": 3, "signal": "+5V", "function": "+5V"},
+        {"pin": 4, "signal": "GND", "function": "Ground"},
+        {"pin": 5, "signal": "GND", "function": "Ground"},
+        {"pin": 6, "signal": "VDD", "function": "+30V"},
+        {"pin": 7, "signal": "VDD", "function": "+30V"},
+        {"pin": 8, "signal": "OUT1", "function": "Trimming"},
+        {"pin": 9, "signal": "OUT5", "function": "Nipping"},
+        {"pin": 10, "signal": "DIN4", "function": "Fill half needle SW"},
+        {"pin": 11, "signal": "DIN3", "function": "Fill needle SW"},
+        {"pin": 12, "signal": "DIN1", "function": "Back tack SW"},
+        {"pin": 13, "signal": "OUT2", "function": "Sweeping"},
+        {"pin": 14, "signal": "OUT4", "function": "Clamping"}
+      ]
+    }
+  },
+  "panel": {
+    "type": "20-button panel with LCD display",
+    "buttons": [
+      {
+        "id": 1,
+        "name": "Stitch length adjustment key",
+        "description": "Stitch length adjustment key, press + to increase or press - to decrease stitch length in idle state"
+      },
+      {
+        "id": 2,
+        "name": "Presser foot height setting",
+        "description": "Press to change the height of presser foot lifting in idle state"
+      },
+      {
+        "id": 3,
+        "name": "Front hardening key",
+        "description": "Front solid joint function selection key. Each press cycles: front solid joint → front double solid joint → close cycle. Corresponding LCD icon lights up. Select key to set number of pins in segment A and B."
+      },
+      {
+        "id": 4,
+        "name": "Rear hardening key",
+        "description": "After solid seam function selection key. Each press cycles: after solid seam → after double solid seam → close cycle. Corresponding LCD icon lights up. Select key to set number of pins in segment C and D."
+      },
+      {
+        "id": 5,
+        "name": "Clamping function",
+        "description": "1. Press to toggle LCD thread tension icon on (line clamping function on). Press again to turn off. 2. When bird's nest is opened, thread clamping function is forced open and key is invalid."
+      },
+      {
+        "id": 6,
+        "name": "Press foot lift key",
+        "description": "Short press: cycles presser foot lifting selection: on → midway on → on after trim → midway off after trim → off after trim → off → (repeat). Long press: turn on or off the presser foot lift function."
+      },
+      {
+        "id": 7,
+        "name": "Trimmer key",
+        "description": "Press briefly to switch the automatic thread trimming function on/off."
+      },
+      {
+        "id": 8,
+        "name": "Mode switch key",
+        "description": "Press briefly to switch the working mode of the sew machine. Sequence: free sew → W sew → multi-section sew."
+      },
+      {
+        "id": 9,
+        "name": "Needle position section key",
+        "description": "Short press to switch the up and down needle stop position."
+      },
+      {
+        "id": 10,
+        "name": "Pattern sew key / Piecework interface key",
+        "description": "1. Short press to enter pattern sew mode. In pattern sew mode, short press to switch between pattern sew interface and pattern sew setting interface. 2. Long press to enter or exit the piece counting mode."
+      },
+      {
+        "id": 11,
+        "name": "P (Parameter mode)",
+        "description": "Enter the parameter function."
+      },
+      {
+        "id": 12,
+        "name": "Up key (speed up)",
+        "description": "In this mode, adjust this key to increase speed."
+      },
+      {
+        "id": 13,
+        "name": "Down key (speed down)",
+        "description": "In this mode, adjust this key to decrease speed."
+      },
+      {
+        "id": 14,
+        "name": "Left key",
+        "description": "Turn to left to choose parameter."
+      },
+      {
+        "id": 15,
+        "name": "Right key",
+        "description": "Turn to right to choose parameter."
+      },
+      {
+        "id": 16,
+        "name": "Reset key",
+        "description": "Long press to back to factory setting."
+      },
+      {
+        "id": 17,
+        "name": "Locksew key",
+        "description": "Short press cycles: front condense stitch → rear condense stitch → front and rear condense stitch → close."
+      },
+      {
+        "id": 18,
+        "name": "Voice key",
+        "description": "1. Short press to toggle voice function and power-on language: voice function on → power-on language on → power-on language off → voice function off. 2. Short press to broadcast voice navigation when reporting an error."
+      },
+      {
+        "id": 19,
+        "name": "Clamping function without any thrum",
+        "description": "1. Only N model can be operated. Short press to set used or cancelled clamping function without any thrum. 2. Long press to enter the quick adjustment interface of clamping function without any thrum."
+      },
+      {
+        "id": 20,
+        "name": "Automatic triggering of multi segment sewing",
+        "description": "1. Switch through parameter item P34."
+      }
+    ]
+  },
+  "parameterEntry": {
+    "userParams": {
+      "range": "P00-P43",
+      "access": "Press P button → use Left/Right to navigate parameters → use Up/Down to adjust value → press P to save and exit",
+      "description": "User-level parameters adjustable by operators"
+    },
+    "technicianParams": {
+      "range": "P47-P304",
+      "access": "Hold P button while powering on machine → technician parameter mode → same navigation as user params",
+      "description": "Technician-level parameters requiring service access"
+    },
+    "monitoringMode": {
+      "access": "Press P + press foot lifter key simultaneously → monitoring mode → press up/down to navigate monitoring items → press P to save (for items 24, 25, 26, 28)",
+      "upperNeedleStop": "Enter monitoring item 24, adjust handwheel to up needle position, long press P to save"
+    },
+    "quickAdjustMode": {
+      "access": "Long press P + stitch length plus key → Quick Parameter Adjustment Mode → press Up/Down to switch options",
+      "options": [
+        {"option": "0", "description": "Set stepper motor zero position — place paper on needle plate, sew without thread, check needle operates in hole"},
+        {"option": "4", "description": "Adjust stitch length 4.0 forward — target 3.9-4.1mm"},
+        {"option": "-4", "description": "Adjust stitch length overlap for reverse sew 4.0 (min 10 stitches)"},
+        {"option": "5", "description": "Adjust stitch length 5.0 forward — target 4.8-5.2mm"},
+        {"option": "-5", "description": "Adjust stitch length overlap for reverse sew 5.0 (min 5 stitches)"},
+        {"option": "-3", "description": "Adjust stitch length overlap for reverse sew 3.0 (min 5 stitches)"},
+        {"option": "-2", "description": "Adjust stitch length overlap for reverse sew 2.0 (min 5 stitches)"},
+        {"option": "L", "description": "Adjust presser foot height — measure with gauge block at 1mm and press P to save"}
+      ]
+    },
+    "languageChange": "Long press voice button, switch parameters with Up/Down keys. Languages: 0=English, 1=Spanish, 2=Portuguese, 3=Russian, 4=Arabic, 5=Vietnamese, 6=Farsi, 7=Bengali, 8=Turkish, 9=Indonesian, 10=Polish, 11=Italian, 12=Thai, 13=Ukrainian (multi-lingual version only)",
+    "factoryReset": "Long press Reset key to restore all factory defaults"
+  },
+  "pieceworkMode": {
+    "enter": "Long press pattern sew key (button 10) to enter piece counting interface",
+    "exit": "Long press piece counting icon OR short press free sew icon",
+    "clearV01": "Directly adjust v01 to 0 and save it",
+    "standby": "Press scissors button to enter standby mode (AMH machine indicator light flashes). Press again to exit standby.",
+    "productionDataClear": "Set v13=1 to clear piece count and efficiency data. Set v13=2 to restore all piecework parameters to factory defaults.",
+    "passwordLock": "Set password via v12. Must restart machine for password to take effect. Change v12 to correct password to decrypt.",
+    "vParameters": [
+      {"param": "v01", "range": "0-9999", "name": "Number of pieces produced", "passwordProtected": false},
+      {"param": "v02", "range": "1-9999", "name": "Target pieces", "passwordProtected": true, "description": "Set target production quantity; used to calculate completion rate"},
+      {"param": "v03", "range": "real-time", "name": "Target completion rate", "passwordProtected": false, "description": "Production quantity ÷ target quantity × 100%"},
+      {"param": "v04", "range": "0-9999", "name": "Target efficiency", "passwordProtected": true, "description": "N/100 minutes (e.g. 33 = 0.33 pieces/minute)"},
+      {"param": "v05", "range": "real-time", "name": "Current target number of pieces", "passwordProtected": false, "description": "Number of pieces that should be completed currently"},
+      {"param": "v06", "range": "real-time", "name": "Current efficiency", "passwordProtected": false, "description": "Production quantity ÷ Current target quantity"},
+      {"param": "v07", "range": "real-time", "name": "Commencement efficiency (individual)", "passwordProtected": false, "description": "Motor running time ÷ (Power on time - Pause time)"},
+      {"param": "v08", "range": "real-time", "name": "Commencement efficiency (company)", "passwordProtected": false, "description": "Motor running time ÷ Power on time"},
+      {"param": "v09", "range": "0-10", "name": "Piecework mode", "passwordProtected": true, "description": "0=Turn off piecework; 1=Automatic piecework"},
+      {"param": "v10", "range": "1-9999", "name": "Piecework unit", "passwordProtected": true, "description": "Record as one piece every N times of thread cutting"},
+      {"param": "v11", "range": "0-3", "name": "Efficiency reminder function", "passwordProtected": false, "description": "0=LOGO light off + voice off; 1=LOGO light on + voice off; 2=LOGO light off + voice on; 3=LOGO light on + voice on"},
+      {"param": "v12", "range": "0-9999", "name": "Password function", "passwordProtected": true},
+      {"param": "v13", "range": "0-9999", "name": "Data clear", "passwordProtected": false, "description": "0=None; 1=Clear piecework and efficiency data (not mode/unit/reminder/password); 2=Restore all piecework parameters to factory defaults"}
+    ]
+  },
+  "parameters": [
+    {"code": "P00", "name": "Minimum sewing speed (r/min)", "default": 200, "range": "100-800"},
+    {"code": "P01", "name": "Free slot speed limit (r/min)", "default": 3800, "range": "200-5000"},
+    {"code": "P02", "name": "Multi-slot speed limit (r/min)", "default": 3500, "range": "200-3500"},
+    {"code": "P03", "name": "Up and down stop needle position selection", "default": 1, "range": "0-1", "description": "0=up; 1=down"},
+    {"code": "P04", "name": "Front bar-tacking speed (r/min)", "default": 1800, "range": "200-3000"},
+    {"code": "P05", "name": "Back bar-tacking speed (r/min)", "default": 1800, "range": "200-3000"},
+    {"code": "P06", "name": "W sew speed (r/min)", "default": 1800, "range": "200-3000"},
+    {"code": "P07", "name": "Soft start sew speed (r/min)", "default": 800, "range": "100-2000"},
+    {"code": "P08", "name": "Soft start sew stitch", "default": 2, "range": "1-9"},
+    {"code": "P09", "name": "Soft start sew switch", "default": 0, "range": "0-1", "description": "0=off; 1=on"},
+    {"code": "P10", "name": "W slit compensates for A", "default": 0, "range": "-20 to 20", "description": "Normal sew to back sew compensation"},
+    {"code": "P11", "name": "W slit compensates for B", "default": 0, "range": "-20 to 20", "description": "Back sew to normal sew compensation"},
+    {"code": "P12", "name": "Delay time for half stitch (ms)", "default": 150, "range": "1-180"},
+    {"code": "P13", "name": "Delay time for one stitch (ms)", "default": 180, "range": "150-250"},
+    {"code": "P14", "name": "Half stitch speed (r/min)", "default": 200, "range": "100-500"},
+    {"code": "P15", "name": "Mode of half stitch", "default": 0, "range": "0-2", "description": "0=Half stitch according to time; 1=Half stitch; 2=One stitch"},
+    {"code": "P18", "name": "Front reinforcement compensation A", "default": 0, "range": "-20 to 20"},
+    {"code": "P19", "name": "Front reinforcement compensation B", "default": 0, "range": "-20 to 20"},
+    {"code": "P21", "name": "Manual backseam spindle speed limit 1 (r/min)", "default": 3500, "range": "0-3800"},
+    {"code": "P23", "name": "Curve mode of pedal", "default": 0, "range": "0-3", "description": "0=straight; 1=slope; 2=curve (square/extraction of root); 3=S curve"},
+    {"code": "P24", "name": "Pedal position of trimming", "default": 350, "range": "0-4095"},
+    {"code": "P25", "name": "After reinforcement compensation C", "default": 0, "range": "-20 to 20"},
+    {"code": "P26", "name": "After reinforcement compensation D", "default": 0, "range": "-20 to 20"},
+    {"code": "P27", "name": "Voltage value of trimming without presser foot lifting", "default": 550, "range": "0-4095"},
+    {"code": "P29", "name": "Pedal control speed power curve", "default": 1, "range": "0-1", "description": "0=square; 1=square root (see P23)"},
+    {"code": "P30", "name": "When too thick motor force mode", "default": 0, "range": "0-2", "description": "0=normal; 1=motor supplies more power; 2=powerful motor + backwards to control"},
+    {"code": "P31", "name": "Power of motor when cutting wire", "default": 35, "range": "10-60"},
+    {"code": "P32", "name": "Thread clamp full power time", "default": 40, "range": "1-200"},
+    {"code": "P33", "name": "Thread clamp keep duty", "default": 30, "range": "1-100", "description": "Higher number = greater force"},
+    {"code": "P34", "name": "Multi-slit automatic trigger", "default": 0, "range": "0-1", "description": "0=trigger off (controlled by pedal, can be stopped/started); 1=trigger open (touch pedal, automatically execute a period of action)"},
+    {"code": "P35", "name": "Thread clamp switch", "default": 1, "range": "0-1"},
+    {"code": "P38", "name": "Trimmer switch", "default": 1, "range": "0-1", "description": "0=off; 1=on"},
+    {"code": "P39", "name": "Lift foot switch midway", "default": 0, "range": "0-1", "description": "0=off; 1=on"},
+    {"code": "P40", "name": "Switch of auto press foot lifter after trimming", "default": 0, "range": "0-1", "description": "0=off; 1=on"},
+    {"code": "P41", "name": "Unit of counter", "default": 1, "range": "1-50", "description": "Stitch count increments by 1 per N stitches"},
+    {"code": "P42", "name": "Setting of total counter", "default": 9999, "range": "1-9999"},
+    {"code": "P43", "name": "Counter mode", "default": 0, "range": "0-6", "description": "0=off; 1=ascending cycle count; 2=descending cycle count; 3=ascending to full, alarm and stop; 4=descending to 0, alarm and stop; 5=ascending to full, remind and keep running; 6=descending to 0, alarm and keep running"},
+    {"code": "P47", "name": "Pull back Angle after cutting", "default": 360, "range": "200-360", "level": "technician"},
+    {"code": "P49", "name": "Cutting speed (r/min)", "default": 250, "range": "100-500", "level": "technician"},
+    {"code": "P53", "name": "Press foot function switch", "default": 1, "range": "0-2", "description": "0=off; 1=press foot in half back position; 2=press foot in full back position", "level": "technician"},
+    {"code": "P54", "name": "Backlight brightness", "default": 100, "range": "0-100", "level": "technician"},
+    {"code": "P56", "name": "Turn on automatically find the pin position", "default": 1, "range": "0-1", "description": "0=No; 1=Yes", "level": "technician"},
+    {"code": "P58", "name": "Adjustment angle of up needle position", "default": 83, "range": "0-359", "description": "Angle reference point is the spindle Z signal", "level": "technician"},
+    {"code": "P59", "name": "Adjustment angle of down needle position", "default": 176, "range": "0-359", "description": "Angle reference point is P58 upper stop angle", "level": "technician"},
+    {"code": "P60", "name": "Automatic test speed (r/min)", "default": 3800, "range": "200-5000", "level": "technician"},
+    {"code": "P61", "name": "Automatic test run time (s)", "default": 3, "range": "1-255", "level": "technician"},
+    {"code": "P62", "name": "Special running", "default": 0, "range": "0-3", "description": "0=normal; 1=easy sew; 2=Initial Angle correction; 3=automatic testing mode; 4=Motor Test Mode; 5=Electromagnet Test mode", "level": "technician"},
+    {"code": "P63", "name": "Aging stopping time (s)", "default": 2, "range": "1-255", "level": "technician"},
+    {"code": "P66", "name": "Protection switch of machine head testing", "default": 1, "range": "0-1", "description": "0=Off; 1=On", "level": "technician"},
+    {"code": "P67", "name": "Protection switch of machine head", "default": 1, "range": "0-1", "description": "0=Positive; 1=Negative", "level": "technician"},
+    {"code": "P70", "name": "Pedal lift foot position", "default": 1000, "range": "0-4095", "level": "technician"},
+    {"code": "P72", "name": "Starting position of pressing the pedal forward", "default": 400, "range": "0-4095", "level": "technician"},
+    {"code": "P73", "name": "End position of pedal low-speed operation (relative to return center)", "default": 800, "range": "0-4095", "description": "Increasing makes it easier to control single needle operation", "level": "technician"},
+    {"code": "P74", "name": "Pedal maximum speed position", "default": 4000, "range": "0-4095", "description": "Higher = deeper front step required for maximum speed", "level": "technician"},
+    {"code": "P75", "name": "Setting of pedal back to middle", "default": 1650, "range": "0-4095", "level": "technician"},
+    {"code": "P78", "name": "Clamp starting Angle 1 (pre-reinforced close)", "default": 130, "range": "10-359", "description": "Front hardening; see P248", "level": "technician"},
+    {"code": "P79", "name": "Clip end Angle 1 (pre-reinforced close)", "default": 320, "range": "0-359", "description": "Front hardening; see P249", "level": "technician"},
+    {"code": "P80", "name": "Trimming starting angle", "default": 0, "range": "0-359", "description": "Angle reference point is the lower stop angle", "level": "technician"},
+    {"code": "P81", "name": "Trimming strength angle", "default": 70, "range": "0-359", "description": "Angle reference point is the lower stop angle", "level": "technician"},
+    {"code": "P82", "name": "Trimming ending angle", "default": 180, "range": "0-359", "level": "technician"},
+    {"code": "P83", "name": "Press foot delay time (ms)", "default": 150, "range": "1-500", "description": "After pedal pressed backwards, wait before lifting press foot", "level": "technician"},
+    {"code": "P84", "name": "Confirmation time of Safety switch alarm (ms)", "default": 300, "range": "1-500", "level": "technician"},
+    {"code": "P85", "name": "Recovery time of Safety switch alarm (ms)", "default": 50, "range": "1-200", "level": "technician"},
+    {"code": "P86", "name": "Pedal two-stage slope turning point speed", "default": 1500, "range": "0-4000", "description": "See P23", "level": "technician"},
+    {"code": "P87", "name": "Pedal two-stage slope turning point position", "default": 2700, "range": "0-4095", "description": "See P23", "level": "technician"},
+    {"code": "P88", "name": "Unit of counting", "default": 1, "range": "1-9999", "description": "Add 1 to value corresponding to sewing piece count unit", "level": "technician"},
+    {"code": "P89", "name": "Setting of total counting", "default": 9999, "range": "1-9999", "level": "technician"},
+    {"code": "P90", "name": "Counter mode", "default": 0, "range": "0-6", "description": "0=off; 1=ascending cycle; 2=descending cycle; 3=ascending to full, alarm and stop; 4=descending to 0, alarm and stop; 5=ascending to full, remind and keep running; 6=descending to 0, alarm and keep running. Press P briefly to cancel alarm.", "level": "technician"},
+    {"code": "P91", "name": "Stitch count value", "default": 0, "range": "0-9999", "description": "Real value displayed in monitoring item M10", "level": "technician"},
+    {"code": "P92", "name": "Piece count value", "default": 0, "range": "0-9999", "description": "Real value displayed in monitoring item M11", "level": "technician"},
+    {"code": "P93", "name": "Voice switch", "default": 1, "range": "0-1", "description": "0=Off; 1=On", "level": "technician"},
+    {"code": "P94", "name": "Welcome voice switch", "default": 1, "range": "0-1", "description": "0=Off; 1=On", "level": "technician"},
+    {"code": "P95", "name": "Language switch", "default": 0, "range": "0-13", "description": "0=English; 1=Spanish; 2=Portuguese; 3=Russian; 4=Arabic; 5=Vietnamese; 6=Farsi; 7=Bengali; 8=Turkish; 9=Indonesian; 10=Polish; 11=Italian; 12=Thai; 13=Ukrainian (multi-lingual version)", "level": "technician"},
+    {"code": "P97", "name": "Needle length 1 (mm)", "default": 35, "range": "0-50", "level": "technician"},
+    {"code": "P98", "name": "Pin pattern", "default": 0, "range": "0-3", "description": "0=Close; 1=Front lock pin; 2=Back lock pin; 3=Front and back lock pin", "level": "technician"},
+    {"code": "P99", "name": "Pin pitch lock switch", "default": 0, "range": "0-1", "description": "0=Off; 1=When opened, needle distance is locked to currently set value", "level": "technician"},
+    {"code": "P100", "name": "Manual inverted seam switching speed limit function selection", "default": 0, "range": "0-1", "description": "0=Off; 1=On", "level": "technician"},
+    {"code": "P101", "name": "1/2 pin distance button redefines the selection", "default": 0, "range": "0-1", "description": "0=Function reference P193; 1=The 1:1/2 needle distance button provides the function of filling needles", "level": "technician"},
+    {"code": "P106", "name": "Front reinforced parking position", "default": 0, "range": "0-1", "description": "0=Stop at second pin hole; 1=Stop at first pin hole", "level": "technician"},
+    {"code": "P107", "name": "Safety needle break selection switch", "default": 1, "range": "0-1", "description": "0=Off; 1=On", "level": "technician"},
+    {"code": "P108", "name": "Anti-break pin start spindle Angle", "default": 20, "range": "0-359", "level": "technician"},
+    {"code": "P109", "name": "Breakproof needle end spindle Angle", "default": 90, "range": "0-359", "level": "technician"},
+    {"code": "P110", "name": "Multi-section seam cutting in the middle reinforcement function switch", "default": 0, "range": "0-1", "description": "0=closed (no hardening before section completes); 1=open", "level": "technician"},
+    {"code": "P111", "name": "Slit micro-lift presser foot switch", "default": 0, "range": "0-1", "description": "0=Off; 1=On", "level": "technician"},
+    {"code": "P124", "name": "Front lock needle spacing", "default": 8, "range": "0-50", "level": "technician"},
+    {"code": "P125", "name": "Front lock pin direction", "default": 0, "range": "0-1", "description": "0=forward stitch; 1=reverse stitch", "level": "technician"},
+    {"code": "P126", "name": "Front lock speed (r/min)", "default": 1000, "range": "100-2500", "level": "technician"},
+    {"code": "P127", "name": "Number of front lock stitches", "default": 2, "range": "0-12", "level": "technician"},
+    {"code": "P128", "name": "Distance of the back lock needle", "default": 5, "range": "0-50", "level": "technician"},
+    {"code": "P129", "name": "Rear lock speed (r/min)", "default": 1800, "range": "100-2500", "level": "technician"},
+    {"code": "P130", "name": "Number of back lock stitches", "default": 2, "range": "0-12", "level": "technician"},
+    {"code": "P131", "name": "Back lock needle direction", "default": 0, "range": "0-1", "description": "0=forward stitch; 1=reverse stitch", "level": "technician"},
+    {"code": "P132", "name": "Speed limit (r/min)", "default": 2000, "range": "200-3000", "level": "technician"},
+    {"code": "P133", "name": "Zero pitch correction", "default": -10, "range": "-999 to 999", "level": "technician"},
+    {"code": "P134", "name": "Step position correction during parking", "default": 1050, "range": "0-2500", "level": "technician"},
+    {"code": "P161", "name": "Offset speed (%)", "default": 100, "range": "70-130", "level": "technician"},
+    {"code": "P162", "name": "Offset speed (%)", "default": 100, "range": "70-130", "level": "technician"},
+    {"code": "P163", "name": "Offset for pattern stitch (%)", "default": 100, "range": "70-130", "level": "technician"},
+    {"code": "P164", "name": "Figure stitch offset (%)", "default": 100, "range": "70-130", "level": "technician"},
+    {"code": "P165", "name": "Right stitch speed compensation", "default": 100, "range": "70-130", "level": "technician"},
+    {"code": "P166", "name": "Reverse stitch speed compensation", "default": 100, "range": "70-130", "level": "technician"},
+    {"code": "P169", "name": "Manual backstitch spindle speed limit 2 (r/min)", "default": 3500, "range": "0-3800", "description": "3.5-4.5 stitch length", "level": "technician"},
+    {"code": "P170", "name": "Manual backseam spindle speed limit 3 (r/min)", "default": 3200, "range": "0-3500", "description": "≥4.6 stitch length", "level": "technician"},
+    {"code": "P171", "name": "Stitching needle length compensation ratio", "default": 100, "range": "70-130", "level": "technician"},
+    {"code": "P172", "name": "Reverse stitching needle length compensation ratio", "default": 100, "range": "70-130", "level": "technician"},
+    {"code": "P173", "name": "Pause press foot height", "default": 9, "range": "1-13", "level": "technician"},
+    {"code": "P174", "name": "Lift presser foot height after cutting line", "default": 9, "range": "1-13", "level": "technician"},
+    {"code": "P175", "name": "Press foot height adjust", "default": 0, "range": "-999 to 999", "description": "Press foot height correction (correct to 1mm high)", "level": "technician"},
+    {"code": "P177", "name": "Underfoot fall speed (r/min)", "default": 400, "range": "100-800", "level": "technician"},
+    {"code": "P179", "name": "Press foot lift speed (r/min)", "default": 400, "range": "200-800", "level": "technician"},
+    {"code": "P181", "name": "Press height limit", "default": 13, "range": "0-13", "description": "Limit the height of pressor foot in middle (P173) and end (P174)", "level": "technician"},
+    {"code": "P182", "name": "Stepmotor press up time", "default": 10, "range": "1-20", "description": "Longest holding time after press foot raised; auto falls after timeout", "level": "technician"},
+    {"code": "P183", "name": "Spindle angle when stepper distance is switched", "default": 140, "range": "0-359", "description": "Ensures needle distance remains small when stepper switches between normal and reverse seam", "level": "technician"},
+    {"code": "P193", "name": "Mode of 1/2 pin spacing keys", "default": 0, "range": "0-5", "description": "0=1/2 stitch length; 1=1/4 stitch length; 2=1/8 stitch length; 3=reserve sew 1/2; 4=reserve sew 1/4; 5=reserve sew 1/8", "level": "technician"},
+    {"code": "P194", "name": "Start sew first stitch speed", "default": 600, "range": "100-1500", "description": "0 indicates speed limit not limited", "level": "technician"},
+    {"code": "P195", "name": "Second stitch speed (pre-reinforced close)", "default": 1200, "range": "100-2000", "description": "0 indicates not limited", "level": "technician"},
+    {"code": "P196", "name": "Third stitch speed (front reinforced close)", "default": 0, "range": "0-4000", "description": "0 indicates not limited", "level": "technician"},
+    {"code": "P197", "name": "Stitch unit", "default": 0, "range": "0-1", "description": "0=mm units (see P97); 1=imperial units (see P198)", "level": "technician"},
+    {"code": "P198", "name": "Needle length 2 (imperial units)", "default": 12, "range": "5-47", "description": "Number of stitches per inch", "level": "technician"},
+    {"code": "P202", "name": "Bus voltage correction", "default": 0, "range": "-30 to 30", "level": "technician"},
+    {"code": "P204", "name": "Pattern sew compensation 1", "default": 0, "range": "-20 to 20", "description": "Cut straight seam and reverse seam", "level": "technician"},
+    {"code": "P205", "name": "Pattern sew compensation 2", "default": 0, "range": "-20 to 20", "description": "Cut straight seam on back seam", "level": "technician"},
+    {"code": "P220", "name": "Needle spacing maintains maximum current", "default": 15, "range": "5-18", "level": "technician"},
+    {"code": "P230", "name": "Max stitch length limit", "default": 75, "range": "0-75", "description": "Limit the maximum adjustable range (uppermost limit)", "level": "technician"},
+    {"code": "P240", "name": "Lift the press foot height slightly", "default": 50, "range": "0-1000", "level": "technician"},
+    {"code": "P241", "name": "Minimum allowable Angle of the seam micro pressure foot", "default": 180, "range": "0-359", "description": "Spindle Angle", "level": "technician"},
+    {"code": "P242", "name": "Maximum allowable Angle of the seam micro pressure foot", "default": 240, "range": "0-359", "description": "Spindle Angle", "level": "technician"},
+    {"code": "P245", "name": "Increase or decrease stitches in first section of W sew", "default": 0, "range": "-99 to 99", "level": "technician"},
+    {"code": "P246", "name": "Increase or decrease stitches at end of W sew", "default": 0, "range": "-99 to 99", "level": "technician"},
+    {"code": "P247", "name": "Thread trimming switch for each section of multi section sew", "default": 0, "range": "0-2", "description": "0=start from first section after cutting; 1=auto cut after each section, start from next section after cutting; 2=do not auto cut after each section, start from next section after cutting", "level": "technician"},
+    {"code": "P248", "name": "Clamping start Angle 2 (pre-reinforced open)", "default": 100, "range": "0-359", "description": "After front hardening is closed, see P78", "level": "technician"},
+    {"code": "P249", "name": "Clip end Angle 2 (pre-reinforced open)", "default": 270, "range": "0-359", "description": "After front hardening is closed, see P79", "level": "technician"},
+    {"code": "P250", "name": "Clamp start Angle 3 (front lock pin open)", "default": 130, "range": "0-359", "level": "technician"},
+    {"code": "P251", "name": "Clamp end Angle 3 (front lock pin open)", "default": 320, "range": "0-359", "level": "technician"},
+    {"code": "P256", "name": "Less bird's nest function switch", "default": 1, "range": "0-1", "level": "technician"},
+    {"code": "P257", "name": "Starting angle of the little bird's nest", "default": 160, "range": "1-200", "description": "Angle relative to lower stop position", "level": "technician"},
+    {"code": "P258", "name": "Duration of little bird's nest dialing", "default": 15, "range": "15-40", "description": "Delay time after thread trimming is in place, controls thread dialing off", "level": "technician"},
+    {"code": "P259", "name": "Loose wire function switch", "default": 1, "range": "0-1", "description": "0=Close; 1=Open", "level": "technician"},
+    {"code": "P260", "name": "Protection time of thread release electromagnet (ms)", "default": 20, "range": "1-60", "description": "Forced closing after holding time to prevent electromagnet overheating", "level": "technician"},
+    {"code": "P261", "name": "Starting angle of thread trimming and loosening", "default": 30, "range": "1-359", "description": "Loose line starting angle (calculated at 0° for lower positioning) — Bird's Nest Close", "level": "technician"},
+    {"code": "P262", "name": "Loose wire end Angle 1 (when cutting)", "default": 180, "range": "1-359", "description": "End angle of loose line (lower positioning, 0°), must be greater than P101 value — Bird's Nest Close", "level": "technician"},
+    {"code": "P265", "name": "Starting angle of loose line of clamp function without any thrum", "default": 1, "range": "1", "level": "technician"},
+    {"code": "P266", "name": "Release end angle parameter of clamp function without any thrum", "default": 65, "range": "1-180", "level": "technician"},
+    {"code": "P267", "name": "Clamping line opening Angle 4 (less bird's nest opening)", "default": 300, "range": "5-359", "level": "technician"},
+    {"code": "P268", "name": "Clamping end Angle 4 (less bird's nest opening)", "default": 359, "range": "10-359", "level": "technician"},
+    {"code": "P269", "name": "Compensation angle of thread gripper when free sew with clamp without any thrum is slow", "default": 6, "range": "0-359", "level": "technician"},
+    {"code": "P270", "name": "Speed limit for first stitch with clamp function without any thrum (less bird's nest opening)", "default": 200, "range": "0-300", "level": "technician"},
+    {"code": "P272", "name": "Full opening time of thread trimming", "default": 100, "range": "50-100", "level": "technician"},
+    {"code": "P273", "name": "Thread trimming solenoid duty ratio", "default": 50, "range": "30-100", "level": "technician"},
+    {"code": "P274", "name": "Full opening time of loose line", "default": 40, "range": "40-100", "level": "technician"},
+    {"code": "P275", "name": "Loose wire electromagnet strength", "default": 30, "range": "30-100", "level": "technician"},
+    {"code": "P276", "name": "Protection time of wire pulling electromagnet", "default": 12, "range": "1-60", "level": "technician"},
+    {"code": "P277", "name": "Delay time of thread loosening during thread trimming", "default": 10, "range": "0-30", "level": "technician"},
+    {"code": "P283", "name": "Duty cycle of wire pulling solenoid", "default": 100, "range": "0-100", "level": "technician"},
+    {"code": "P284", "name": "Puller angle compensation", "default": 15, "range": "0-90", "level": "technician"},
+    {"code": "P292", "name": "Tow wheel switch", "default": 0, "range": "0-1", "description": "0=off; 1=on", "level": "technician"},
+    {"code": "P303", "name": "Second speed limit (front reinforcement open)", "default": 0, "range": "0-1500", "description": "0 indicates no speed limit", "level": "technician"},
+    {"code": "P304", "name": "Third pin speed limit (front reinforcement open)", "default": 0, "range": "0-3000", "description": "0 indicates no speed limit", "level": "technician"}
+  ],
+  "monitoring": [
+    {"code": "M10", "description": "Stitches account number"},
+    {"code": "M11", "description": "Pieces account number"},
+    {"code": "M13", "description": "Panel version number"},
+    {"code": "M18", "description": "Main board version number for control box"},
+    {"code": "M20", "description": "Generatrix voltage"},
+    {"code": "M21", "description": "Machine speed"},
+    {"code": "M23", "description": "Initial angle"},
+    {"code": "M24", "description": "Mechanical angle"},
+    {"code": "M25", "description": "Max value for pedal forward press"},
+    {"code": "M26", "description": "Sample value for pedal back"},
+    {"code": "M28", "description": "Sample pedal value of trimming"},
+    {"code": "M30-M37", "description": "Historical Error numbers"},
+    {"code": "M44", "description": "Step reference position"},
+    {"code": "M45", "description": "Step Z signal"},
+    {"code": "M46", "description": "Spindle Z signal"},
+    {"code": "M58", "description": "Stepmotor Electric Angle"},
+    {"code": "M59", "description": "Stepmotor current value"},
+    {"code": "M64", "description": "Stepmotor last action maximum current"}
+  ],
+  "errorCodes": [
+    {"code": "Err-01", "description": "Arm shaft motor overcurrent (hardware)", "solution": "1. Turn off system power, turn on again after 30 seconds. 2. Check whether arm shaft motor encoder and electronic control are damaged or in poor conditions. 3. If still fails after troubleshooting and restart, contact local service provider."},
+    {"code": "Err-02", "description": "Arm shaft motor overcurrent (software)", "solution": "Same as Err-01."},
+    {"code": "Err-03", "description": "System undervoltage", "solution": "Disconnect controller power and check if input power supply voltage is lower than 176V. If so, restart controller after voltage returns to normal. Contact local service provider if still fails."},
+    {"code": "Err-04", "description": "Overvoltage (during shutdown)", "solution": "Disconnect controller power and check if input power voltage is higher than 264V. Restart after voltage returns to normal. Contact local service provider if still fails."},
+    {"code": "Err-05", "description": "Overvoltage (during operation)", "solution": "Same as Err-04."},
+    {"code": "Err-07", "description": "Arm shaft motor current detection circuit failure", "solution": "Turn off system power, turn on again after 30 seconds. Try a few times. If fault occurs frequently, contact local service provider."},
+    {"code": "Err-08", "description": "Arm shaft motor stalled", "solution": "1. Check for foreign objects wrapped around machine head, thread residue in rotating shuttle, or eccentric wheel stuck. 2. Check if input plug of arm shaft motor power supply is detached, loose, or damaged. 3. Contact service provider if still fails."},
+    {"code": "Err-10", "description": "Panel communication failure", "solution": "1. Check connection between operation panel and electric control — drops off, loose, or broken. 2. Contact service provider if still fails after restart."},
+    {"code": "Err-12", "description": "Arm shaft motor initial angle detection failure", "solution": "Try 2-3 times again after power off. If still fails, contact local service provider."},
+    {"code": "Err-13", "description": "Arm shaft motor zero position fault", "solution": "1. Turn off system power, turn on again after 30 seconds. 2. Check arm shaft motor encoder and electronic control for damage. 3. Contact service provider if still fails."},
+    {"code": "Err-14", "description": "Electronic control EEPROM is faulty", "solution": "Power off system and power on again 30 seconds later. If controller still fails, contact local service provider or dial 4008876858."},
+    {"code": "Err-15", "description": "Arm shaft motor overspeed protection", "solution": "1. Turn off system power, turn on again after 30 seconds. 2. Check arm shaft motor encoder and electronic control for damage. 3. Contact service provider if still fails."},
+    {"code": "Err-16", "description": "Arm shaft motor reverse", "solution": "Same as Err-15."},
+    {"code": "Err-17", "description": "Panel date read/write failure", "solution": "Turn off system power, turn on again after 30 seconds. If still fails, contact local service provider."},
+    {"code": "Err-18", "description": "Arm shaft motor overload", "solution": "Check whether arm shaft motor is stalled. If not, contact local service provider."},
+    {"code": "Err-19", "description": "Motor type mismatch", "solution": "Turn off system power, turn on again after 30 seconds. If still fails, contact local service provider."},
+    {"code": "Err-20", "description": "Pedal error", "solution": "1. Check if connection cable of pedal speed controller is dropped off, loose, or damaged. 2. Contact service provider if still fails after restart."},
+    {"code": "Err-21", "description": "Backstitch step motor hardware overcurrent", "solution": "Turn off system power, check the socket of the reverse sew motor, and restart the electric control. If error still reported, contact local service provider."},
+    {"code": "Err-22", "description": "Backstitch step motor software overcurrent", "solution": "Same as Err-21."},
+    {"code": "Err-23", "description": "Backstitch step motor current detection circuit failure", "solution": "Same as Err-21."},
+    {"code": "Err-24", "description": "Backstitch step motor stalled", "solution": "Same as Err-21."},
+    {"code": "Err-28", "description": "Backstitch step motor zero position fault", "solution": "Same as Err-21."},
+    {"code": "Err-29", "description": "Reverse stitch stepping motor encoder AB signal abnormal", "solution": "Same as Err-21."},
+    {"code": "Err-30", "description": "Password lock shutdown alarm", "solution": "Machine has reached the set time. If further use is required, contact your local service provider."}
+  ],
+  "alarmCodes": [
+    {"code": "A-UP", "description": "Alarm of safety switch", "solution": "Return machine head to normal position, to make sure safety switch rebound"},
+    {"code": "ALR-1", "description": "Alarm of machine head button with short circuit", "solution": "Turn off system power and change the light button of machine head"},
+    {"code": "ALR-2", "description": "Alarm when needle counting is fulled", "solution": "Press P key with short time, alarm will stop"},
+    {"code": "ALR-3", "description": "Alarm when needle counting is fulled", "solution": "Press P key with short time, alarm will stop"},
+    {"code": "OFF", "description": "Power off", "solution": "1. After the power switch is turned off, the panel will display OFF, and it will return to normal after turning on the power again. 2. Please check if the input voltage is too low."}
+  ],
+  "troubleshooting": [
+    {
+      "issue": "Machine prompts error via voice but no error code visible",
+      "cause": "Voice error broadcast active",
+      "solution": "Note the error code being announced. Press Voice key (button 18) to hear the broadcast again. Refer to error code table Err-01 to Err-30."
+    },
+    {
+      "issue": "Piecework mode not counting correctly",
+      "cause": "v09 not set to 1, or v10 piecework unit wrong",
+      "solution": "Enter piecework interface. Set v09=1 (automatic piecework). Set v10 to the number of thread cuts per piece."
+    }
+  ]
+}

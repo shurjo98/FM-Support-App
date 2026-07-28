@@ -1,0 +1,565 @@
+{
+  "model": "Xinghuo Fully Automatic Sewing Control System Gen-II HMI",
+  "manufacturer": "Shenzhen Xing Huo CNC Technology Co., Ltd. (星火数控科技有限公司)",
+  "controllerType": "Universal CNC template sewing controller (XH Gen-II)",
+  "type": "Third-party automatic template sewing controller used in CNC sewing machines with XY servo axes",
+  "source": "全自动缝纫控制系统操作说明书2.0-英文.pdf (148 pages)",
+  "note": "This is NOT a Jack-branded product. It is a Xinghuo (Xing Huo / 星火) universal controller used in template/auto sewing machines, potentially including some Jack automatic models. Power: 220V AC, 1-2KW. Display: 7-inch LCD touch screen. Parameter files use .xhp extension. Machine parameters require service personnel.",
+  "specs": {
+    "power": "220V AC, 1-2KW",
+    "display": "7-inch LCD touch screen",
+    "parameterFileExtension": ".xhp",
+    "languages": ["Simplified Chinese", "Traditional Chinese", "English", "Japanese", "Korean", "Vietnamese", "Russian", "Italian", "Turkish", "and more (10 languages total)"],
+    "templateRecognition": ["Barcode", "RFID"]
+  },
+  "homeInterface": {
+    "description": "27-button main home interface for operation",
+    "keyButtons": [
+      "XY Origin — enter XY origin detection",
+      "Fast Change Knife — quick tool change",
+      "Winding mode icon",
+      "Single Step Test",
+      "Enter Sew",
+      "4x4 Counter display (AddCounter)",
+      "Clean up (quick clear)",
+      "Bottom Line counter",
+      "Pattern number selector",
+      "Shortcut Key - Bag Opening",
+      "Shortcut Key - Pattern"
+    ]
+  },
+  "parameterFilesManagement": {
+    "storage": "Flash memory (internal) and USB flash disk",
+    "fileExtension": ".xhp",
+    "operations": {
+      "export": "Export current running parameter file to USB flash disk",
+      "write": "Write selected parameter file to system; system runs with new configuration immediately",
+      "delete": "Delete selected parameter files",
+      "backup": "Backup current running parameter file to flash list",
+      "import": "Import selected .xhp file from USB disk to flash file list"
+    },
+    "note": "Parameter files vary by equipment model — mixing is prohibited. Same model may have different optimal factory parameters due to mechanical differences. Recommended: export factory parameters after purchase and save with machine-specific filenames."
+  },
+  "userParameters": {
+    "description": "User parameters (Chapter 6) accessible from menu interface. Adjustable by operators and technicians for production settings.",
+    "categories": {
+      "AutoProcess": {
+        "description": "Parameters for automatic processing: frame pressing, thread cutting, foot pressing during auto cycle",
+        "parameters": [
+          {"name": "Lift the platen up after auto process", "range": "Yes/No", "default": "Yes"},
+          {"name": "No. of stitches to lower for Start and End presser foot", "range": "0-8", "default": "0"},
+          {"name": "Trimming after work end", "range": "Yes/No", "default": "Yes"},
+          {"name": "Return to position after auto process", "range": "Origin/Secondary origin", "default": "Secondary origin", "note": "Origin=absolute coordinate origin; Secondary origin=offset point added to the file"},
+          {"name": "Whether to loosen during movement", "range": "Yes/No", "default": "No"},
+          {"name": "Set the base pressure foot to keep the same", "range": "Yes/No", "default": "No"},
+          {"name": "Automatically press the frame when starts work", "range": "Yes/No", "default": "Yes"},
+          {"name": "Press frame before manual move axis", "range": "Yes/No", "default": "Yes"},
+          {"name": "Start needle repetition number", "range": "Close/1/2/3", "default": "Close", "note": "1/2/3 means the 1st needle position is sewn 1/2/3 additional times before proceeding"},
+          {"name": "No. of stitches for loose tension at start", "range": "0-255", "default": "0"},
+          {"name": "Dynamic presser foot height at start of sewing", "range": "0.000-4.000", "default": "0.000"},
+          {"name": "Dynamic presser foot height at end of sewing", "range": "0.000-4.000", "default": "0.000"},
+          {"name": "First and last presser foot amplitude setting", "range": "Normal/Halve/Enlarge", "default": "Normal"},
+          {"name": "Trim motor reset after work", "range": "Yes/No", "default": "Yes"},
+          {"name": "Dynamic presser foot reset after work", "range": "Yes/No", "default": "Yes"},
+          {"name": "Shift the axis before the reference", "range": "Yes/No", "default": "Yes"},
+          {"name": "Error if reference pressure frame doesn't press", "range": "Yes/No", "default": "No"},
+          {"name": "End the work and output IO1", "range": "Nil/OUT1-OUT12/Low/High", "default": "OUT1; Low"},
+          {"name": "End the work and output IO2", "range": "Nil/OUT1-OUT12/Low/High", "default": "OUT1; Low"}
+        ]
+      },
+      "StitchStartSpeed": {
+        "description": "Start speed ramping — set speed of each of the first 5 stitches to control acceleration from standstill",
+        "parameters": [
+          {"name": "Speed of the 1st stitch (rpm)", "range": "100-3000", "default": "300"},
+          {"name": "Speed of the 2nd stitch (rpm)", "range": "100-3000", "default": "600"},
+          {"name": "Speed of the 3rd stitch (rpm)", "range": "100-3000", "default": "1000"},
+          {"name": "Speed of the 4th stitch (rpm)", "range": "100-3000", "default": "1600"},
+          {"name": "Speed of the 5th stitch (rpm)", "range": "100-3000", "default": "2000"},
+          {"name": "Rewinding needle changes speed", "range": "100-3000", "default": "1500"},
+          {"name": "Start at a slow speed", "range": "Yes/No", "default": "No", "note": "Slow=increased at fixed rate; disables above acceleration settings"},
+          {"name": "The first two stitches start at a slow speed", "range": "Yes/No", "default": "No"},
+          {"name": "The last two stitches end up with a slow speed", "range": "Yes/No", "default": "No"}
+        ]
+      },
+      "SpeedParameter": {
+        "description": "Running speed settings for spindle, XY frame movement, and direction key speeds",
+        "parameters": [
+          {"name": "The highest speed of the spindle (rpm)", "range": "100-4500", "default": "2800", "note": "Limits maximum working speed in main processing interface"},
+          {"name": "The speed of frame moving (mm/min)", "range": "100-100000", "default": "15000", "note": "Moving speed of press frame in idling segment during normal sewing"},
+          {"name": "Pressing frame inching speed (mm/min)", "range": "100-20000", "default": "5000", "note": "Preview the press frame's moving speed when capturing or modifying files"},
+          {"name": "Simulation sewing speed (mm/min)", "range": "100-60000", "default": "8000", "note": "Moving speed of test sewing track"},
+          {"name": "Button of speed 1 (mm/min)", "range": "10-20000", "default": "500", "note": "Speed for slow arrow (▶) among 8 direction keys during manual frame shift"},
+          {"name": "Button of speed 2 (mm/min)", "range": "100-20000", "default": "1200", "note": "Speed for medium arrow (▶▶) among 8 direction keys"},
+          {"name": "Button of speed 3 (mm/min)", "range": "100-20000", "default": "2600", "note": "Speed for fast arrow (▶▶▶) among 8 direction keys"},
+          {"name": "Graph editing speed (mm/min)", "range": "0-10000", "default": "0", "note": "Speed used to edit the graph"},
+          {"name": "Head 2 speed (mm/s)", "range": "0.000-2000.000", "default": "0.000", "note": "XY moving speed of head 2 (e.g., laser cutting head)"},
+          {"name": "Head 3 speed (mm/s)", "range": "0.000-2000.000", "default": "0.000", "note": "XY moving speed of head 3"},
+          {"name": "Continuous inching speed", "range": "Reduce/Lowest/Normal", "default": "Reduce"},
+          {"name": "Reverse speed (rpm)", "range": "0-3000", "default": "0", "note": "Working speed of reverse sewing"},
+          {"name": "No pull line blowing output IO", "range": "OUT1-OUT8/Nil", "default": "Nil"},
+          {"name": "Limit speed starting from which inverted stitch", "range": "0-30", "default": "0"},
+          {"name": "Limit inverted stitch speed", "range": "100-1800", "default": "0"}
+        ]
+      },
+      "PlatenSetting": {
+        "description": "Frame/platen pressing behavior parameters",
+        "parameters": [
+          {"name": "Prohibit sewing when frame is uplifted", "range": "Yes/No", "default": "Yes"},
+          {"name": "The frame must be pressed when moving", "range": "Yes/No", "default": "Yes", "note": "When frame is lifted, axis cannot be moved manually"},
+          {"name": "Double frame lifting delay (ms)", "range": "0-10000", "default": "0", "note": "Interval time between main and auxiliary frames lifting"},
+          {"name": "Double frame pressing delay (ms)", "range": "0-10000", "default": "0", "note": "Interval time between main and auxiliary frames pressing down"},
+          {"name": "Thread-holding mode", "range": "Thread-loose/Thread-holding", "default": "Thread-loose"},
+          {"name": "Clip thread compensation", "range": "-30 to 30", "default": "0"},
+          {"name": "Pedal operating sequence", "range": "Normal/Special", "default": "Normal"},
+          {"name": "Pedal operating mode", "range": "1STA/1STB/1STC/2ST/3ST", "default": "2ST", "note": "Different operation modes for pedal switches of different mechanical structures"},
+          {"name": "Sewing clip line start angle", "range": "1-990", "default": "1"},
+          {"name": "Sewing clip line end angle", "range": "1-990", "default": "1"},
+          {"name": "Trim clip line start angle", "range": "1-990", "default": "1"},
+          {"name": "Trim clip line end angle", "range": "1-990", "default": "1"}
+        ]
+      },
+      "WindingSetting": {
+        "description": "Bobbin winding parameters",
+        "parameters": [
+          {"name": "Winder status", "range": "Allow/Prohibit", "default": "Allow", "note": "Set default state of processing assist interface winding"},
+          {"name": "Winder speed (rpm)", "range": "100-4500", "default": "1200", "note": "Default rotation speed for winding in processing assist interface"},
+          {"name": "Timing winder (s)", "range": "1-63000", "default": "70", "note": "Time from start to automatic stop of winding in processing assist interface"}
+        ]
+      },
+      "SpeedRatio": {
+        "description": "Spindle speed ratio settings — actual speed = set speed × ratio percentage",
+        "parameters": [
+          {"name": "High speed ratio (%)", "range": "1-100", "default": "100"},
+          {"name": "Mid-high speed ratio (%)", "range": "1-100", "default": "90"},
+          {"name": "Mid-low speed ratio (%)", "range": "1-100", "default": "70"},
+          {"name": "Low speed ratio (%)", "range": "1-100", "default": "60"}
+        ]
+      },
+      "ResetSetting": {
+        "description": "Machine reset behavior when returning to origin",
+        "parameters": [
+          {"name": "Put down the platen when reset", "range": "Yes/No", "default": "Yes"},
+          {"name": "Lift up the platen after manual reset", "range": "Yes/No", "default": "Yes"},
+          {"name": "Return origin mode", "range": "XY/X priority/Y priority", "default": "XY", "note": "XY=simultaneous; X priority=X first then Y"},
+          {"name": "The speed of back to the origin (mm/min)", "range": "100-60000", "default": "100"},
+          {"name": "Extended axis reset speed (mm/s)", "range": "1.000-2000.000", "default": "1.000"},
+          {"name": "XY axis 0 bit buffer at reset", "range": "X Axis/XY Axis/Y Axis/No", "default": "No"},
+          {"name": "Press reset alarm prompt", "range": "Yes/No", "default": "No"},
+          {"name": "Output IO before reset", "range": "OUT1-OUT10/Nil", "default": "Nil; Low"},
+          {"name": "Output IO after reset", "range": "OUT1-OUT10/Nil", "default": "Nil; Low"}
+        ]
+      },
+      "PauseSetting": {
+        "description": "Behavior when machine pauses mid-operation",
+        "parameters": [
+          {"name": "Lift the plate up during pause", "range": "Yes/No", "default": "Yes"},
+          {"name": "Pause switch type", "range": "Self lock/Ordinary", "default": "Self lock", "note": "Self lock=switch doesn't automatically bounce when depressed; Ordinary=auto-bounce"},
+          {"name": "The presser foot does not lift when paused", "range": "Yes/No", "default": "No"},
+          {"name": "Restore the last working position of the graph", "range": "Yes/No", "default": "No", "note": "Set axes position status"},
+          {"name": "Start after pause and ignore one stitch", "range": "Yes/No", "default": "No"}
+        ]
+      },
+      "StatisticSetting": {
+        "description": "Production statistics and bobbin thread counting",
+        "parameters": [
+          {"name": "The bobbin line is cleared at power-on", "range": "Yes/No", "default": "No", "note": "Yes=used length of bottom thread cleared after power-up"},
+          {"name": "Stop working when run out of bobbin line", "range": "Yes/No", "default": "Yes", "note": "Yes=stops when used bottom thread length reaches total length"},
+          {"name": "Bobbin line count setting is valid", "range": "Yes/No", "default": "Yes", "note": "Enable bobbin thread statistical function"},
+          {"name": "Zero the piecework at power-on", "range": "Yes/No", "default": "Yes", "note": "Yes=current piece count cleared after power-up"},
+          {"name": "Bottom line margin adjustment (mm)", "range": "0-600000", "default": "0", "note": "Error residual length for special bobbin line detection device"},
+          {"name": "Piecework setting is valid", "range": "Yes/No", "default": "Yes", "note": "Yes=automatic statistics of used bottom thread length during operation"},
+          {"name": "Statistical working time", "range": "Yes/No", "default": "No", "note": "Yes=enable working time statistical function"},
+          {"name": "Bobbin line counting mode", "range": "Default/IN1-7", "default": "Default", "note": "Default for dedicated bottom line detection devices; select input IO as detection trigger signal"},
+          {"name": "Continue to work when pieces reach requirement", "range": "Yes/No", "default": "Yes", "note": "No=stops when current count reaches total count by piece"},
+          {"name": "Bobbin count extra length", "range": "0-10000", "default": "0"}
+        ]
+      },
+      "GrabLine": {
+        "description": "Thread catching/clamping settings at start and end of sewing",
+        "parameters": [
+          {"name": "Trim catching position", "range": "0.0-200.0", "default": "0.0", "note": "Position to grab the thread when trimming"},
+          {"name": "Sewing start catching position", "range": "0.0-200.0", "default": "0.0", "note": "Position to grab the thread when starts sewing"},
+          {"name": "Non sewing graphics convert to point", "range": "Yes/No", "default": "No", "note": "Whether to convert non-sewing graphics into point-graphics"},
+          {"name": "Start the first pin clamping IO", "range": "OUT1-OUT12/Nil", "default": "Nil", "note": "IO port to clamp thread when starts sewing"},
+          {"name": "Thread clamping IO after sewing", "range": "OUT1-OUT12/Nil", "default": "Nil", "note": "IO port to clamp thread when ends sewing"},
+          {"name": "The first needle start output IO", "range": "OUT1-OUT12/Nil", "default": "Nil", "note": "IO port used when first stitch is sewn"},
+          {"name": "Output IO opening angle", "range": "0-10000", "default": "0"},
+          {"name": "Output IO off angle", "range": "0-10000", "default": "0"}
+        ]
+      },
+      "ThreadBreakingDetection": {
+        "description": "Thread break detection and response parameters",
+        "parameters": [
+          {"name": "Automatic break detection", "range": "Yes/No", "default": "Yes", "note": "Yes=stop operation and prompt when thread break detected"},
+          {"name": "Ignore the number of stitches when sewing", "range": "1-255", "default": "3", "note": "No break detection for the initial set stitch number"},
+          {"name": "Detect the number of effective stitches when thread is broken", "range": "1-255", "default": "2", "note": "Thread break confirmed by continuous detection of break at this stitch count"},
+          {"name": "Process delay at broken line detection (s)", "range": "0.01-255.00", "default": "0.20", "note": "Delay time before taking action after confirming thread break"},
+          {"name": "Number of broken wire return stitches", "range": "0-20", "default": "0", "note": "Number of stitches to automatically retract in case of thread breakage"},
+          {"name": "Break thread and output IO", "range": "OUT1-OUT12/Nil", "default": "Nil", "note": "After disconnection, corresponding output IO maintains high level for 1 second"},
+          {"name": "Broken thread detection mode", "range": "Model 1/Model 2", "default": "Model 1"},
+          {"name": "Rotate back to zero when broken thread", "range": "Yes/No", "default": "No"},
+          {"name": "Take QEP2 as bobbin thread detection", "range": "Yes/No", "default": "No", "note": "Some machines employ B encoder for bottom thread detection"}
+        ]
+      },
+      "TrimSetting": {
+        "description": "Thread trimming sequence timing and behavior parameters",
+        "parameters": [
+          {"name": "Trimming spindle speed (rpm)", "range": "10-500", "default": "10"},
+          {"name": "Trim starts to delay (s)", "range": "0.01-6.55", "default": "0.01"},
+          {"name": "Duration of wiping thread (s)", "range": "0.01-6.55", "default": "0.01"},
+          {"name": "Lift up the presser foot during delay of thread wiping", "range": "0.01-6.55", "default": "0.01"},
+          {"name": "Delay of loosing thread (s)", "range": "0.00-6.55", "default": "0.01"},
+          {"name": "Whether to trim when move empty after sewing", "range": "Yes/No", "default": "Yes"},
+          {"name": "Whether to use wiper", "range": "Yes/No", "default": "Yes", "note": "No=wiper turned off"},
+          {"name": "Motor trim thread mode", "range": "Back and forth/Single", "default": "Back and forth"},
+          {"name": "Motor trimming stroke", "range": "1.0-100.0", "default": "1.0"},
+          {"name": "Flat knife grip delay (ms)", "range": "1-350", "default": "1"},
+          {"name": "Return knife speed ratio", "range": "10-100", "default": "100"},
+          {"name": "Thread loosing start mode", "range": "Angle/Delay", "default": "Angle"},
+          {"name": "Thread loosing angle", "range": "0-999", "default": "850"},
+          {"name": "Multi segment thread trimming", "range": "Yes/No", "default": "Yes"},
+          {"name": "The first knife length", "range": "0.000-100.000", "default": "0.000"},
+          {"name": "The second knife length", "range": "0.000-100.000", "default": "0.000"},
+          {"name": "The third knife length", "range": "0.000-100.000", "default": "0.000"},
+          {"name": "The knife first speed (mm/s)", "range": "0.000-100.000", "default": "0.000"},
+          {"name": "The knife second speed (mm/s)", "range": "0.000-100.000", "default": "0.000"},
+          {"name": "The knife third speed (mm/s)", "range": "0.000-100.000", "default": "0.000"}
+        ]
+      },
+      "PowerOnSettings": {
+        "description": "Initialization behavior at machine power-on",
+        "parameters": [
+          {"name": "The needle returns to the upper position at power-on", "range": "Yes/No", "default": "Yes"},
+          {"name": "The frame automatically returns to the origin at power-on", "range": "Yes/No", "default": "No"},
+          {"name": "Motor lock when powered on", "range": "Yes/No", "default": "Yes"},
+          {"name": "Presser foot lifts when powered on", "range": "Yes/No", "default": "Yes"}
+        ]
+      },
+      "OtherSetting": {
+        "description": "Miscellaneous operational settings",
+        "parameters": [
+          {"name": "Air pressure detection", "range": "Yes/No", "default": "No", "note": "Yes=stop and alarm if air pressure is low when working"},
+          {"name": "Whether to work cyclically", "range": "Yes/No", "default": "No", "note": "Yes=same file is processed in a cyclic manner after startup"},
+          {"name": "Circular work time (min)", "range": "1-65535", "default": "1", "note": "Total cycle time; processing stops when time is up"},
+          {"name": "Circular work gap (s)", "range": "0-20", "default": "2", "note": "Interval between completion of processing and restart during cycle"},
+          {"name": "Work end position", "range": "Origin/Right/Sewing POS/Default", "default": "Origin", "note": "Origin=XY at 0,0; Right=rightmost point; Sewing POS=first sewing point; Default=stop after processing"},
+          {"name": "Template recognition mode", "range": "Barcode/RFID", "default": "RFID"},
+          {"name": "Interface style", "range": "Classic/Simplicity", "default": "Classic", "note": "Classic=3D keys; Simplicity=flat keys"},
+          {"name": "Start up pre-work sport mode", "range": "XY/X priority/Y priority", "default": "XY"},
+          {"name": "Moving mode through the air during working", "range": "XY/X priority/Y priority", "default": "XY"},
+          {"name": "Spindle stops needling and retracts", "range": "0-160", "default": "0"},
+          {"name": "Connect extension screen", "range": "1/2/No", "default": "No", "note": "Yes=display screen connected to extension screen showing working files and info"},
+          {"name": "Voice prompt", "range": "Middle/High/Low/Close", "default": "Close", "note": "Volume adjustment"},
+          {"name": "Enable power-down Memory", "range": "Yes/No", "default": "No", "note": "Yes=after restarting, continue sewing progress from before power failure"},
+          {"name": "The file is valid when the RFID leaves", "range": "Yes/No", "default": "No", "note": "When RFID tag card leaves, whether to keep the read file valid"}
+        ]
+      },
+      "AuxiliaryFunction": {
+        "description": "Air blowing, laser, and special IO trigger settings",
+        "parameters": [
+          {"name": "The sewing start to blow", "range": "Nil/OUT1-OUT12", "default": "Nil", "note": "IO port to activate when sewing starts"},
+          {"name": "The sewing end to blow", "range": "Nil/OUT1-OUT12", "default": "Nil", "note": "IO port to activate when sewing ends"},
+          {"name": "Continuous blowing time", "range": "0-5000", "default": "0", "note": "Duration of blowing operation in ms"},
+          {"name": "Imported graphics are not centered", "range": "Yes/No", "default": "No", "note": "Used for benchmark-free mode"},
+          {"name": "Open output IO moving", "range": "Nil/OUT1-OUT12", "default": "Nil", "note": "IO port used when machine moves"},
+          {"name": "Laser output IO", "range": "Nil/OUT1-OUT12", "default": "Nil", "note": "IO port used for laser cutting"},
+          {"name": "Regular laser cleaning time (s)", "range": "0-63000000", "default": "0", "note": "Time for cleaning the laser"}
+        ]
+      }
+    }
+  },
+  "machineParameters": {
+    "description": "Machine parameters (Chapter 7) for mechanical configuration. Requires service/technician access. Multi function board and XYZ Motor settings must be changed by after-sales staff only.",
+    "categories": {
+      "ShaftAngleSetting": {
+        "description": "QEP encoder angle settings for feeding, trimming, and needle position timing",
+        "parameters": [
+          {"name": "Feed start angle", "range": "0-999", "default": "0", "note": "QEP value of spindle at start of machine feeding"},
+          {"name": "Feed end angle", "range": "0-999", "default": "0", "note": "QEP value of spindle at end of machine feeding"},
+          {"name": "Trim start angle", "range": "0-999", "default": "0", "note": "QEP value of spindle at start of machine trimming"},
+          {"name": "Trim end angle", "range": "0-999", "default": "0", "note": "QEP value of spindle at end of machine trimming"},
+          {"name": "Surface line dialing angle", "range": "0-999", "default": "0", "note": "QEP value of spindle at start of machine pulling thread"},
+          {"name": "Needle up position", "range": "0-999", "default": "0", "note": "QEP value of spindle at upper needle position"},
+          {"name": "Needle down position", "range": "0-999", "default": "0", "note": "QEP value of spindle at lower needle position"},
+          {"name": "Spindle pause time", "range": "0-20", "default": "10", "note": "Spindle back-off delay in milliseconds; inversion delay"}
+        ]
+      },
+      "InputOutputPortSetting": {
+        "description": "IO port polarity and output duty cycle settings",
+        "parameters": [
+          {"name": "Input 01-07", "range": "Open/Close", "default": "Open", "note": "Input IO polarity; currently only input 03 (pause) is used; others standby"},
+          {"name": "Pause polarity", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "Output duty ration — Frame", "range": "25%/50%/75%/100%", "default": "25%", "note": "Adjust output electromagnet strength"},
+          {"name": "Output duty ration — Foot", "range": "25%/50%/75%/100%", "default": "25%"},
+          {"name": "Output duty ration — Trim", "range": "25%/50%/75%/100%", "default": "25%"},
+          {"name": "Output duty ration — Thread pull", "range": "25%/50%/75%/100%", "default": "25%"},
+          {"name": "Output duty ration — Thread loose", "range": "25%/50%/75%/100%", "default": "25%"},
+          {"name": "Output duty ration — OUT6/OUT7", "range": "25%/50%/75%/100%", "default": "25%"},
+          {"name": "Output mode", "range": "Ordinary/Program", "default": "Ordinary"},
+          {"name": "Duration (ms)", "range": "0-500", "default": "0", "note": "Duration for related IO port"},
+          {"name": "Thread-holding mode", "range": "Thread-loose/Thread-holding", "default": "Thread-loose"}
+        ]
+      },
+      "PlatenSizeSetting": {
+        "description": "Working area size limits and benchmark-free mode offset",
+        "parameters": [
+          {"name": "X+ limit", "range": "10-15000", "default": "10", "note": "Maximum value in positive X direction working range"},
+          {"name": "X- limit", "range": "0-15000", "default": "0", "note": "Maximum value in negative X direction working range"},
+          {"name": "Y+ limit", "range": "10-10000", "default": "10", "note": "Maximum value in positive Y direction working range"},
+          {"name": "Y- limit", "range": "0-10000", "default": "0", "note": "Maximum value in negative Y direction working range"},
+          {"name": "No datum X offset", "range": "-5000.000 to 5000.000", "default": "0.000", "note": "X offset values when system performs benchmark-free mode"},
+          {"name": "No datum Y offset", "range": "-5000.000 to 5000.000", "default": "0.000", "note": "Y offset values when system performs benchmark-free mode"}
+        ]
+      },
+      "AxisRunParameter": {
+        "description": "Spindle motor direction, polarity, and axis rigidity settings",
+        "parameters": [
+          {"name": "Spindle motor direction", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "Spindle encoder", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "X-axis motor direction", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "Y-axis motor direction", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "X polarity", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "Y polarity", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "Spdrate", "range": "ALL/95%/90%/85%/80%/75%/70%", "default": "ALL"},
+          {"name": "Presser foot stroke", "range": "0-10000", "default": "0"},
+          {"name": "Presser foot resolution", "range": "0-60000", "default": "0"},
+          {"name": "Presser foot limit polarity", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "Presser foot polarity", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "X-axis rigidity", "range": "-6 to 6", "default": "0"},
+          {"name": "Y-axis rigidity", "range": "-6 to 6", "default": "0"}
+        ]
+      },
+      "DelaySetting": {
+        "description": "Timing delays for presser foot, platen, and shutdown behavior",
+        "parameters": [
+          {"name": "Automatic processing delay (ms)", "range": "0-5000", "default": "0"},
+          {"name": "Presser foot delays pressing down (ms)", "range": "0-5000", "default": "0"},
+          {"name": "Presser foot delays uplifting (ms)", "range": "0-5000", "default": "0"},
+          {"name": "Platen delays operating (ms)", "range": "0-5000", "default": "0"},
+          {"name": "Electromagnet presser foot dormancy time (s)", "range": "0-300", "default": "0", "note": "Solenoid foot enters dormant state (low IO) after this idle time; 0=disabled"},
+          {"name": "Downtime of timeout (ms)", "range": "0-1800000", "default": "0", "note": "If work doesn't continue beyond this time after last work, alarm is prompted; 0=disabled"},
+          {"name": "Work enable input IO", "range": "0-7", "default": "0", "note": "High level input required to work normally; 0=disabled"},
+          {"name": "Input detection starts up", "range": "Yes/No (implied)", "default": "Off", "note": "Only when input IO is at high level can work be started"}
+        ]
+      },
+      "DynamicPresserFoot": {
+        "description": "Dynamic presser foot angle and height control during sewing",
+        "parameters": [
+          {"name": "Rise start angle", "range": "5-995", "default": "10"},
+          {"name": "Rise end angle", "range": "5-995", "default": "10"},
+          {"name": "Drop start angle", "range": "5-995", "default": "10"},
+          {"name": "Drop end angle", "range": "5-995", "default": "10"},
+          {"name": "Dynamic foot height (mm)", "range": "0.200-100.000", "default": "0.026"},
+          {"name": "Y-Axis lifting start angle compensation", "range": "-300 to 300", "default": "0"},
+          {"name": "Y-Axis lifting end angle compensation", "range": "-300 to 300", "default": "0"},
+          {"name": "Y-Axis dropping start angle compensation", "range": "-300 to 300", "default": "0"},
+          {"name": "Y-Axis dropping end angle compensation", "range": "-300 to 300", "default": "0"},
+          {"name": "Dropping start angle is allowed to be set limited", "range": "Yes/No", "default": "No"},
+          {"name": "Dynamic foot enable", "range": "Ordinary/Close/Left right", "default": "Ordinary"},
+          {"name": "Follow the spindle sewing", "range": "Yes/No", "default": "No", "note": "Presser foot follows the spindle"},
+          {"name": "Foot type", "range": "Pneumatic/Motor", "default": "Pneumatic", "note": "The presser foot type"}
+        ]
+      },
+      "TurningPointSpeed": {
+        "description": "Speed settings at sewing inflection points (corners/curves)",
+        "parameters": [
+          {"name": "Inflection slow speed", "range": "Yes/No", "default": "Yes", "note": "Enable speed slowing down at inflection point"},
+          {"name": "Turning Point Speed", "range": "10-5000", "default": "0", "note": "The speed when machine is at the inflection point"},
+          {"name": "1st speed after turning point (rpm)", "range": "10-5000", "default": "1200"},
+          {"name": "2nd speed after turning point (rpm)", "range": "10-5000", "default": "1300"},
+          {"name": "3rd speed after turning point (rpm)", "range": "10-5000", "default": "1400"},
+          {"name": "4th speed after turning point (rpm)", "range": "10-5000", "default": "1500"},
+          {"name": "5th speed after turning point (rpm)", "range": "10-5000", "default": "1600"},
+          {"name": "6th speed after turning point (rpm)", "range": "10-5000", "default": "1700"},
+          {"name": "7th speed after turning point (rpm)", "range": "10-5000", "default": "1800"},
+          {"name": "8th speed after turning point (rpm)", "range": "10-5000", "default": "1900"},
+          {"name": "9th speed after turning point (rpm)", "range": "10-5000", "default": "2000"},
+          {"name": "10th speed after turning point (rpm)", "range": "10-5000", "default": "2100"}
+        ]
+      },
+      "SwingSetting": {
+        "description": "Swing needle rod stroke and timing for zigzag/special stitch patterns",
+        "parameters": [
+          {"name": "Swing start angle", "range": "0-999", "default": "0"},
+          {"name": "Return start angle", "range": "0-999", "default": "0"},
+          {"name": "Swing distance", "range": "0.00-360.00", "default": "0.00"},
+          {"name": "X polarity of swing needle rod", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "Y polarity of swing needle rod", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "Add a special needle at the end of sewing (mm)", "range": "0.0-1.0", "default": "0.0", "note": "At end of sewing, sew one more stitch"}
+        ]
+      },
+      "AxisResolution": {
+        "description": "Axis resolution calibration — ratio of actual movement to theoretical movement",
+        "parameters": [
+          {"name": "Actual sewing length", "range": "1.0-99999.9", "default": "1.0", "note": "Distance from actual movement of the corresponding axis"},
+          {"name": "Theory length", "range": "1.0-99999.9", "default": "1.0", "note": "Distance that the corresponding axis should theoretically move"},
+          {"name": "X Axis resolution", "range": "1.0000000-200.0000000", "default": "1.0000000", "note": "Auto-calculated from actual/theory length values"},
+          {"name": "Y Axis resolution", "range": "1.0000000-200.0000000", "default": "1.0000000"},
+          {"name": "Z Axis resolution", "range": "1.0000000-200.0000000", "default": "1.0000000"},
+          {"name": "X Axis position", "range": "0.000-10", "default": "0.000", "note": "Current absolute coordinate position of X-axis"},
+          {"name": "Y Axis position", "range": "read-only", "default": "0.000", "note": "Current absolute coordinate position of Y-axis"}
+        ]
+      },
+      "OilSupplySetting": {
+        "description": "Automatic lubrication oil supply control based on spindle rotation count",
+        "parameters": [
+          {"name": "Number of spindles less than 1500 rpm (count)", "range": "0-90000000", "default": "0"},
+          {"name": "Number of spindles less than 2000 rpm (count)", "range": "0-90000000", "default": "0"},
+          {"name": "Number of spindles less than 2300 rpm (count)", "range": "0-90000000", "default": "0"},
+          {"name": "Number of spindles less than 2600 rpm (count)", "range": "0-90000000", "default": "0"},
+          {"name": "Number of spindles less than 3000 rpm (count)", "range": "0-90000000", "default": "0"},
+          {"name": "The number of turns of oil supplied by spindle", "range": "100-90000000", "default": "100", "note": "After this many spindle turns, oil supply operation is performed (output IO goes high)"},
+          {"name": "Oil supply duration (s)", "range": "0.00-650.00", "default": "0.00", "note": "Duration output IO maintains high level during oil supply"}
+        ]
+      },
+      "BondPolarity": {
+        "description": "XYZ axis key polarity and graphics mirror display settings",
+        "parameters": [
+          {"name": "Bond polarity of X axis", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "Bond polarity of Y axis", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "Bond polarity of Z axis", "range": "Positive/Negative", "default": "Positive"},
+          {"name": "Graphic horizontal mirror", "range": "Yes/No", "default": "No", "note": "X-direction mirror display when displaying graphics"},
+          {"name": "Graphic vertical mirror", "range": "Yes/No", "default": "No", "note": "Y-direction mirror display when displaying graphics"}
+        ]
+      },
+      "MotorClipSetting": {
+        "description": "Thread clamp motor zero position and maximum stroke settings",
+        "parameters": [
+          {"name": "Clip line zero 1", "range": "0.000-100.000", "default": "0.000"},
+          {"name": "Clip line zero 2", "range": "0.000-100.000", "default": "0.000"},
+          {"name": "Clip line 1 maximum stroke", "range": "1.000-100.000", "default": "1.000"},
+          {"name": "Clip line 2 maximum stroke", "range": "1.000-100.000", "default": "1.000"}
+        ]
+      },
+      "CutterSetting": {
+        "description": "Cutter (knife) lifting and rotation control parameters",
+        "parameters": [
+          {"name": "Cutter lifting IO", "range": "OUT1-OUT20/Nil", "default": "Nil"},
+          {"name": "Cutter rotating IO", "range": "OUT1-OUT20/Nil", "default": "Nil"},
+          {"name": "Cutter rotation during inching", "range": "Yes/No", "default": "No"},
+          {"name": "Cutter turning point lifting delay (ms)", "range": "0-10000", "default": "0"},
+          {"name": "Cutter turning point drop delay (ms)", "range": "0-10000", "default": "0"},
+          {"name": "Cutter compensation (mm)", "range": "0.000-8.000", "default": "0.000"},
+          {"name": "Cutter lifting height (mm)", "range": "0-10000", "default": "0"}
+        ]
+      },
+      "NonStandardSetting": {
+        "description": "Non-standard special settings including head 3 punching mode and cycloid function",
+        "parameters": [
+          {"name": "Head 3 mode", "range": "Ordinary/Punching", "default": "Ordinary", "note": "Changes use of Head 3; generally for laser cutting; Punching mode enables special IO behavior"},
+          {"name": "Output IO (punching)", "range": "OUT1-OUT6/Nil", "default": "Nil", "note": "When head 3 in punching mode, corresponds to output IO of punching device"},
+          {"name": "Input IO (punching)", "range": "IN1-IN6/Nil", "default": "Nil", "note": "When head 3 in punching mode, input detection IO of punching device"},
+          {"name": "Delay (ms)", "range": "0.000-100.000", "default": "0.000", "note": "Interval between output IO and input IO in punching mode"},
+          {"name": "Start the output IO ahead of time (mm)", "range": "0.000-8.000", "default": "0.000", "note": "Output IO turned on early before reaching punching position"},
+          {"name": "Punching feeding length (mm)", "range": "0.000-50.000", "default": "0.000"},
+          {"name": "Punching feeding total length (mm)", "range": "0.000-2000000.000", "default": "0.000"},
+          {"name": "Z axis is used as cycloid", "range": "Yes/No", "default": "Yes", "note": "Special settings for sewing electric blankets"},
+          {"name": "Cycloid position", "range": "0.000-80.000", "default": "0.000", "note": "Magnitude of cycloid oscillation when Z axis cycloid is enabled"},
+          {"name": "Right angle compensation length X (mm)", "range": "0.00-1.50", "default": "0.00", "note": "At right-angle inflection point, moves inflection point along X direction"},
+          {"name": "Right angle compensation length Y (mm)", "range": "0.00-1.50", "default": "0.00", "note": "At right-angle inflection point, moves inflection point along Y direction"},
+          {"name": "Frame to Other", "range": "Yes/No", "default": "No", "note": "In punching mode, pressing frame operation on main page auto-changes to manual punching operation"}
+        ]
+      },
+      "RotationSetting": {
+        "description": "Machine head rotation settings for rotating head machines",
+        "parameters": [
+          {"name": "Rotate along the graph", "range": "Yes/No", "default": "No", "note": "Auto-inserts rotate instruction along graphic track when sewing"},
+          {"name": "Rotary up and down IO", "range": "OUT1-OUT12/Nil", "default": "Nil", "note": "Control output IO of rotating nose when rise or fall"},
+          {"name": "Rotary delays upping and downing", "range": "0.0-3000.0", "default": "0.0", "note": "Duration of IO high level for spinning up and down IO"},
+          {"name": "Upping and downing only at start and end", "range": "Yes/No", "default": "No", "note": "Lifting action performed only at beginning and end of work"},
+          {"name": "Rotate in place before starting", "range": "Yes/No", "default": "No", "note": "Needle is rotated to angle of graphic before starting"},
+          {"name": "Rotate reset after work", "range": "Yes/No", "default": "No", "note": "Rotate to reset position when work is done"},
+          {"name": "Close move rotation", "range": "Yes/No", "default": "No"},
+          {"name": "Small angle segments do not rotate", "range": "Yes/No", "default": "No", "note": "When graphic has small angle, machine will not perform rotation"},
+          {"name": "Rotation offset initial angle", "range": "0-360", "default": "0", "note": "Rotation-assisted migration starting angle"},
+          {"name": "Rotation offset radius (mm)", "range": "0.000-0.500", "default": "0.000", "note": "Rotation-assisted migration radius"}
+        ]
+      },
+      "HeadOffset": {
+        "description": "Offset position of Head 2 or 3 relative to Head 1 (sewing head). Head 2/3 can be laser, brush, etc.",
+        "parameters": [
+          {"name": "Head 1-5 offset", "range": "-5000.000 to 5000.000", "default": "0.000"}
+        ]
+      },
+      "AutomaticTrigger": {
+        "description": "Automatic start trigger settings for input IO-based automatic operation",
+        "parameters": [
+          {"name": "Input IO", "range": "IN1-IN7", "default": "Nil"},
+          {"name": "Level", "range": "Low/High", "default": "Low"},
+          {"name": "Auto frame only", "range": "Yes/No", "default": "No", "note": "No=otherwise work automatically"},
+          {"name": "Effective detection delay (s)", "range": "0.00-650.00", "default": "0.00"},
+          {"name": "Restart first disconnect delay (s)", "range": "0.0-25.5", "default": "0.0"}
+        ]
+      }
+    }
+  },
+  "assistSetting": {
+    "description": "Chapter 8 — System utilities including IO testing, network, time, locking, language, and system upgrade",
+    "functions": [
+      {"name": "Input Test", "description": "Test if input port is normal"},
+      {"name": "Output Test", "description": "Test if output port is normal"},
+      {"name": "Network Setting", "description": "Set wireless network and perform remote control"},
+      {"name": "Date Setting", "description": "Set the system time"},
+      {"name": "Locking Setting", "description": "Set administration password and use restrictions"},
+      {"name": "System Language", "description": "Set system language (10 languages: Simplified Chinese, Traditional Chinese, English, Japanese, Korean, Vietnamese, Russian, Italian, Turkish, and more)"},
+      {"name": "System Upgrade", "description": "Upgrade system firmware"},
+      {"name": "Driver Preview", "description": "Preview driver configuration"},
+      {"name": "Test Transfer", "description": "Transfer test data"}
+    ]
+  },
+  "errorCodes": [],
+  "alarmCodes": [],
+  "monitoring": [],
+  "troubleshooting": [
+    {
+      "issue": "Thread breaking during sewing",
+      "cause": "Thread break detection triggered; can be false-positive in first few stitches",
+      "solution": "Adjust Thread Breaking Detection → 'Ignore the number of stitches when sewing' (default 3) to increase ignored start stitches. Check 'Automatic break detection' is Yes. Verify thread sensor is connected."
+    },
+    {
+      "issue": "Machine not starting / requires high input IO",
+      "cause": "Work enable input IO setting (Delay Setting) is non-zero, requiring a specific input signal to be high before work can start",
+      "solution": "Set 'Work enable input IO' to 0 to disable this requirement, or ensure the corresponding input IO is at high level."
+    },
+    {
+      "issue": "Bobbin alarm stops machine",
+      "cause": "Statistic Setting: bobbin line count reached total length",
+      "solution": "Replace bobbin. Set 'Stop working when run out of bobbin line' to No to disable this stop, or increase bobbin total length setting."
+    },
+    {
+      "issue": "Speed is lower than set value",
+      "cause": "Speed Ratio settings reducing actual spindle speed",
+      "solution": "Check Speed Ratio parameters. High/Mid-high/Mid-low/Low speed ratios (default 100%/90%/70%/60%) multiply the set speed. Verify 'Spdrate' in Axis Run Parameter is ALL or appropriate percentage."
+    },
+    {
+      "issue": "Pattern alignment is wrong / stitches offset from template",
+      "cause": "Origin not set correctly or No datum X/Y offset set incorrectly",
+      "solution": "Run XY origin detection from main interface. In benchmark-free mode, verify No datum X/Y offset values in Platen Size Setting."
+    },
+    {
+      "issue": "Frame slams down or has incorrect pressing timing",
+      "cause": "Platen delay settings or presser foot delay settings need adjustment",
+      "solution": "Adjust Delay Setting → 'Presser foot delays pressing down' and 'Presser foot delays uplifting'. Also check Auto Process → 'No. of stitches to lower for Start and End presser foot'."
+    },
+    {
+      "issue": "XY axis runs too fast or too slow during air travel",
+      "cause": "Speed Parameter → frame moving speed set incorrectly",
+      "solution": "Adjust 'The speed of frame moving (mm/min)' in Speed Parameter (default 15000). For slow jogging, check Button of speed 1/2/3 values."
+    },
+    {
+      "issue": "Presser foot electromagnet overheating",
+      "cause": "Electromagnet presser foot dormancy time (Delay Setting) set to 0 — electromagnet stays active constantly",
+      "solution": "Set 'Electromagnet presser foot dormancy time' to a positive value (e.g., 30s) so the solenoid enters low-power dormant state when idle."
+    },
+    {
+      "issue": "Parameter file cannot be loaded from USB",
+      "cause": "Wrong .xhp file for this machine model, or USB not detected",
+      "solution": "Verify parameter file extension is .xhp. Note: parameter files vary by equipment model — mixing is prohibited. Use only the backup file saved from this specific machine."
+    },
+    {
+      "issue": "Turning point stitches are too small or too large",
+      "cause": "Turning Point Speed settings — 1st through 10th speed after turning point control post-corner acceleration",
+      "solution": "Reduce 1st speed after turning point (default 1200 rpm) if stitches are too small at corners. Enable 'Inflection slow speed' for additional slow-down at corners."
+    }
+  ]
+}

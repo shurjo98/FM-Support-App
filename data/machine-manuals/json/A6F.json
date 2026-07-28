@@ -1,0 +1,259 @@
+{
+  "model": "A6F",
+  "manufacturer": "Jack",
+  "controllerType": "AHE59",
+  "manualVersion": "1.0",
+  "type": "Lockstitch sewing machine electronic controller",
+  "specs": {
+    "supplyVoltage": "AC 220 ±20%V",
+    "frequency": "50Hz/60Hz",
+    "maxPower": "550W",
+    "operatingTemp": "0°C to 45°C",
+    "humidity": "30% to 95% (non-condensing)"
+  },
+  "errorCodes": [
+    {
+      "code": "Err-01",
+      "display": "Err-01",
+      "cause": "Hardware overcurrent",
+      "solution": "Turn off power switch, restart after 30 seconds. If still not working, replace controller and inform manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-03",
+      "display": "Err-03",
+      "cause": "Under-voltage — input supply voltage is too low (below 176V)",
+      "solution": "Disconnect controller power and check input supply voltage. If voltage is low, restart after voltage returns to normal. If voltage is normal but controller still fails, replace controller.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-04",
+      "display": "Err-04",
+      "cause": "Over-voltage when machine is off — input voltage too high (above 264V)",
+      "solution": "Disconnect controller power and check input voltage. If above 264V, restart after voltage normalizes. If voltage is normal but problem persists, replace controller.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-05",
+      "display": "Err-05",
+      "cause": "Over-voltage in operation — input voltage too high (above 264V) while sewing",
+      "solution": "Disconnect controller power, check input voltage. If above 264V, restart after normalizing. Replace controller if problem persists.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-06",
+      "display": "Err-06",
+      "cause": "Solenoid circuit fault — solenoid connection loose or damaged",
+      "solution": "Turn off system. Check carefully if solenoid connection is loose or damaged; replace if so. Restart. If still not working, inform manufacturer and replace controller.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-07",
+      "display": "Err-07",
+      "cause": "Motor current measuring failure",
+      "solution": "Turn off power, restart after 30 seconds. If fault occurs frequently, seek technical support.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-08",
+      "display": "Err-08",
+      "cause": "Sewing motor blocked — motor input plug off, loose, or broken; or foreign body tangled in machine head",
+      "solution": "Turn off system. Check motor input plug condition. Check machine head for tangles. Re-make correct then restart. Replace controller if still failing.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-10",
+      "display": "Err-10",
+      "cause": "Communication failure between control panel and controller",
+      "solution": "Check that connection between control panel and controller is not loose or broken. Correct then restart. Replace controller if still failing.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-11",
+      "display": "Err-11",
+      "cause": "Machine head needle positioning failure — synchronizer connection loose or not restored",
+      "solution": "Check connection line between machine head synchronizer and controller. Restore it and restart. Replace controller and inform manufacturer if still failing.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-12",
+      "display": "Err-12",
+      "cause": "Initial motor electrical angle failure",
+      "solution": "Try 2 to 3 more times after power down. If still failing, replace controller and inform manufacturer.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-13",
+      "display": "Err-13",
+      "cause": "Motor HALL failure — motor sensor plug loose or dropped off",
+      "solution": "Turn off system. Check if motor sensor plug is loose or dropped off; restore and restart. If still failing, replace controller and inform manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-14",
+      "display": "Err-14",
+      "cause": "DSP Read/Write EEPROM failure",
+      "solution": "Contact manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-15",
+      "display": "Err-15",
+      "cause": "Motor over-speed protection",
+      "solution": "Turn off system, restart after 30 seconds. If still not working, replace controller and inform manufacturer.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-16",
+      "display": "Err-16",
+      "cause": "Motor reversion",
+      "solution": "Turn off system, restart after 30 seconds. Replace controller if persistent.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-17",
+      "display": "Err-17",
+      "cause": "HMI Read/Write EEPROM failure",
+      "solution": "Turn off system, restart after 30 seconds. Replace controller if persistent.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-18",
+      "display": "Err-18",
+      "cause": "Motor overload — motor may be stalled",
+      "solution": "Check if motor is stalled. If not stalled, replace controller and notify manufacturer.",
+      "severity": "medium"
+    },
+    {
+      "code": "Err-20",
+      "display": "Err-20",
+      "cause": "Oil shortage alarm — oil quantity has fallen below normal level",
+      "solution": "System detects oil quantity below normal level, exceeded set time. Add oil to machine.",
+      "severity": "low"
+    },
+    {
+      "code": "Err-23",
+      "display": "Err-23",
+      "cause": "Motor blocked encoder failure — motor input plug off, loose, or broken; foreign body tangled in machine head",
+      "solution": "Turn off system. Check motor input plug and machine head for tangles. Correct then restart. Replace controller if still failing.",
+      "severity": "high"
+    },
+    {
+      "code": "Err-24",
+      "display": "Err-24",
+      "cause": "Bobbin detection alarm — bobbin insufficient or sensor issue",
+      "solution": "Check if bobbin is sufficient. If bobbin is sufficient but error still exists, replace controller and notify manufacturer.",
+      "severity": "low"
+    },
+    {
+      "code": "Err-26",
+      "display": "Err-26",
+      "cause": "Thread end detection alarm — thread end not cleared",
+      "solution": "Restart after clearing the thread end. If still fails to work properly, replace controller and notify manufacturer.",
+      "severity": "low"
+    },
+    {
+      "code": "Err-30",
+      "display": "Err-30",
+      "cause": "Password lock shutdown alarm — machine use time limit has been reached",
+      "solution": "If continued use is required, please contact your local service provider.",
+      "severity": "medium"
+    }
+  ],
+  "alarmCodes": [
+    {
+      "code": "ALR-2",
+      "display": "ALR-2",
+      "cause": "Stitch counter alarm — stitch counter has reached the limit",
+      "solution": "Press P key to cancel the alarm and reset the counter.",
+      "severity": "low"
+    },
+    {
+      "code": "ALR-3",
+      "display": "ALR-3",
+      "cause": "Trimming counter alarm — trimming counter has reached the limit",
+      "solution": "Press P key to cancel the alarm and reset the counter.",
+      "severity": "low"
+    },
+    {
+      "code": "PauOFF",
+      "display": "PauOFF",
+      "cause": "Power is off alarm",
+      "solution": "Please wait for 30 seconds, then turn on the power switch.",
+      "severity": "low"
+    },
+    {
+      "code": "ArnUP",
+      "display": "ArnUP",
+      "cause": "Safety switch alarm — machine is not in correct position",
+      "solution": "Adjust the machine to the correct position.",
+      "severity": "medium"
+    }
+  ],
+  "parameters": [
+    { "id": "P01", "name": "Max speed of free sewing", "range": "200-5000", "default": 3500, "unit": "RPM" },
+    { "id": "P03", "name": "Needle stop position selection", "range": "0-1", "default": 1, "values": { "0": "up", "1": "down" } },
+    { "id": "P04", "name": "Start back tacking speed", "range": "200-3000", "default": 1500, "unit": "RPM" },
+    { "id": "P05", "name": "End back tacking speed", "range": "200-3000", "default": 1500, "unit": "RPM" },
+    { "id": "P06", "name": "Continuous back sewing speed (W sewing)", "range": "200-3000", "default": 1500, "unit": "RPM" },
+    { "id": "P08", "name": "Clamp Angle compensation", "range": "0-360", "default": 27, "unit": "degrees" },
+    { "id": "P09", "name": "Soft start switch", "range": "0-1", "default": 0, "values": { "0": "off", "1": "on" } },
+    { "id": "P15", "name": "Mode of adding stitch", "range": "0-2", "default": 0, "values": { "0": "continuous", "1": "half stitch", "2": "one stitch" } },
+    { "id": "P24", "name": "Trimming point of pedal", "range": "0-1024", "default": 80 },
+    { "id": "P48", "name": "Trimming speed", "range": "100-500", "default": 250, "unit": "RPM" },
+    { "id": "P53", "name": "Presser foot lifting function selection", "range": "0-1", "default": 1, "values": { "0": "off", "1": "on" } },
+    { "id": "P56", "name": "Run up to needle position after power on", "range": "0-1", "default": 1, "values": { "0": "no action", "1": "action" } },
+    { "id": "P60", "name": "Maximum speed of constant sewing", "range": "200-5000", "default": 3000, "unit": "RPM" },
+    { "id": "P62", "name": "Special mode", "range": "0/1/2/3", "default": 0, "values": { "0": "normal", "1": "simply sewing mode", "2": "motor initial angle measurement", "3": "CPU synchronizer mode", "4": "automatic test mode 1" } },
+    { "id": "P66", "name": "Safety switch function", "range": "0/2", "default": 2, "values": { "0": "off", "2": "on" } },
+    { "id": "P99", "name": "Language selection", "range": "0-2", "default": 1, "values": { "0": "off", "1": "Chinese", "2": "English" } },
+    { "id": "PA7", "name": "Stitch count upper limit setting", "range": "1-9999", "default": 1 },
+    { "id": "PAA", "name": "Trimming count setting", "range": "1-9999", "default": 9999 }
+  ],
+  "monitorParams": [
+    { "id": "010", "name": "Stitch counter" },
+    { "id": "011", "name": "Counter for sewing pieces" },
+    { "id": "012", "name": "Head real speed" },
+    { "id": "013", "name": "State of encoder" },
+    { "id": "020", "name": "DC voltage" },
+    { "id": "021", "name": "Machine speed" },
+    { "id": "022", "name": "Phase current" },
+    { "id": "02C", "name": "Error counter" },
+    { "id": "030-037", "name": "History record of error codes" }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "Machine shows error code on startup",
+      "checks": [
+        "Confirm machine connection cable is intact",
+        "Confirm electronic control box and machine head are matched",
+        "Confirm factory reset is accurate"
+      ]
+    },
+    {
+      "symptom": "Machine will not start after showing Err-08",
+      "checks": [
+        "Turn off power",
+        "Check motor input plug is not off, loose, or broken",
+        "Check if something is tangled around the machine head",
+        "Correct issues and restart system"
+      ]
+    },
+    {
+      "symptom": "Low voltage error Err-03 appears",
+      "checks": [
+        "Check input supply voltage at socket",
+        "Ensure voltage is at least 176V",
+        "Restart controller after voltage returns to normal",
+        "Replace controller if voltage is normal but error persists"
+      ]
+    },
+    {
+      "symptom": "Stitch counter alarm ALR-2 appears",
+      "checks": [
+        "This is a normal counter full notification",
+        "Press P key to cancel alarm and reset counter"
+      ]
+    }
+  ]
+}

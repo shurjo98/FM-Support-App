@@ -496,7 +496,8 @@
 .cust-form select,
 .cust-form textarea,
 .cust-form input[type="text"],
-.cust-form input[type="password"] {
+.cust-form input[type="password"],
+.cust-form input[type="date"] {
   display: block;
   width: 100%;
   margin-top: 6px;
@@ -514,7 +515,8 @@
 .cust-form select:focus,
 .cust-form textarea:focus,
 .cust-form input[type="text"]:focus,
-.cust-form input[type="password"]:focus {
+.cust-form input[type="password"]:focus,
+.cust-form input[type="date"]:focus {
   outline: none;
   border-bottom-color: var(--md-primary-strong);
 }
@@ -587,6 +589,35 @@
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 12px;
   margin-bottom: 18px;
+}
+
+/* Horizontally-scrollable catalog row (Spare Parts / Needles) — a wrapping
+   grid hides most of the catalog below the fold with no way to browse it
+   except scrolling the whole page; a swipeable/scrollable row keeps it
+   compact and browsable like the featured-card carousel elsewhere. */
+.cust-catalog-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 4px 20px;
+  margin-bottom: 8px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cust-catalog-row::-webkit-scrollbar {
+  height: 6px;
+}
+
+.cust-catalog-row::-webkit-scrollbar-thumb {
+  background: var(--md-divider);
+  border-radius: 999px;
+}
+
+.cust-catalog-row .cust-machine-option {
+  flex: 0 0 auto;
+  width: 168px;
+  scroll-snap-align: start;
 }
 
 .cust-machine-option {

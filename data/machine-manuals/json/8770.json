@@ -1,0 +1,435 @@
+{
+  "model": "8770",
+  "manufacturer": "Jack Sewing Machine Co., Ltd.",
+  "controllerType": "S68 Controller",
+  "manualVersion": "v1.1",
+  "type": "Lockstitch / interlock sewing machine S68 electronic control box",
+  "specs": {
+    "maxSpeed": "200-7000 spm (H parameter)",
+    "display": "Multi-digit 7-segment LED with motor rotation direction icon (two squares), numerical display for stitch count, speed, and special functions",
+    "panelColor": "Yellow panel with P, S, A, B, C, D buttons and dedicated function LEDs",
+    "interface": "P (parameter/save), S (save parameter in setting mode), A/B/C/D (function and value buttons), plus dedicated keys for needle up/down, soft start, presser foot, trimming, soft start",
+    "parameterLevelA": "Normal mode: press P briefly — enters first parameter code 001",
+    "parameterLevelB": "Technician: hold P and turn on power — enters at code 047",
+    "parameterLevelC": "Factory: hold S and turn on power — enters at code 123",
+    "monitorMode": "Standby mode: press P + S (number key) combination — shows code 06 (mechanical angle) first",
+    "autoTest": "Press P + S combo to enter auto-test interface; select T-r-20/T-S-10/T-W-00 parameters",
+    "saveUserParams": "Method 1: enter param level C, find 123.FAS, short press A key. Method 2: enter monitor angle mode, long press C key until shows '------' then release",
+    "restoreUserParams": "Method 1: hold A+B keys and turn on power. Method 2: enter monitor angle mode, long press A key until shows '------' then release",
+    "restoreFactoryParams": "Machine head factory only: enter level B params, set parameter 047 to target model code, press S to confirm",
+    "machineCode": "Parameter MAC (code 047) sets machine type — default 630 for 8770 machine"
+  },
+  "note": "S68 controller has 3 parameter levels (A/B/C) with hundreds of parameters. Error codes use ER0.X format (e.g. ER0.1, ER0.7, ER0.107). The MAC (machine code) parameter [047] determines the machine head type — default value 630 corresponds to the 8770. Special 4-pin 6-wire machine interface uses P1-P6 sub-parameters. Up-needle position adjustment is critical — do not open motor rear cover without permission.",
+  "errorCodes": [
+    {
+      "code": "ER0.1",
+      "display": "ER0.1",
+      "cause": "Over current for hardware",
+      "solution": "Turn off the system power, restart after 15 seconds. If the controller still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "critical"
+    },
+    {
+      "code": "ER0.2",
+      "display": "ER0.2",
+      "cause": "Main board storage failure",
+      "solution": "Turn off the system power, restart after 15 seconds. If still does not work, please replace it and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "ER0.4",
+      "display": "ER0.4",
+      "cause": "Over voltage during standby mode — supply voltage higher than 264V",
+      "solution": "Disconnect the controller power and check if the input voltage is too high (higher than 264V). If yes, restart the controller when the normal voltage is resumed. If the controller still does not work when voltage is at normal level, please replace the controller and inform the manufacturer.",
+      "severity": "critical"
+    },
+    {
+      "code": "ER0.5",
+      "display": "ER0.5",
+      "cause": "System under voltage — supply voltage lower than 176V",
+      "solution": "Disconnect the controller power and check if the input voltage is too low (lower than 176V). If yes, restart the controller when the normal voltage is resumed. If the controller still does not work when voltage is at normal level, please replace the controller and inform the manufacturer.",
+      "severity": "critical"
+    },
+    {
+      "code": "ER0.7",
+      "display": "ER0.7",
+      "cause": "Motor stalled — motor stuck, foreign objects in pulley, material too heavy",
+      "solution": "Motor and machine will be shutting down. Please check the motor or motor connectors' connection. Please check machine head to see if objects are stuck in the motor pulley, or if it does not rotate smoothly.",
+      "severity": "high"
+    },
+    {
+      "code": "ER0.8",
+      "display": "ER0.8",
+      "cause": "Communication error — operation panel disconnected or cable loose",
+      "solution": "Motor and machine will be shutting down. Please check the Operation panel and the cable of the operation panel.",
+      "severity": "high"
+    },
+    {
+      "code": "ER0.9",
+      "display": "ER0.9",
+      "cause": "Solenoid circuit failure — solenoid not connected correctly, loose or damaged",
+      "solution": "Turn off the system power. Check whether the solenoid is connected correctly, loose or damaged. If there is any defect, please replace it immediately. Restart the system and check whether the function is good or not. If it still does not work, inform the technical support.",
+      "severity": "high"
+    },
+    {
+      "code": "ER0.107",
+      "display": "ER0.107",
+      "cause": "Current checking circuit failure",
+      "solution": "Turn off the system power, restart after 15 seconds and check whether it works well. If not, try several more times. If the same failure happens frequently, inform the technical service.",
+      "severity": "high"
+    },
+    {
+      "code": "ER0.109",
+      "display": "ER0.109",
+      "cause": "Brake circuit failure — white resistance cable loose or disconnected on main board",
+      "solution": "Turn off the system power. Check whether the cable of the white resistance is loose or disconnecting to the jack on the main board. Please reconnect it and restart the system. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "ER0.113",
+      "display": "ER0.113",
+      "cause": "Motor hall failure — motor sensor plug loose or disconnecting",
+      "solution": "Turn off the system power. Check whether the motor sensor plug is loose or disconnecting. Please reconnect it and restart the system. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "ER0.115",
+      "display": "ER0.115",
+      "cause": "Motor over-speed failure",
+      "solution": "Turn off the system power, restart the system after 15 seconds. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "ER0.116",
+      "display": "ER0.116",
+      "cause": "Motor reversion (reverse direction detected)",
+      "solution": "Turn off the system power, restart the system after 15 seconds. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "ER0.117",
+      "display": "ER0.117",
+      "cause": "HMI read/write eeprom failure",
+      "solution": "Turn off the system power, restart the system after 15 seconds. If it still does not work, please replace the controller and inform the manufacturer.",
+      "severity": "high"
+    },
+    {
+      "code": "ER0.119",
+      "display": "ER0.119",
+      "cause": "Cutting protection switch — safety switch faulty or bad connection. Motor rotation icon in LCD halting and not moving.",
+      "solution": "Restart the system and check whether the fault is removed. Please check parameter [075.SFM] setting — make sure it matches machine head safety switch type (NO=normal open, NC=normal close). Note: parameter [145.SFM] setting enables or disables this function.",
+      "severity": "high"
+    },
+    {
+      "code": "ER0.130",
+      "display": "ER0.130",
+      "cause": "Pedal failure — pedal not properly connected",
+      "solution": "Please check that the pedal is properly connected.",
+      "severity": "medium"
+    }
+  ],
+  "alarmCodes": [],
+  "parameters": [
+    {
+      "note": "S68 has three parameter levels. Level A = normal user access (press P in standby). Level B = technician (hold P, power on — starts at code 047). Level C = factory (hold S, power on — starts at code 123). Parameters are referenced by code number [001], [002], etc. or by code name [H], [SLM], etc."
+    },
+    { "id": "H", "code": "001", "name": "Maximum sewing speed", "range": "200-7000", "default": 4000, "unit": "spm", "level": "A" },
+    { "id": "SLM", "code": "002", "name": "Slow Start mode setting", "range": "T/A", "default": "T", "level": "A", "values": { "T": "Effective for the first time after power on or thread cutting", "A": "Effective every time pedal starts to be pressed" } },
+    { "id": "CNR", "code": "003", "name": "Counter ratio selection", "range": "1-100", "default": 1, "level": "A" },
+    { "id": "N", "code": "004", "name": "Start back-tacking speed", "range": "200-3000", "default": 1800, "unit": "spm", "level": "A" },
+    { "id": "V", "code": "005", "name": "End back-tacking speed", "range": "200-3000", "default": 1800, "unit": "spm", "level": "A" },
+    { "id": "B", "code": "006", "name": "Bar-Tacking Speed", "range": "200-3000", "default": 1800, "unit": "spm", "level": "A" },
+    { "id": "S", "code": "007", "name": "Soft start speed", "range": "100-800", "default": 400, "unit": "spm", "level": "A" },
+    { "id": "SLS", "code": "008", "name": "Stitch numbers for soft start", "range": "0-9", "default": 2, "unit": "stitches", "level": "A" },
+    { "id": "A", "code": "009", "name": "Automatic constant-stitch sewing speed", "range": "200-5000", "default": 3000, "unit": "spm", "level": "A" },
+    { "id": "ACD", "code": "010", "name": "Auto end back-tacking after constant sewing", "range": "ON/OFF", "default": "ON", "level": "A", "values": { "ON": "Immediately back-stitch (cannot fill needle)", "OFF": "Park at motor position (can fill needle)" } },
+    { "id": "RVM", "code": "011", "name": "Back-tacking function mode selection", "range": "J/B", "default": "J", "level": "A", "values": { "J": "倒缝 (back tacking)", "B": "补针 (fill needle)" } },
+    { "id": "SMS", "code": "012", "name": "Auto start back-tacking movement mode selection", "range": "A/M/SU/SD", "default": "A", "level": "A", "values": { "A": "Auto one-shot sewing", "M": "Pedal control, can stop in middle", "SU": "Auto, stops at up needle position with CT timer at end of each seam", "SD": "Auto, stops at down needle position with CT timer at end of each seam" } },
+    { "id": "TYS", "code": "013", "name": "Mode selection at end of Start back-tacking", "range": "CON/STP/TRM", "default": "CON", "level": "A", "values": { "CON": "Machine continues sewing if pedal pressed or START signal on", "STP": "Machine stops, must re-start by pedal command", "TRM": "Make trimming cycle once the Start Back-Tacking finishes (Mini Bar tacking)" } },
+    { "id": "SBT", "code": "014", "name": "Start back-tacking function selection", "range": "OFF/B/AB/2AB", "default": "OFF", "level": "A", "values": { "OFF": "Not perform", "B": "Only B", "AB": "Only AB", "2AB": "Double AB" } },
+    { "id": "SBA", "code": "015", "name": "Setting stitches A of Start back-tacking", "range": "0-F", "default": 3, "level": "A" },
+    { "id": "SBB", "code": "016", "name": "Setting stitches B of Start back-tacking", "range": "0-F", "default": 3, "level": "A" },
+    { "id": "SBN", "code": "017", "name": "Setting turns of Start Back-tacking", "level": "A", "note": "Setting the seam times of Start back-tacking — requires [014.SBT] = ON" },
+    { "id": "BT1", "code": "018", "name": "Stitch balance for Start Back-tacking 1", "range": "1-1200", "default": 26, "level": "A", "note": "BT1=0: Invalid; 1-8: Increase stitches of reverse seam; 9-F: Increase stitches of forward seam" },
+    { "id": "BT2", "code": "019", "name": "Stitch balance for Start Back-tacking 2", "range": "1-1200", "default": 20, "level": "A", "note": "BT2=0: Invalid; 1-8: Increase stitches of forward seam; 9-F: Increase stitches of reverse seam" },
+    { "id": "SME", "code": "020", "name": "Auto end back-tacking movement mode selection", "range": "A/M/SU/SD", "default": "A", "level": "A" },
+    { "id": "EBT", "code": "021", "name": "End back-tacking selection", "range": "OFF/C/CD/2CD", "default": "OFF", "level": "A", "values": { "OFF": "Not perform", "C": "Only C", "CD": "Only CD", "2CD": "Double CD" } },
+    { "id": "EBC", "code": "022", "name": "Setting stitches C of End back-tacking", "range": "0-F", "default": 3, "level": "A" },
+    { "id": "EBD", "code": "023", "name": "Setting stitches D of End back-tacking", "range": "0-F", "default": 3, "level": "A" },
+    { "id": "EBN", "code": "024", "name": "Setting turns of End back-tacking", "level": "A", "note": "Requires [021.EBT] = ON" },
+    { "id": "BT3", "code": "025", "name": "Stitch balance for End Back-tacking 3", "range": "1-1200", "default": 26, "level": "A" },
+    { "id": "BT4", "code": "026", "name": "Stitch balance for End Back-tacking 4", "range": "1-1200", "default": 20, "level": "A" },
+    { "id": "CT", "code": "027", "name": "Auto back-tacking time interruption at each section end", "range": "1-999", "default": 200, "unit": "ms", "level": "A" },
+    { "id": "BCC", "code": "030", "name": "Added 1 stitch to C segment of End back-tacking", "range": "0-90", "default": 0, "unit": "stitches", "level": "A" },
+    { "id": "SMB", "code": "031", "name": "Auto bar-tacking movement mode selection", "range": "A/M/SU/SD", "default": "A", "level": "A" },
+    { "id": "BAR", "code": "032", "name": "Setting stitches A of bar-tacking", "range": "0-15", "default": 3, "level": "A" },
+    { "id": "BRC", "code": "033", "name": "Setting stitches B of bar-tacking", "range": "0-15", "default": 3, "level": "A" },
+    { "id": "BRN", "code": "034", "name": "Setting turns D segment of bar-tacking", "range": "0-15", "default": 3, "level": "A" },
+    { "id": "SMP", "code": "037", "name": "Mode selection for Constant-stitch sewing", "range": "M/A", "default": "M", "level": "A", "values": { "M": "Pedal control and motor can stop at middle way", "A": "One shot sewing" } },
+    {
+      "id": "PM",
+      "code": "038",
+      "name": "Constant-stitch sewing selection",
+      "range": "0-7",
+      "default": 0,
+      "level": "A",
+      "values": { "0": "Free sewing", "1": "Constant stitch sewing", "2": "Bar-tacking sewing", "3": "Auto-test", "4": "4 segments sewing" }
+    },
+    {
+      "id": "PS",
+      "code": "039",
+      "name": "Constant-stitch segment stitches (PS[1] to PS[24])",
+      "range": "0-250 per segment",
+      "default": "Segment 1: 16; all others: 0",
+      "level": "A",
+      "note": "24 segments total (PS1-PS24). Each segment 0-250 stitches."
+    },
+    { "id": "WON", "code": "040", "name": "Wiper function selection", "range": "OFF/ON", "default": "ON", "level": "A", "note": "Can be operated directly on panel" },
+    { "id": "TM", "code": "041", "name": "Trimmer function selection", "range": "OFF/ON", "default": "ON", "level": "A", "note": "Can be operated directly on panel" },
+    {
+      "id": "CUD",
+      "code": "042",
+      "name": "Count mode selection (bobbin thread or sewing piece)",
+      "range": "NOP/UT/DT/UTS/DTS",
+      "default": "NOP",
+      "level": "A",
+      "values": {
+        "NOP": "Counter is invalid",
+        "UT": "Count up by trimming — when count over, counter will be auto-reset",
+        "DT": "Count down by trimming — when count over, counter will be auto-reset",
+        "UTS": "Count up by trimming — when count over, motor stops and counter must be reset by external switch S4 [152.INI] = CRS or A key on front panel",
+        "DTS": "Count down by trimming — when count over, motor stops and counter must be reset similarly"
+      }
+    },
+    { "id": "UD", "code": "043", "name": "Setting the count", "range": "1-9999", "default": 1, "level": "A" },
+    { "id": "PN", "code": "044", "name": "Display current count", "level": "A", "note": "Monitor function — display current count of [043.UD]" },
+    { "id": "SP", "code": "045", "name": "Sewing speed display", "level": "A", "note": "Monitor function — showing current sewing speed" },
+    { "id": "DIR", "code": "046", "name": "Direction of motor rotation", "range": "CW/CCW", "default": "CCW", "level": "A" },
+    { "id": "MAC", "code": "047", "name": "Machine Code", "range": "0-9999", "default": 630, "level": "B", "note": "CRITICAL: Determines machine head type. Default 630 = 8770 machine. Restoring factory params sets this to target model code." },
+    { "id": "N12", "code": "048", "name": "Positioning mode selection", "range": "ON/OFF", "default": "OFF", "level": "A" },
+    { "id": "BT", "code": "052", "name": "Motor braking time", "range": "0-3000", "default": 300, "unit": "ms", "level": "B", "note": "Only valid when [054.BK] set to ON" },
+    { "id": "POL", "code": "053", "name": "Soft start at the first cycle of power ON", "range": "OFF/ON", "default": "OFF", "level": "B" },
+    { "id": "BK", "code": "054", "name": "Motor braked at normal stop", "range": "OFF/ON", "default": "OFF", "level": "B", "note": "Motor stops with brake function: ON=Enable, OFF=Disable" },
+    { "id": "SRM", "code": "055", "name": "Motor start running with a reverse angle", "range": "OFF/ON", "default": "OFF", "level": "B" },
+    { "id": "SRA", "code": "056", "name": "Setting the angles for [055.SRM]", "range": "0-240", "default": 0, "unit": "degrees", "level": "B" },
+    { "id": "TRU", "code": "057", "name": "Motor stops with a reverse angle after trimming", "range": "OFF/ON", "default": "ON", "level": "B" },
+    { "id": "TR8", "code": "058", "name": "Setting the angles for [057.TRU]", "range": "200-360", "default": 360, "unit": "degrees", "level": "B" },
+    { "id": "M", "code": "059", "name": "Middle speed", "range": "200-1400", "default": 600, "unit": "spm", "level": "B" },
+    { "id": "L", "code": "060", "name": "Low speed", "range": "100-800", "default": 230, "unit": "spm", "level": "B", "note": "Pedal minimum speed" },
+    { "id": "T", "code": "061", "name": "Thread trimming speed", "range": "100-500", "default": 350, "unit": "spm", "level": "B" },
+    { "id": "FO", "code": "064", "name": "Full-On time setting for foot lifting solenoid", "range": "0-500", "default": 150, "unit": "ms", "level": "B", "note": "Only valid when [063.FTP] set at 'M' mode. For solenoid pulling torque adjustment." },
+    { "id": "FC", "code": "065", "name": "Duty cycle time setting for foot lifting solenoid", "range": "0-100", "default": 20, "unit": "%", "level": "B", "note": "Only valid when [063.FTP] set at 'M' mode. Wrongly adjusting will cause solenoid unable to lift or over-heat." },
+    { "id": "FD", "code": "066", "name": "Running-Delay time setting for foot lifting", "range": "1-800", "default": 110, "unit": "ms", "level": "B", "note": "If foot lifter is installed, set 100ms to ensure the presser foot will come down first." },
+    { "id": "FPM", "code": "067", "name": "Protection for foot lifter solenoid", "range": "OFF/ON", "default": "ON", "level": "B" },
+    { "id": "FP", "code": "068", "name": "Working time limit for foot lifter solenoid", "range": "0-600", "default": 250, "unit": "×0.1s", "level": "B" },
+    { "id": "HD", "code": "069", "name": "Sensitivity adjustment for half-heeling pedal", "range": "0-800", "default": 50, "unit": "ms", "level": "B" },
+    { "id": "HHC", "code": "070", "name": "Half-pedal cancel presser foot lift", "range": "OV/OFF", "default": "OFF", "level": "B", "note": "Can be operated directly on panel" },
+    { "id": "FL", "code": "071", "name": "Full-pedal cancel presser foot lift", "range": "ON/OFF", "default": "OFF", "level": "B" },
+    { "id": "FHC", "code": "072", "name": "Full-pedal cancel trimming (only with presser foot function)", "range": "OV/OFF", "default": "OFF", "level": "B" },
+    { "id": "NTC", "code": "073", "name": "Trimming works immediately when neutral pedal", "range": "OFF/ON", "default": "OFF", "level": "B" },
+    {
+      "id": "SFM",
+      "code": "075",
+      "name": "Safety switch protection mode",
+      "range": "NO/NC",
+      "default": "NO",
+      "level": "B",
+      "values": {
+        "NO": "Normal open — when signal is close, motor immediately stops and rotation symbol will stop",
+        "NC": "Normal close — when signal is open, motor immediately stops and rotation symbol will stop"
+      },
+      "note": "Trimming device protection for Cover-Stitch machine. Must match the actual safety switch type on the machine head."
+    },
+    {
+      "id": "TRM",
+      "code": "078",
+      "name": "Motor running mode at trimming sequence",
+      "range": "LK/KA/KS/KC/RK",
+      "default": "KA",
+      "level": "B",
+      "note": "Motor running mode at trimming — for overlock and lockstitch machines, different trimming modes"
+    },
+    {
+      "id": "LTM",
+      "code": "079",
+      "name": "Mode selection for trimming sequence (TM output signal)",
+      "range": "T1/T2/T3/T4/TK/TS/T7",
+      "default": "TK",
+      "level": "B",
+      "values": {
+        "T1": "At down position delayed [081.TS] angles on, at up position delayed [083.T2] time off",
+        "T2": "At down position delayed [081.TS] angles on, extended [084.TE] angles off",
+        "T3": "At down position delayed [081.TS] angles on, extended [083.T2] time off",
+        "T4": "At down position delayed [082.T1] time on, extended [083.T2] time off",
+        "TK": "At up position delayed [082.T1] time on, extended [083.T2] time off (most lockstitch machines)",
+        "TS": "At down position always on, at up position delayed [082.T1] time on, extended [083.T2] time off (most general lockstitch machines, T1 and T2 default 0)",
+        "T7": "At down position delayed [081.TS] angles on, at up position off, and delayed [082.T1] time on, extended [083.T2] time off"
+      }
+    },
+    {
+      "id": "LLM",
+      "code": "080",
+      "name": "Mode selection for tension-release sequence (ML output signal)",
+      "range": "L1/L2/L3/L4/LK/LS/L7",
+      "default": "L1",
+      "level": "B"
+    },
+    { "id": "TS", "code": "081", "name": "Delayed angles prior to trimmer engaged", "range": "5-359", "default": 100, "unit": "degrees", "level": "B", "note": "Valid for [079.LTM] = T1/T2/T3/T7" },
+    { "id": "T1", "code": "082", "name": "Delayed timing prior to trimmer engaged", "range": "1-999", "default": 5, "unit": "ms", "level": "B", "note": "Valid for [079.LTM] = T4/TK/TS/T7" },
+    { "id": "T2", "code": "083", "name": "Trimming time", "range": "1-999", "default": 100, "unit": "ms", "level": "B", "note": "Valid for [079.LTM] = T1/T3/T4/TK/TS/T7" },
+    { "id": "TE", "code": "084", "name": "Setting angles of trimming", "range": "10-359", "default": 180, "unit": "degrees", "level": "B", "note": "Valid for [079.LTM] = T2" },
+    { "id": "LS", "code": "085", "name": "Delayed angles prior to tension release engaged", "range": "5-359", "default": 180, "unit": "degrees", "level": "B", "note": "Valid for [080.LLM] = L1/L2/L7" },
+    { "id": "L1", "code": "086", "name": "Timing for tension release start", "range": "1-999", "default": 1, "unit": "ms", "level": "B", "note": "Valid for [080.LLM] = L4/LK/LS/L7" },
+    { "id": "L2", "code": "087", "name": "Timing of tension release", "range": "1-999", "default": 10, "unit": "ms", "level": "B", "note": "Valid for [080.LLM] = L1/L3/L4/LK/LS/L7" },
+    { "id": "LE", "code": "088", "name": "Setting angles of tension release", "range": "10-359", "default": 350, "unit": "degrees", "level": "B", "note": "Valid for [080.LLM] = L2" },
+    { "id": "W1", "code": "092", "name": "Delayed timing prior to wiper engaged", "range": "1-999", "default": 230, "unit": "ms", "level": "B" },
+    { "id": "W2", "code": "093", "name": "Setting timing of wiping", "range": "1-9999", "default": 55, "unit": "ms", "level": "B" },
+    { "id": "WF", "code": "094", "name": "Delayed timing prior to foot lifter engaged", "range": "0-800", "default": 50, "unit": "ms", "level": "B", "note": "Timer setting between wiper OFF to presses foot ON" },
+    { "id": "CSF", "code": "095", "name": "Condense-Stitch function selection", "range": "OFF/ON", "default": "OFF", "level": "B", "note": "Back-tacking function selection: OFF=disable, ON=Enable" },
+    { "id": "SEN", "code": "099", "name": "Edge sensor function selection", "range": "0-3", "default": 0, "level": "B", "values": { "0": "Disable (not using edge sensor)", "1": "Manual mode", "2": "Auto mode" } },
+    { "id": "SRS", "code": "100", "name": "Edge sensor signal check 1", "range": "0-999", "default": 3, "unit": "stitches", "level": "B" },
+    { "id": "SE", "code": "102", "name": "Setting stitches from edge sensing to stop", "range": "1-999", "default": 6, "unit": "stitches", "level": "B" },
+    { "id": "PSU", "code": "104", "name": "Stitches for emergency up-stop", "range": "0-999", "default": 6, "unit": "stitches", "level": "B" },
+    { "id": "PSN", "code": "106", "name": "Re-start function at emergency stop", "range": "OFF/ON", "default": "ON", "level": "B", "note": "When pedal on and edge signal detected, motor can start running" },
+    { "id": "TB", "code": "110", "name": "Mode for Back-Tacking at trimming cycle", "range": "0-110", "default": 0, "unit": "ms", "level": "B", "note": "Trimming and reverse solenoid activated at the same time when 0" },
+    { "id": "DEG", "code": "113", "name": "Needle DOWN position stop angle", "range": "0-359", "default": 175, "unit": "degrees", "level": "B", "note": "Adjust the needle down stop position" },
+    { "id": "UEG", "code": "114", "name": "Needle UP position stop angle", "range": "0-359", "default": 107, "unit": "degrees", "level": "B", "note": "Adjust the needle up stop position" },
+    { "id": "ER", "code": "117", "name": "Error code display", "level": "B", "note": "Monitor function — error code history display, total 8 events can be memorized" },
+    { "id": "NOS", "code": "118", "name": "Converting to a clutch motor", "range": "OFF/ON", "default": "OFF", "level": "B" },
+    { "id": "DD", "code": "119", "name": "Direct drive or belt drive", "range": "OFF/ON", "default": "ON", "level": "B", "values": { "OFF": "Direct drive (直驱式)", "ON": "Belt drive (下挂式)" } },
+    { "id": "ANU", "code": "121", "name": "Needle goes up as power turned ON", "range": "OFF/ON", "default": "OFF", "level": "B", "note": "ON: Automatic needle UP at power on; OFF: Function invalid" },
+    { "id": "HL", "code": "122", "name": "Upper limit of maximum speed", "range": "200-7000", "default": 4200, "unit": "spm", "level": "B", "note": "Motor's maximum speed limit setting (limits [001.H] parameter)" },
+    { "id": "TOT", "code": "135", "name": "Auto-running full time setting", "range": "0-99", "default": 1, "unit": "×1 hour", "level": "C" },
+    { "id": "TM1", "code": "136", "name": "Auto-running on cycle time setting", "range": "1-60", "default": 20, "unit": "×0.1s", "level": "C" },
+    { "id": "TM2", "code": "137", "name": "Auto-running off cycle time setting", "range": "1-60", "default": 20, "unit": "×0.1s", "level": "C" },
+    { "id": "IN1", "code": "144", "name": "Input 1 function definition", "level": "C" },
+    { "id": "IN2", "code": "145", "name": "Input 2 function definition (safety switch)", "range": "0-20", "default": 2, "level": "C", "values": { "0": "Closed", "2": "Safety switch enabled" } },
+    { "id": "O1", "code": "157", "name": "Output 1 function definition", "level": "C" },
+    { "id": "O3", "code": "158", "name": "Output 3 function definition", "level": "C" },
+    { "id": "O4", "code": "159", "name": "Output 4 function definition", "level": "C" },
+    { "id": "O5", "code": "160", "name": "Output 5 function definition", "level": "C" },
+    { "id": "O6", "code": "161", "name": "Output 6 function definition", "level": "C" },
+    { "id": "O7", "code": "162", "name": "Output 7 function definition", "level": "C" },
+    { "id": "ACT", "code": "166", "name": "Acceleration time", "range": "1-40", "default": 35, "level": "C" },
+    { "id": "DCT", "code": "167", "name": "Deceleration time", "range": "1-40", "default": 28, "level": "C" },
+    { "id": "T3", "code": "195", "name": "Blow air timer", "range": "1-9999", "default": 300, "unit": "ms", "level": "C" },
+    { "id": "FK1", "code": "210", "name": "Thread nipper start angle", "range": "10-359", "default": 70, "unit": "degrees", "level": "C" },
+    { "id": "FK2", "code": "211", "name": "Thread nipper end angle", "range": "11-359", "default": 140, "unit": "degrees", "level": "C" },
+    { "id": "SAF", "code": "246", "name": "Foot lifting at motor stop", "range": "0-1", "default": 0, "level": "C", "values": { "0": "Disable", "1": "Enable" } },
+    { "id": "pedal_trim", "code": "365", "name": "Trimming point of the pedal", "range": "0-1024", "default": 120, "level": "C" },
+    { "id": "pedal_lift", "code": "366", "name": "Footer lifting point of the pedal", "range": "0-1024", "default": 300, "level": "C" },
+    { "id": "pedal_neutral", "code": "367", "name": "Neutral point of the pedal", "range": "0-1024", "default": 470, "level": "C" },
+    { "id": "pedal_lowstart", "code": "368", "name": "Motor running point of the pedal in low speed", "range": "0-1024", "default": 480, "level": "C" },
+    { "id": "pedal_accel", "code": "369", "name": "Accelerated point of the pedal", "range": "0-1024", "default": 600, "level": "C" },
+    { "id": "pedal_max", "code": "370", "name": "Max speed point of the pedal", "range": "0-1024", "default": 940, "level": "C" },
+    { "id": "brake_detect", "code": "377", "name": "Brake resistance detection function", "range": "0-1", "default": 1, "level": "C" },
+    { "id": "foot_slowdown", "code": "379", "name": "Press foot slow down setting", "range": "0-1", "default": 1, "level": "C" },
+    { "id": "bobbin_factor", "code": "384", "name": "Factor of bobbin stitch counter", "range": "1-100", "default": 1, "level": "C" },
+    { "id": "bobbin_reset", "code": "385", "name": "Reset value of bobbin stitch counter", "range": "1-9999", "default": 1, "level": "C" },
+    {
+      "id": "bobbin_mode",
+      "code": "386",
+      "name": "Bobbin stitch counter mode",
+      "range": "0-6",
+      "default": 0,
+      "level": "C",
+      "values": {
+        "0": "Invalid",
+        "1": "Count up by stitches — when count over, counter auto-reset",
+        "2": "Count down by stitches — when count over, counter auto-reset",
+        "3": "Count up by stitches — when count over, motor stops, must reset by external switch or P key",
+        "4": "Count down by stitches — when count over, motor stops, must reset by external switch or P key",
+        "5": "Count up by stitches — when count over and after trimming, motor stops, must reset",
+        "6": "Count down by stitches — when count over and after trimming, motor stops, must reset"
+      }
+    },
+    { "id": "wipe_recover", "code": "418", "name": "Wiping recovery time", "range": "1-999", "default": 30, "unit": "ms", "level": "C" },
+    { "id": "clamp_sel", "code": "419", "name": "Clamp function selection", "range": "0-1", "default": 0, "level": "C", "values": { "0": "Disable", "1": "Enable" } },
+    { "id": "air_delay", "code": "420", "name": "Air blow start time delay", "range": "0-9999", "default": 120, "unit": "ms", "level": "C" },
+    { "id": "air_mode", "code": "422", "name": "Air suction mode", "range": "0-1", "default": 0, "level": "C", "values": { "0": "Suction after trimming", "1": "To suck when the motor is running" } },
+    { "id": "estop_mode", "code": "423", "name": "Emergency Stop Mode", "range": "0-3", "default": 0, "level": "C", "values": { "0": "Disable emergency stop", "1": "Emergency stop at anywhere", "2": "Emergency stop at up position", "3": "Emergency stop at down position" } },
+    { "id": "mid_up_pos", "code": "424", "name": "Up needle position adjustment when machine stops mid-position", "range": "200-360", "default": 360, "level": "C" },
+    { "id": "const_stitches", "code": "425", "name": "Stitches for the start of constant sewing", "range": "0-9999", "default": 4, "level": "C" },
+    { "id": "const_start", "code": "426", "name": "Start constant sewing setting", "range": "0-1", "default": 0, "level": "C", "values": { "0": "Disable", "1": "Enable" } },
+    { "id": "fill_angle", "code": "430", "name": "Specify angle to fill stitch", "range": "0-359", "level": "C" },
+    { "id": "lock_current", "code": "432", "name": "Current of motor locked", "range": "0-20", "default": 10, "level": "C" },
+    { "id": "autotest_mode", "code": "434", "name": "Auto-test running mode", "range": "0-1", "default": 1, "level": "C", "values": { "0": "Stitch", "1": "Time (×0.1s)" } },
+    { "id": "safety_confirm", "code": "435", "name": "Safety alarm confirming time", "range": "0-1000", "default": 300, "unit": "ms", "level": "C" },
+    { "id": "safety_restore", "code": "436", "name": "Safety switch restore confirm time", "range": "0-1000", "default": 50, "unit": "ms", "level": "C" }
+  ],
+  "monitoring": [
+    { "id": "01", "name": "Trimming counter", "note": "View total completed thread trimming count" },
+    { "id": "02", "name": "Sewing speed", "note": "Check machine head speed" },
+    { "id": "04", "name": "BUS voltage", "note": "Check BUS voltage" },
+    { "id": "05", "name": "Digital value for pedal", "note": "Check whether pedal signal is abnormal by digital value" },
+    { "id": "06", "name": "Mechanical angle", "note": "Check mechanical angle of the motor — default display when entering monitor mode" },
+    { "id": "08", "name": "Software version", "note": "Check software version of the controller" },
+    { "id": "ER", "code": "117", "name": "Error code history", "note": "Stores up to 8 error events" }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "ER0.119 cutting protection switch on 8770 / S68",
+      "checks": [
+        "Motor rotation icon on LCD is halting (not moving) — this is the key symptom",
+        "Restart the system and check if the fault is removed",
+        "Check parameter [075.SFM] — this must match the actual safety switch type on the machine head",
+        "If machine head uses normally-open (NO) switch: set SFM=NO",
+        "If machine head uses normally-close (NC) switch: set SFM=NC",
+        "Parameter [145.IN2] setting enables or disables this function (2=enable, 0=close)",
+        "Inspect the safety switch cable connection — check for loose or broken wires"
+      ]
+    },
+    {
+      "symptom": "ER0.7 motor stalled on 8770 / S68",
+      "checks": [
+        "Motor and machine will shut down automatically",
+        "Check motor connector and cable connections are secure",
+        "Check machine head for foreign objects stuck in motor pulley",
+        "Rotate hand wheel manually to check if mechanism moves freely",
+        "Reduce material thickness or check that fabric is not too heavy for the machine settings",
+        "Check L (low speed) and M (middle speed) parameter values are not set too high"
+      ]
+    },
+    {
+      "symptom": "ER0.8 communication error on 8770 / S68",
+      "checks": [
+        "Motor and machine will shut down automatically",
+        "Check the operation panel cable is firmly connected to both the panel and controller",
+        "Try reconnecting the panel cable",
+        "If error persists after reconnecting, the operation panel or controller may need replacement"
+      ]
+    },
+    {
+      "symptom": "Up-needle position incorrect on startup for 8770",
+      "checks": [
+        "Do NOT open the motor rear cover to adjust the needle position magnet without guidance",
+        "Method 1 (motor with needle position sensor+magnet): Adjust needle bar to target up position, then adjust needle position magnet to sensor position",
+        "Method 2 (motor without needle position sensor): Press pedal, verify motor runs correctly. Enter monitor mode [06] (mechanical angle). Turn hand wheel to target up position. Press and hold D key — machine saves up position automatically",
+        "Both methods are described in manual section 5.2 and 5.3"
+      ]
+    },
+    {
+      "symptom": "Restoring factory parameters on S68 / 8770",
+      "checks": [
+        "THIS OPERATION IS FOR MACHINE HEAD FACTORY ONLY",
+        "Step 1: Access parameter level B (hold P key, turn on power — shows 047)",
+        "Step 2: Set parameter 047 (MAC - Machine Code) to the target model code (default 630 for 8770)",
+        "Step 3: Press S key to start the recovery process",
+        "Warning: This will overwrite all custom parameter settings"
+      ]
+    },
+    {
+      "symptom": "Special 4-pin 6-wire machine parameters (S68)",
+      "checks": [
+        "When operating in 4-pin 6-wire interlock mode, the display shows a special interface (3.P1.0)",
+        "Press A key to select parameter number (P1-P6)",
+        "Press B, C, D keys to adjust parameter values",
+        "P1: Reserved",
+        "P2: Number of stitches in front suction (0=closed)",
+        "P3: Reserved",
+        "P4: Reserved",
+        "P5: Number of stitches in front cut delay (0=closed) — larger value = shorter front end thread",
+        "P6: After cutting thread delay stitches (0=closed) — larger value = longer back end thread"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,273 @@
+{
+  "model": "F6",
+  "manufacturer": "Jack Sewing Machine Co., Ltd. / ZB",
+  "controllerType": "F6 / ZB-F6 Control Box (2-digit 7-segment LED display)",
+  "manualVersion": "V1.0",
+  "manualDate": "2025-07-09",
+  "type": "Lockstitch / flat sewing machine electronic control box",
+  "note": "F6 and F5 share the same error code set and parameter structure. F6 is an updated/variant version supporting speed controller model code 4 in addition to F5's codes. ZB-F6 is the ZB-branded variant of this controller.",
+  "specs": {
+    "powerVoltage220V": "AC 220±20% V",
+    "powerVoltage110V": "AC 110±20% V",
+    "powerFrequency": "50Hz/60Hz",
+    "maxOutputPower": "550W",
+    "display": "2-digit 7-segment LED digital tube",
+    "interface": "+ (Speed) and - (Speed) buttons",
+    "errorClearMethod": "Press + to re-detect and clear error alarm (E4, E5, shutdown reminder only)"
+  },
+  "errorCodes": [
+    {
+      "code": "OF",
+      "display": "OF",
+      "cause": "Machine has not been running for about 30 minutes and enters sleep state, OR supply voltage is too low",
+      "solution": "Press + or - key to wake up the machine. If alarm cannot be eliminated, check whether the power supply voltage is normal.",
+      "severity": "low"
+    },
+    {
+      "code": "E1",
+      "display": "E1",
+      "cause": "Motor stuck — machine head is stuck or dry and difficult to rotate, motor plug is loose or has fallen off, materials are too thick and motor cannot penetrate due to insufficient torque",
+      "solution": "Rotate the hand wheel to check whether the machine head is stuck or dry and difficult to rotate. Check whether the motor plug-in is loose or falls off. Check whether the materials are too thick and the motor cannot penetrate due to insufficient torque.",
+      "severity": "high"
+    },
+    {
+      "code": "E2",
+      "display": "E2",
+      "cause": "Controller exception — motor load too large, sewing material too thick, machine lacks lubrication",
+      "solution": "Turn off and power on again. If alarm cannot be eliminated: reduce load and restart motor if load is too large; check if sewing material is too thick; check if machine lacks lubrication. If above problems cannot be solved, contact maintenance personnel.",
+      "severity": "high"
+    },
+    {
+      "code": "E4",
+      "display": "E4",
+      "cause": "Abnormal motor Hall signal — motor encoder plug connection is unreliable, encoder signal wire is broken, or pin has deformed",
+      "solution": "Check whether the motor encoder plug connection is reliable, whether the encoder signal wire is broken, and whether the pin exits or deforms. Press + to re-detect and clear if alarm is gone.",
+      "severity": "high"
+    },
+    {
+      "code": "E5",
+      "display": "E5",
+      "cause": "Abnormal locator signal — encoder/positioner plug connection unreliable, abnormal Hall of motor positioner, or positioner is damaged",
+      "solution": "Turn the hand wheel. If alarm persists, turn off power and on again. Check if encoder/positioner plug connection is reliable. Abnormal Hall of motor positioner — if positioner is damaged or positioning function is not required, long press - for 3S to close the needle stop function and release alarm. Press + to re-detect if alarm can be cleared.",
+      "severity": "high"
+    },
+    {
+      "code": "E6",
+      "display": "E6",
+      "cause": "Abnormal speed controller — speed controller type does not match parameter b setting, speed controller plug is loose or has fallen off, or speed controller signal is abnormal",
+      "solution": "If E6 is flashing: check if speed controller type matches parameter b (default b=0 for computerized lockstitch type). Adjust b parameter to match current speed controller. If E6 is always on: check whether speed controller is inserted and plug/pin is not loose or fallen off. If alarm cannot be eliminated, replace the governor. If still cannot be eliminated, control box speed controller signal may be abnormal — contact maintenance personnel.",
+      "severity": "high"
+    },
+    {
+      "code": "E7",
+      "display": "E7",
+      "cause": "Head safety switch alarm — head safety switch is turned on and machine head has tilted/dumped",
+      "solution": "Turn off the safety switch or restore the head position. If alarm cannot be eliminated, contact maintenance personnel. Long press - for 3S to close the safety switch alarm function and release alarm.",
+      "severity": "high"
+    },
+    {
+      "code": "EA",
+      "display": "EA",
+      "cause": "Software over current detected",
+      "solution": "Turn off the power and power on again. If alarm cannot be eliminated, contact maintenance personnel.",
+      "severity": "critical"
+    },
+    {
+      "code": "Eb",
+      "display": "Eb",
+      "cause": "System overvoltage — power supply voltage exceeds 294V (220V control box) or 147V (110V control box)",
+      "solution": "Turn off the power supply immediately and check whether the power supply voltage exceeds threshold. Adjust power supply voltage to rated voltage before starting the machine (220V box rated: 220V; 110V box rated: 110V).",
+      "severity": "critical"
+    },
+    {
+      "code": "EC",
+      "display": "EC",
+      "cause": "System undervoltage — power supply voltage is lower than 110V (220V control box) or 55V (110V control box)",
+      "solution": "Immediately cut off the power supply and check whether power supply voltage is below threshold. Adjust power supply voltage to rated voltage before starting the machine (220V box rated: 220V; 110V box rated: 110V).",
+      "severity": "critical"
+    },
+    {
+      "code": "EJ",
+      "display": "EJ",
+      "cause": "Current detection circuit fault — circuit board dirty, power supply voltage abnormal, or power board malfunction",
+      "solution": "Check whether the circuit board is clean. Check whether power supply voltage is normal. Wait for power to be turned on/reset again (carefully check functions of power board).",
+      "severity": "high"
+    },
+    {
+      "code": "EZ",
+      "display": "EZ",
+      "cause": "Complementary stitch button failure — machine head complementary stitch button is stuck in the off position",
+      "solution": "Check whether the complementary stitch button of the machine head can turn on and off normally. If it keeps off, replace the button of the machine head. The alarm automatically turns off the complementary stitch function but will not affect motor operation. Alarm will be cleared automatically after 30s or by pressing +.",
+      "severity": "medium"
+    }
+  ],
+  "alarmCodes": [],
+  "parameters": [
+    {
+      "id": "L",
+      "name": "Max sewing speed",
+      "range": "05-50",
+      "default": 40,
+      "unit": "×100 RPM",
+      "note": "Increase/decrease by 500rpm per step. Value 40 = 4000 RPM."
+    },
+    {
+      "id": "M",
+      "name": "Needle position switch",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off", "1": "On" }
+    },
+    {
+      "id": "d",
+      "name": "Complementary stitch function switch",
+      "range": "0-2",
+      "default": 1,
+      "values": { "0": "Off", "1": "Half stitch", "2": "One stitch" }
+    },
+    {
+      "id": "G",
+      "name": "Safety switch",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off", "1": "On" }
+    },
+    {
+      "id": "H",
+      "name": "Dormancy time",
+      "range": "0-6",
+      "default": 3,
+      "unit": "×10 minutes",
+      "note": "0 = Off (no sleep). Value 3 = 30 minutes idle before sleep."
+    },
+    {
+      "id": "C",
+      "name": "Acceleration",
+      "range": "0-9",
+      "default": 5,
+      "note": "The higher the value, the faster the acceleration."
+    },
+    {
+      "id": "n",
+      "name": "Point stitch interval",
+      "range": "0-9",
+      "default": 6,
+      "note": "The larger the value, the larger the point stitch interval."
+    },
+    {
+      "id": "V",
+      "name": "Speed display enable",
+      "range": "0-1",
+      "default": 0,
+      "values": { "0": "Off", "1": "On" }
+    },
+    {
+      "id": "R",
+      "name": "Low voltage alarm value",
+      "range": "0, 10-15",
+      "default": 0,
+      "note": "0=Off. 220V box: 10=100VAC, 11=110VAC, 12=120VAC, 13=130VAC, 14=140VAC, 15=150VAC. 110V box: 10=50VAC, 11=55VAC, 12=60VAC, 13=65VAC, 14=70VAC, 15=75VAC."
+    },
+    {
+      "id": "Y",
+      "name": "High voltage alarm value",
+      "range": "0, 26-31",
+      "default": 29,
+      "note": "0=Off. 220V box: 26=264VAC, 27=274VAC, 28=284VAC, 29=294VAC, 30=304VAC, 31=314VAC. 110V box: 26=132VAC, 27=137VAC, 28=142VAC, 29=147VAC, 30=152VAC, 31=157VAC."
+    },
+    {
+      "id": "A",
+      "name": "Ridge crossing assistance",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off", "1": "On" }
+    },
+    {
+      "id": "b",
+      "name": "Speed controller model selection",
+      "range": "0-1",
+      "default": 0,
+      "values": { "0": "Computerized type (standard lockstitch)", "1": "ZB simple type" },
+      "note": "Must match the actual speed controller installed. Mismatch will cause E6 alarm."
+    },
+    {
+      "id": "U",
+      "name": "Upper position after start up",
+      "range": "0-1",
+      "default": 1,
+      "values": { "0": "Off", "1": "On" }
+    }
+  ],
+  "monitoring": [
+    { "id": "J0", "name": "Pedal voltage monitoring", "note": "Displayed number / 10 = actual pedal voltage value" },
+    { "id": "J1", "name": "Speed", "note": "Displayed number × 100 = actual speed (RPM)" },
+    { "id": "J2", "name": "Power", "note": "Displayed number × 10 = actual power (W)" },
+    { "id": "J3", "name": "Voltage (standby)", "note": "Displayed number × 10 = actual voltage (V)" },
+    { "id": "J4", "name": "Historical maximum voltage", "note": "Displayed number × 10 = actual voltage (V)" },
+    { "id": "J5", "name": "Historical error code", "note": "Last 5 errors displayed; 00 = no error. Auto-returns to standby after 8S of no operation. E7 (head safety switch alarm) is not recorded in history." },
+    { "id": "J6", "name": "Cumulative running time", "note": "Displayed number × 100 = actual time in hours" },
+    { "id": "J7", "name": "Aging monitoring", "note": "For manufacturer test only" },
+    { "id": "J8", "name": "Model code", "note": "1/4/FF=F5; 2=20U; 3=8558G/8560G" },
+    { "id": "J9", "name": "Speed controller standby range adjustment", "note": "Displayed number / 10 = actual voltage. Adjusts middle value of voltage for pedal standby state." },
+    { "id": "JA", "name": "Fix version number", "note": "Displays the firmware/fix version number of the electronic control software" }
+  ],
+  "troubleshooting": [
+    {
+      "symptom": "E6 error flashing on F6 control box",
+      "checks": [
+        "Enter parameter F interface and navigate to parameter 'b'",
+        "Check whether b=0 (computerized lockstitch) or b=1 (ZB simple type) matches the actual speed controller fitted",
+        "Adjust b to match and save — power off and replace the governor",
+        "If E6 is always on (not flashing): check whether the speed controller plug is firmly inserted",
+        "If alarm persists after re-seating plug, replace the governor/speed controller"
+      ]
+    },
+    {
+      "symptom": "OF error — machine not responding",
+      "checks": [
+        "Press + or - button to wake machine from sleep mode",
+        "If OF persists, check that power supply voltage is within 220V ±20% range",
+        "Check low voltage alarm parameter R — if R is set too high it may trigger a false alarm",
+        "If voltage is normal and alarm persists, contact manufacturer"
+      ]
+    },
+    {
+      "symptom": "E5 abnormal locator signal on F6",
+      "checks": [
+        "Turn the hand wheel to check if encoder signal recovers",
+        "Power off and power on again",
+        "Check encoder/positioner plug connection at both motor and board ends",
+        "If positioner not needed: long press - for 3S to disable needle stop function and clear alarm",
+        "If positioner is damaged, replace it"
+      ]
+    },
+    {
+      "symptom": "E1 motor stuck on F6 — machine won't run",
+      "checks": [
+        "Rotate the hand wheel manually — check if machine head is stiff or seized",
+        "Check motor plug connection is secure",
+        "Check if material is too thick for current torque setting",
+        "Oil the machine if it is dry/stiff",
+        "If motor plug is OK and head is free, check motor and controller"
+      ]
+    },
+    {
+      "symptom": "Eb or EC voltage alarm on F6",
+      "checks": [
+        "Turn off power immediately",
+        "Check input voltage with a multimeter — 220V box must be 220V ±20% (176V-264V)",
+        "Do not restart until voltage is within the rated range",
+        "Check if voltage fluctuation from other equipment on the same circuit is causing the spike"
+      ]
+    },
+    {
+      "symptom": "EZ complementary stitch button failure on F6",
+      "checks": [
+        "Check whether the complementary stitch button on the machine head can toggle on/off normally",
+        "Press the button and listen for a clear click — stuck in off position = replace button",
+        "The machine will continue to sew normally; complementary stitch function is only disabled",
+        "Alarm auto-clears after 30s or press + to clear"
+      ]
+    }
+  ]
+}
