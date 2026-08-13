@@ -12,11 +12,11 @@ import {
   updateTask,
   UnauthorizedError,
 } from "../api";
-import type { FactoryAccount, InternalAccountLite, InternalNotification, InternalTask, TaskColumn, TaskEventType, TaskPriority } from "../types";
+import type { FactoryAccount, InternalAccountLite, InternalNotification, InternalTask, TaskColumn, TaskEventType, TaskPriority, TaskTeam } from "../types";
 import { REGIONS } from "../types";
 import { Avatar } from "../Avatar";
 import { canManageTasks, isGm } from "../permissions";
-import { Archive, Bell, Building2, Lock, MessageCircle, Plus, Sparkles, ArrowRightLeft, Zap, UserCheck, CalendarClock, SlidersHorizontal, type LucideIcon } from "lucide-react";
+import { Archive, Bell, Building2, Lock, MessageCircle, Plus, Sparkles, ArrowRightLeft, Zap, UserCheck, CalendarClock, SlidersHorizontal, Users, type LucideIcon } from "lucide-react";
 
 // Highlights "@Full Name" substrings that match a known account — pure
 // display-time formatting, mirrors the backend's parseMentions() matching
@@ -196,6 +196,7 @@ const COLUMNS: { key: TaskColumn; label: string }[] = [
 ];
 
 const PRIORITIES: TaskPriority[] = ["LOW", "MEDIUM", "HIGH", "URGENT"];
+const TEAMS: TaskTeam[] = ["Software", "Hardware"];
 const PRIORITY_RANK: Record<TaskPriority, number> = { URGENT: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
 
 const PRIORITY_COLORS: Record<TaskPriority, string> = {
@@ -211,6 +212,7 @@ const EVENT_ICON: Record<TaskEventType, LucideIcon> = {
   PRIORITY_CHANGED: Zap,
   ASSIGNED: UserCheck,
   DUE_DATE_CHANGED: CalendarClock,
+  TEAM_CHANGED: Users,
 };
 
 function isOverdue(task: InternalTask): boolean {
@@ -237,10 +239,12 @@ interface DragState {
 }
 
 export default function TaskBoardPage({
+  team,
   token,
   actingAccount,
   onUnauthorized,
 }: {
+  team: TaskTeam;
   token: string;
   actingAccount: InternalAccountLite;
   onUnauthorized: () => void;
@@ -413,6 +417,7 @@ export default function TaskBoardPage({
   if (!tasks) return <div className="page-loading">Loading task board...</div>;
 
   const visibleTasks = tasks.filter((t) => {
+    if (t.team !== team) return false;
     if (myTasksOnly && !t.assignees.some((a) => a.accountId === actingAccount.id)) return false;
     if (searchQuery.trim() && !(t.organizationName ?? "").toLowerCase().includes(searchQuery.trim().toLowerCase())) return false;
     if (regionFilter && t.region !== regionFilter) return false;
@@ -425,9 +430,9 @@ export default function TaskBoardPage({
     <div className="kanban-page">
       <div className="kanban-toolbar">
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h2 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700 }}>Task Board</h2>
+          <h2 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700 }}>{team} Task Board</h2>
           <span style={{ fontSize: "0.75rem", color: "#6b7280", background: "#f3f4f6", borderRadius: 999, padding: "2px 10px" }}>
-            {tasks?.filter(t => t.column !== "COMPLETED").length ?? 0} active
+            {tasks?.filter((t) => t.team === team && t.column !== "COMPLETED").length ?? 0} active
           </span>
         </div>
         <div className="kanban-toolbar-actions">
@@ -638,6 +643,7 @@ export default function TaskBoardPage({
 
       {showNewTask && (
         <NewTaskModal
+          team={team}
           accounts={accounts}
           organizations={organizations}
           canManage={canManage}
@@ -694,6 +700,7 @@ function TaskDetailModal({
   async function patch(payload: {
     column?: TaskColumn;
     priority?: TaskPriority;
+    team?: TaskTeam;
     leadId?: string | null;
     assistIds?: string[];
     dueDate?: string | null;
@@ -772,6 +779,17 @@ function TaskDetailModal({
                   {PRIORITIES.map((p) => (
                     <option key={p} value={p}>
                       {p}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Board
+                <select value={task.team} onChange={(e) => patch({ team: e.target.value as TaskTeam })} disabled={saving}>
+                  {TEAMS.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
                     </option>
                   ))}
                 </select>
@@ -907,6 +925,7 @@ function TaskDetailModal({
 }
 
 function NewTaskModal({
+  team,
   accounts,
   organizations,
   canManage,
@@ -915,6 +934,7 @@ function NewTaskModal({
   onClose,
   onCreated,
 }: {
+  team: TaskTeam;
   accounts: InternalAccountLite[];
   organizations: FactoryAccount[];
   canManage: boolean;
@@ -948,6 +968,7 @@ function NewTaskModal({
         leadId,
         assistIds,
         column,
+        team,
         dueDate: dueDate || null,
         organizationId,
         restricted: canManage ? restricted : undefined,

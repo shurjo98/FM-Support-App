@@ -20,6 +20,8 @@ const PRESET_ROLES = [
   "Technician",
   "Manager",
   "Admin",
+  "Software Team",
+  "Hardware Team",
   "Sales",
   "Commercial",
   "Marketing",

@@ -1,7 +1,7 @@
 // src/routes/dashboard.ts
 import express, { Router } from "express";
 import { prisma } from "../db";
-import type { ReorderStatus, TaskColumn, TaskPriority } from "../types";
+import type { ReorderStatus, TaskColumn, TaskPriority, TaskTeam } from "../types";
 import { requireInternalAuth } from "../middleware/requireInternalAuth";
 import { notify } from "../services/notificationService";
 import { sendPushToAccount } from "../services/pushService";
@@ -708,13 +708,14 @@ router.get("/tasks", async (req, res) => {
 // people can add their own tasks — editing another task's details (priority,
 // assignee, etc.) is still manager/admin only, see PATCH below.
 router.post("/tasks", async (req, res) => {
-  const { title, description, priority, leadId, assistIds, column, dueDate, organizationId, restricted, allowedAccountIds, actingAccountId } = req.body as {
+  const { title, description, priority, leadId, assistIds, column, team, dueDate, organizationId, restricted, allowedAccountIds, actingAccountId } = req.body as {
     title: string;
     description?: string;
     priority?: TaskPriority;
     leadId?: string | null;
     assistIds?: string[];
     column?: TaskColumn;
+    team?: TaskTeam;
     dueDate?: string | null;
     organizationId?: string | null;
     restricted?: boolean;
@@ -742,6 +743,7 @@ router.post("/tasks", async (req, res) => {
       description: description ?? null,
       column: column ?? "BACKLOG",
       priority: priority ?? "MEDIUM",
+      team: team ?? "Hardware",
       dueDate: dueDate ?? null,
       organizationId: organizationId || null,
       createdByAccountId: actingAccountId,
@@ -778,13 +780,14 @@ router.post("/tasks", async (req, res) => {
 // technician moves a task, the manager/admin get an in-app notification.
 router.patch("/tasks/:id", async (req, res) => {
   const { id } = req.params;
-  const { column, priority, leadId, assistIds, title, description, dueDate, organizationId, restricted, allowedAccountIds, actingAccountId } = req.body as {
+  const { column, priority, leadId, assistIds, title, description, team, dueDate, organizationId, restricted, allowedAccountIds, actingAccountId } = req.body as {
     column?: TaskColumn;
     priority?: TaskPriority;
     leadId?: string | null;
     assistIds?: string[];
     title?: string;
     description?: string;
+    team?: TaskTeam;
     dueDate?: string | null;
     organizationId?: string | null;
     restricted?: boolean;
@@ -806,6 +809,7 @@ router.patch("/tasks/:id", async (req, res) => {
     description !== undefined ||
     dueDate !== undefined ||
     organizationId !== undefined ||
+    team !== undefined ||
     restricted !== undefined ||
     allowedAccountIds !== undefined;
 
@@ -828,6 +832,11 @@ router.patch("/tasks/:id", async (req, res) => {
   if (priority && priority !== task.priority) {
     eventsToCreate.push(mkTaskEventData("PRIORITY_CHANGED", `Priority changed to ${priority}`, account.id, account.name));
     data.priority = priority;
+  }
+
+  if (team && team !== task.team) {
+    eventsToCreate.push(mkTaskEventData("TEAM_CHANGED", `Moved to the ${team} board`, account.id, account.name));
+    data.team = team;
   }
 
   let accountsToNotify: string[] = [];

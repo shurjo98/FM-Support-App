@@ -27,6 +27,7 @@ import type {
   SparePart,
   TaskColumn,
   TaskPriority,
+  TaskTeam,
   TeamGoal,
 } from "./types";
 
@@ -186,6 +187,7 @@ export function createTask(
     leadId?: string | null;
     assistIds?: string[];
     column?: TaskColumn;
+    team?: TaskTeam;
     dueDate?: string | null;
     organizationId?: string | null;
     restricted?: boolean;
@@ -206,6 +208,7 @@ export function updateTask(
     assistIds?: string[];
     title?: string;
     description?: string;
+    team?: TaskTeam;
     dueDate?: string | null;
     organizationId?: string | null;
     restricted?: boolean;

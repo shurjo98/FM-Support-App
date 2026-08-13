@@ -257,6 +257,8 @@ model InternalTask {
   description        String?
   column             String
   priority           String
+  // Which internal Kanban board this task lives on ("Software" | "Hardware").
+  team               String   @default("Hardware")
   dueDate            String?
   createdByAccountId String
   relatedTicketId    String?

@@ -88,8 +88,11 @@ export default function InternalApp() {
     >
       {tab === "dashboard" && <DashboardPage token={token} onUnauthorized={handleLogout} />}
       {tab === "assignments" && <AssignmentsPage token={token} onUnauthorized={handleLogout} />}
-      {tab === "tasks" && (
-        <TaskBoardPage token={token} actingAccount={actingAccount} onUnauthorized={handleLogout} />
+      {tab === "tasks-software" && (
+        <TaskBoardPage team="Software" token={token} actingAccount={actingAccount} onUnauthorized={handleLogout} />
+      )}
+      {tab === "tasks-hardware" && (
+        <TaskBoardPage team="Hardware" token={token} actingAccount={actingAccount} onUnauthorized={handleLogout} />
       )}
       {tab === "content" && <ContentStudioPage actingAccount={actingAccount} />}
       {tab === "teamhub" && (

@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { ArrowLeft, Factory, Building2, Users, Kanban, Newspaper, Target, Bell, LogOut, Menu, RefreshCw, ShieldCheck, ExternalLink, ClipboardList, Inbox, type LucideIcon } from "lucide-react";
+import { ArrowLeft, Factory, Building2, Users, Newspaper, Target, Bell, LogOut, Menu, RefreshCw, ShieldCheck, ExternalLink, ClipboardList, Inbox, Code2, Wrench, type LucideIcon } from "lucide-react";
 import type { InternalAccountLite } from "./types";
 import { Avatar } from "./Avatar";
 import { RoleBadges } from "./RoleBadges";
@@ -8,7 +8,8 @@ import { isFmAdmin, isGm } from "./permissions";
 export type InternalTab =
   | "dashboard"
   | "assignments"
-  | "tasks"
+  | "tasks-software"
+  | "tasks-hardware"
   | "content"
   | "teamhub"
   | "team"
@@ -20,7 +21,8 @@ export type InternalTab =
 const NAV_ITEMS: { key: InternalTab; label: string; icon: LucideIcon; adminOnly?: boolean; gmOnly?: boolean }[] = [
   { key: "dashboard", label: "By Factory", icon: Factory },
   { key: "assignments", label: "Assignments", icon: Users },
-  { key: "tasks", label: "Task Board", icon: Kanban },
+  { key: "tasks-software", label: "Software Board", icon: Code2 },
+  { key: "tasks-hardware", label: "Hardware Board", icon: Wrench },
   { key: "approvals", label: "Approvals", icon: ClipboardList },
   { key: "gm-portal", label: "GM Portal", icon: Inbox, gmOnly: true },
   { key: "content", label: "Content Studio", icon: Newspaper },

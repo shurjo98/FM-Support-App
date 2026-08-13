@@ -188,7 +188,9 @@ export interface NotificationLogEntry {
 // moving, the manager/admin get notified (see InternalNotification below).
 export type TaskColumn = "BACKLOG" | "PENDING" | "IN_PROGRESS" | "COMPLETED";
 export type TaskPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
-export type TaskEventType = "CREATED" | "MOVED" | "PRIORITY_CHANGED" | "ASSIGNED" | "DUE_DATE_CHANGED";
+// Which internal Kanban board a task lives on.
+export type TaskTeam = "Software" | "Hardware";
+export type TaskEventType = "CREATED" | "MOVED" | "PRIORITY_CHANGED" | "ASSIGNED" | "DUE_DATE_CHANGED" | "TEAM_CHANGED";
 
 export interface TaskEvent {
   id: string;
@@ -225,6 +227,7 @@ export interface InternalTask {
   description?: string;
   column: TaskColumn;
   priority: TaskPriority;
+  team: TaskTeam;
   assignees: TaskAssignee[];
   dueDate?: string | null;
   createdByAccountId: string;
