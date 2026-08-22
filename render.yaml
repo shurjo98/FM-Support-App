@@ -9,11 +9,20 @@ services:
     # deploy has run this. It's idempotent (upsert-based), but remove this
     # line again once the seed has run once against prod — no need to re-run
     # it on every future deploy.
+    #
+    # seed-shangu.ts (Shangu Group's real machine list, 446 machines across
+    # Farseeing + Voyager — see prisma/seed-shangu.ts) is NOT temporary the
+    # same way: it stays in the build command so that re-committing an
+    # updated data/shangu_machine_list/shangu_machine_list.xlsx and
+    # redeploying is enough to re-sync production, with no separate manual
+    # step. Also idempotent/upsert-based — a no-op deploy costs one extra
+    # pass over ~450 rows.
     buildCommand: >-
       npm install &&
       npx prisma generate &&
       npx prisma migrate deploy &&
       npx ts-node --transpile-only prisma/seed-pilot.ts &&
+      npx ts-node --transpile-only prisma/seed-shangu.ts &&
       npm install --prefix fm-support-frontend &&
       npm run build --prefix fm-support-frontend
     startCommand: npm start
