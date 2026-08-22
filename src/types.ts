@@ -3,7 +3,17 @@
 export type IssueType =
   | "THREAD_BREAKING"
   | "STITCH_SKIPPING"
-  | "FABRIC_NOT_FEEDING";
+  | "NEEDLE_BREAKING"
+  | "TENSION_PROBLEM"
+  | "FABRIC_NOT_FEEDING"
+  | "BOBBIN_PROBLEM"
+  | "NOISE"
+  | "MACHINE_NOT_STARTING"
+  | "ERROR_CODE"
+  | "THREAD_TRIMMER_FAULT"
+  | "OIL_LEAKAGE"
+  | "OVERHEATING"
+  | "OTHER";
 
 export interface Organization {
   id: string;

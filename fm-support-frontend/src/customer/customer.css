@@ -462,6 +462,24 @@
   opacity: 0.6;
 }
 
+/* Selectable variant (picking one option, not firing an action) — an
+   issue-type picker being the first use, see IssueTypePicker.tsx. */
+.cust-chip.selectable {
+  border: 2px solid transparent;
+  padding: 5px 12px 5px 5px;
+}
+
+.cust-chip.selectable.selected {
+  border-color: var(--md-primary-strong);
+}
+
+.cust-chip-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+  width: 30px;
+  text-align: center;
+}
+
 .cust-section-title {
   font-family: var(--font-display);
   font-size: 1.25rem;

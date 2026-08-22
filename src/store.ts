@@ -635,7 +635,11 @@ export const tickets: Ticket[] = [
 ];
 
 // 15 more varied tickets so the dashboards have ~20 issues to show.
-const EXTRA_DESCRIPTIONS: Record<IssueType, string[]> = {
+// Deliberately a narrower type than the full IssueType union (which has
+// since grown well past these 3) — this demo generator only ever needs a
+// small rotating set, not full coverage of every category.
+type DemoIssueType = "THREAD_BREAKING" | "STITCH_SKIPPING" | "FABRIC_NOT_FEEDING";
+const EXTRA_DESCRIPTIONS: Record<DemoIssueType, string[]> = {
   THREAD_BREAKING: [
     "Top thread snapping every few stitches.",
     "Thread breaks whenever sewing thicker seams.",
@@ -653,7 +657,7 @@ const EXTRA_DESCRIPTIONS: Record<IssueType, string[]> = {
   ],
 };
 
-const EXTRA_ISSUE_TYPES: IssueType[] = ["THREAD_BREAKING", "STITCH_SKIPPING", "FABRIC_NOT_FEEDING"];
+const EXTRA_ISSUE_TYPES: DemoIssueType[] = ["THREAD_BREAKING", "STITCH_SKIPPING", "FABRIC_NOT_FEEDING"];
 const EXTRA_IES = [
   { id: "u6", name: "IE Hossain" },
   { id: "u7", name: "IE Tania" },

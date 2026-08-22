@@ -1,4 +1,17 @@
-export type IssueType = "THREAD_BREAKING" | "STITCH_SKIPPING" | "FABRIC_NOT_FEEDING";
+export type IssueType =
+  | "THREAD_BREAKING"
+  | "STITCH_SKIPPING"
+  | "NEEDLE_BREAKING"
+  | "TENSION_PROBLEM"
+  | "FABRIC_NOT_FEEDING"
+  | "BOBBIN_PROBLEM"
+  | "NOISE"
+  | "MACHINE_NOT_STARTING"
+  | "ERROR_CODE"
+  | "THREAD_TRIMMER_FAULT"
+  | "OIL_LEAKAGE"
+  | "OVERHEATING"
+  | "OTHER";
 export type TicketStatus = "OPEN" | "IN_PROGRESS" | "COMPLETED";
 
 export interface WorkerTicket {

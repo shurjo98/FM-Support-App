@@ -55,7 +55,17 @@ const dict = {
 
   "issue.threadBreaking": { en: "Thread Breaking", bn: "থ্রেড ছিঁড়ে যাওয়া" },
   "issue.stitchSkipping": { en: "Stitch Skipping", bn: "স্টিচ স্কিপিং" },
+  "issue.needleBreaking": { en: "Needle Breaking", bn: "সুঁই ভেঙে যাওয়া" },
+  "issue.tensionProblem": { en: "Tension Problem", bn: "টেনশন সমস্যা" },
   "issue.fabricNotFeeding": { en: "Fabric Not Feeding", bn: "ফেব্রিক ফিড না হওয়া" },
+  "issue.bobbinProblem": { en: "Bobbin Problem", bn: "ববিন সমস্যা" },
+  "issue.noise": { en: "Unusual Noise / Vibration", bn: "অস্বাভাবিক শব্দ / কম্পন" },
+  "issue.machineNotStarting": { en: "Machine Won't Start", bn: "মেশিন চালু হচ্ছে না" },
+  "issue.errorCode": { en: "Error Code / Alarm", bn: "এরর কোড / অ্যালার্ম" },
+  "issue.threadTrimmerFault": { en: "Thread Trimmer Not Working", bn: "থ্রেড ট্রিমার কাজ করছে না" },
+  "issue.oilLeakage": { en: "Oil Leaking", bn: "তেল লিক হচ্ছে" },
+  "issue.overheating": { en: "Machine Overheating", bn: "মেশিন গরম হয়ে যাচ্ছে" },
+  "issue.other": { en: "Other", bn: "অন্যান্য" },
 
   "table.issueType": { en: "Issue Type", bn: "ইস্যু টাইপ" },
   "table.description": { en: "Description", bn: "বিবরণ" },

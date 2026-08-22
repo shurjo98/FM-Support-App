@@ -9,12 +9,7 @@ import {
 } from "../api";
 import type { CustomerUser, EquipmentItem, IssueType } from "../types";
 import { useLang } from "./i18n";
-
-const ISSUE_TYPES: { value: IssueType; label: string }[] = [
-  { value: "THREAD_BREAKING", label: "Thread breaking" },
-  { value: "STITCH_SKIPPING", label: "Stitch skipping" },
-  { value: "FABRIC_NOT_FEEDING", label: "Fabric not feeding" },
-];
+import IssueTypePicker from "./IssueTypePicker";
 
 const SERVICE_BADGE: Record<string, { label: string; className: string; icon: typeof CheckCircle2 }> = {
   ok: { label: "Serviced recently", className: "equip-badge-ok", icon: CheckCircle2 },
@@ -299,13 +294,7 @@ function ReportIssueModal({
           <div className="cust-form">
             <label>
               What's the problem?
-              <select value={issueType} onChange={(e) => setIssueType(e.target.value as IssueType)}>
-                {ISSUE_TYPES.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+              <IssueTypePicker value={issueType} onChange={setIssueType} />
             </label>
             <label>
               Describe it

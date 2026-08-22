@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchCustomerTickets, fetchPurchases } from "../api";
+import { fetchAnalyticsOverview, fetchCustomerTickets, fetchPurchases } from "../api";
 import type { CustomerTicket, CustomerUser, Purchase } from "../types";
 import type { CustomerSection } from "./CustomerLayout";
 import { useLang, type TranslationKey } from "./i18n";
@@ -27,20 +27,32 @@ export default function OverviewPage({
   const { t } = useLang();
   const [tickets, setTickets] = useState<CustomerTicket[]>([]);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [fleetTotal, setFleetTotal] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([fetchCustomerTickets(user.id), fetchPurchases({ organizationId: user.organizationId })])
-      .then(([t, p]) => {
+    Promise.all([
+      fetchCustomerTickets(user.id),
+      fetchPurchases({ organizationId: user.organizationId }),
+      fetchAnalyticsOverview(user.organizationId),
+    ])
+      .then(([t, p, overview]) => {
         setTickets(t);
         setPurchases(p);
+        setFleetTotal(overview.fleet.total);
       })
       .catch((err) => setError(err.message));
   }, [user.id, user.organizationId]);
 
-  const machinesOwned = new Set(
-    purchases.filter((p) => p.itemType === "MACHINE" && p.serialNumber).map((p) => p.serialNumber)
-  ).size;
+  // Purchase records track order history, not the live fleet — a factory
+  // onboarded with a real machine list (MachineInstance rows) but no
+  // itemType:"MACHINE" purchase entries would otherwise show 0 here even
+  // though their Sewing/Automated Machines pages are full. Fleet count from
+  // /analytics/overview is the authoritative source; fall back to the
+  // purchase-derived count only while that request is still in flight.
+  const machinesOwned =
+    fleetTotal ??
+    new Set(purchases.filter((p) => p.itemType === "MACHINE" && p.serialNumber).map((p) => p.serialNumber)).size;
   const needleOrders = purchases.filter((p) => p.itemType === "NEEDLE").length;
   const openTickets = tickets.filter((t) => t.status === "OPEN").length;
 

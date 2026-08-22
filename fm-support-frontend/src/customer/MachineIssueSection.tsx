@@ -13,12 +13,7 @@ import { useLang, type TranslationKey } from "./i18n";
 import DetailModal from "./DetailModal";
 import CallTechnicianButton from "./CallTechnicianButton";
 import FiveWhys from "./FiveWhys";
-
-const ISSUE_TYPES: { value: IssueType; labelKey: TranslationKey }[] = [
-  { value: "THREAD_BREAKING", labelKey: "issue.threadBreaking" },
-  { value: "STITCH_SKIPPING", labelKey: "issue.stitchSkipping" },
-  { value: "FABRIC_NOT_FEEDING", labelKey: "issue.fabricNotFeeding" },
-];
+import IssueTypePicker from "./IssueTypePicker";
 
 export default function MachineIssueSection({
   user,
@@ -193,13 +188,7 @@ export default function MachineIssueSection({
 
         <label>
           {t("machines.whatsProblem")}
-          <select value={issueType} onChange={(e) => setIssueType(e.target.value as IssueType)}>
-            {ISSUE_TYPES.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {t(opt.labelKey)}
-              </option>
-            ))}
-          </select>
+          <IssueTypePicker value={issueType} onChange={setIssueType} />
         </label>
 
         <label>
