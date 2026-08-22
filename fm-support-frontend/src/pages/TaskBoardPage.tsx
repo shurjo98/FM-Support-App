@@ -1,4 +1,11 @@
-import { useEffect, useRef, useState, type ChangeEvent, type PointerEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type PointerEvent,
+  type ReactNode,
+} from "react";
 import {
   addTaskComment,
   createOrganization,
@@ -12,20 +19,52 @@ import {
   updateTask,
   UnauthorizedError,
 } from "../api";
-import type { FactoryAccount, InternalAccountLite, InternalNotification, InternalTask, TaskColumn, TaskEventType, TaskPriority, TaskTeam } from "../types";
+import type {
+  FactoryAccount,
+  InternalAccountLite,
+  InternalNotification,
+  InternalTask,
+  TaskColumn,
+  TaskEventType,
+  TaskPriority,
+  TaskTeam,
+} from "../types";
 import { REGIONS } from "../types";
 import { Avatar } from "../Avatar";
 import { canManageTasks, isGm } from "../permissions";
-import { Archive, Bell, Building2, Lock, MessageCircle, Plus, Sparkles, ArrowRightLeft, Zap, UserCheck, CalendarClock, SlidersHorizontal, Users, type LucideIcon } from "lucide-react";
+import {
+  Archive,
+  Bell,
+  Building2,
+  Lock,
+  MessageCircle,
+  Plus,
+  Sparkles,
+  ArrowRightLeft,
+  Zap,
+  UserCheck,
+  CalendarClock,
+  SlidersHorizontal,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
 
 // Highlights "@Full Name" substrings that match a known account — pure
 // display-time formatting, mirrors the backend's parseMentions() matching
 // (dashboard.ts) but doesn't need to agree exactly since this only affects
 // rendering, not who gets notified.
-function renderMentions(text: string, accounts: InternalAccountLite[]): ReactNode[] {
-  const names = [...accounts].sort((a, b) => b.name.length - a.name.length).map((a) => a.name);
+function renderMentions(
+  text: string,
+  accounts: InternalAccountLite[],
+): ReactNode[] {
+  const names = [...accounts]
+    .sort((a, b) => b.name.length - a.name.length)
+    .map((a) => a.name);
   if (names.length === 0) return [text];
-  const pattern = new RegExp(`@(${names.map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})\\b`, "gi");
+  const pattern = new RegExp(
+    `@(${names.map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})\\b`,
+    "gi",
+  );
   const parts: ReactNode[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;
@@ -35,7 +74,7 @@ function renderMentions(text: string, accounts: InternalAccountLite[]): ReactNod
     parts.push(
       <span key={key++} className="mention-highlight">
         @{match[1]}
-      </span>
+      </span>,
     );
     lastIndex = match.index + match[0].length;
   }
@@ -68,12 +107,17 @@ function MentionAwareField({
   function detectMention(newValue: string, cursor: number) {
     const uptoCursor = newValue.slice(0, cursor);
     const match = uptoCursor.match(/@([A-Za-z\s]{0,30})$/);
-    setQuery(match ? match[1] ?? "" : null);
+    setQuery(match ? (match[1] ?? "") : null);
   }
 
-  function handleChange(e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) {
+  function handleChange(
+    e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
+  ) {
     onChange(e.target.value);
-    detectMention(e.target.value, e.target.selectionStart ?? e.target.value.length);
+    detectMention(
+      e.target.value,
+      e.target.selectionStart ?? e.target.value.length,
+    );
   }
 
   function selectAccount(name: string) {
@@ -86,7 +130,14 @@ function MentionAwareField({
     requestAnimationFrame(() => el?.focus());
   }
 
-  const matches = query !== null ? accounts.filter((a) => a.name.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 6) : [];
+  const matches =
+    query !== null
+      ? accounts
+          .filter((a) =>
+            a.name.toLowerCase().includes(query.trim().toLowerCase()),
+          )
+          .slice(0, 6)
+      : [];
 
   return (
     <div className="mention-field-wrap">
@@ -112,7 +163,12 @@ function MentionAwareField({
       {matches.length > 0 && (
         <div className="mention-suggestions">
           {matches.map((a) => (
-            <button key={a.id} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => selectAccount(a.name)}>
+            <button
+              key={a.id}
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => selectAccount(a.name)}
+            >
               <Avatar name={a.name} avatarUrl={a.avatarUrl} size={18} />
               <span>{a.name}</span>
             </button>
@@ -125,9 +181,22 @@ function MentionAwareField({
 
 // Simple on/off pill switch (iOS-style) — used for the "restrict visibility"
 // toggle so setting task privacy reads as a single obvious tap.
-function IosToggle({ on, onToggle, label }: { on: boolean; onToggle: () => void; label: ReactNode }) {
+function IosToggle({
+  on,
+  onToggle,
+  label,
+}: {
+  on: boolean;
+  onToggle: () => void;
+  label: ReactNode;
+}) {
   return (
-    <div className="ios-toggle-row" onClick={onToggle} role="switch" aria-checked={on}>
+    <div
+      className="ios-toggle-row"
+      onClick={onToggle}
+      role="switch"
+      aria-checked={on}
+    >
       <span>{label}</span>
       <span className={`ios-toggle ${on ? "on" : ""}`}>
         <span className="ios-toggle-knob" />
@@ -162,7 +231,11 @@ function RestrictedVisibilityField({
         onToggle={disabled ? () => {} : onToggleRestricted}
         label={
           <>
-            <Lock size={14} strokeWidth={2} style={{ verticalAlign: "-2px", marginRight: 6 }} />
+            <Lock
+              size={14}
+              strokeWidth={2}
+              style={{ verticalAlign: "-2px", marginRight: 6 }}
+            />
             Restrict who can see this
           </>
         }
@@ -174,14 +247,25 @@ function RestrictedVisibilityField({
             .map((a) => {
               const active = allowedAccountIds.includes(a.id);
               return (
-                <label key={a.id} className={`assist-chip ${active ? "active" : ""}`}>
-                  <input type="checkbox" checked={active} onChange={() => onToggleAllowed(a.id)} disabled={disabled} hidden />
+                <label
+                  key={a.id}
+                  className={`assist-chip ${active ? "active" : ""}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={active}
+                    onChange={() => onToggleAllowed(a.id)}
+                    disabled={disabled}
+                    hidden
+                  />
                   <Avatar name={a.name} avatarUrl={a.avatarUrl} size={20} />
                   <span>{a.name}</span>
                 </label>
               );
             })}
-          <p className="empty restricted-field-hint">Leave everyone unchecked to keep this visible to only you (and GM).</p>
+          <p className="empty restricted-field-hint">
+            Leave everyone unchecked to keep this visible to only you (and GM).
+          </p>
         </div>
       )}
     </div>
@@ -197,7 +281,12 @@ const COLUMNS: { key: TaskColumn; label: string }[] = [
 
 const PRIORITIES: TaskPriority[] = ["LOW", "MEDIUM", "HIGH", "URGENT"];
 const TEAMS: TaskTeam[] = ["Software", "Hardware"];
-const PRIORITY_RANK: Record<TaskPriority, number> = { URGENT: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+const PRIORITY_RANK: Record<TaskPriority, number> = {
+  URGENT: 0,
+  HIGH: 1,
+  MEDIUM: 2,
+  LOW: 3,
+};
 
 const PRIORITY_COLORS: Record<TaskPriority, string> = {
   LOW: "#6b7280",
@@ -252,7 +341,9 @@ export default function TaskBoardPage({
   const [tasks, setTasks] = useState<InternalTask[] | null>(null);
   const [accounts, setAccounts] = useState<InternalAccountLite[]>([]);
   const [organizations, setOrganizations] = useState<FactoryAccount[]>([]);
-  const [notifications, setNotifications] = useState<InternalNotification[]>([]);
+  const [notifications, setNotifications] = useState<InternalNotification[]>(
+    [],
+  );
   const [error, setError] = useState<string | null>(null);
   const [drag, setDrag] = useState<DragState | null>(null);
   // Mobile only: the 4-column kanban grid doesn't fit a phone width, so below
@@ -276,7 +367,9 @@ export default function TaskBoardPage({
   // anyway since only one column is visible at a time. Below 880px, cards are
   // tap-to-open instead — reassigning a column happens via the detail
   // modal's Column dropdown.
-  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 880px)").matches);
+  const [isMobile, setIsMobile] = useState(
+    () => window.matchMedia("(max-width: 880px)").matches,
+  );
   const columnRefs = useRef<Partial<Record<TaskColumn, HTMLDivElement>>>({});
 
   useEffect(() => {
@@ -292,7 +385,11 @@ export default function TaskBoardPage({
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   function load() {
-    Promise.all([fetchTasks(token, actingAccount.id, showArchived), fetchInternalAccounts(token), fetchOrganizations(token)])
+    Promise.all([
+      fetchTasks(token, actingAccount.id, showArchived),
+      fetchInternalAccounts(token),
+      fetchOrganizations(token),
+    ])
       .then(([t, a, o]) => {
         setTasks(t);
         setAccounts(a);
@@ -325,8 +422,13 @@ export default function TaskBoardPage({
 
   async function moveTask(taskId: string, column: TaskColumn) {
     try {
-      const updated = await updateTask(token, taskId, { column, actingAccountId: actingAccount.id });
-      setTasks((prev) => prev?.map((t) => (t.id === taskId ? updated : t)) ?? prev);
+      const updated = await updateTask(token, taskId, {
+        column,
+        actingAccountId: actingAccount.id,
+      });
+      setTasks(
+        (prev) => prev?.map((t) => (t.id === taskId ? updated : t)) ?? prev,
+      );
       loadNotifications();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to move task");
@@ -336,7 +438,10 @@ export default function TaskBoardPage({
   // Pointer Events work for mouse AND touch, unlike the old HTML5 drag API
   // (which never fires on phones/tablets) — this is what makes dragging
   // cards work on mobile.
-  function handlePointerDown(e: PointerEvent<HTMLDivElement>, task: InternalTask) {
+  function handlePointerDown(
+    e: PointerEvent<HTMLDivElement>,
+    task: InternalTask,
+  ) {
     if (e.pointerType === "mouse" && e.button !== 0) return;
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
@@ -371,17 +476,31 @@ export default function TaskBoardPage({
         const el = columnRefs.current[col.key];
         if (!el) continue;
         const r = el.getBoundingClientRect();
-        if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
+        if (
+          e.clientX >= r.left &&
+          e.clientX <= r.right &&
+          e.clientY >= r.top &&
+          e.clientY <= r.bottom
+        ) {
           overColumn = col.key;
           break;
         }
       }
     }
 
-    setDrag({ ...drag, x: e.clientX - drag.offsetX, y: e.clientY - drag.offsetY, isDragging, overColumn });
+    setDrag({
+      ...drag,
+      x: e.clientX - drag.offsetX,
+      y: e.clientY - drag.offsetY,
+      isDragging,
+      overColumn,
+    });
   }
 
-  function handlePointerUp(e: PointerEvent<HTMLDivElement>, task: InternalTask) {
+  function handlePointerUp(
+    e: PointerEvent<HTMLDivElement>,
+    task: InternalTask,
+  ) {
     if (!drag || e.pointerId !== drag.pointerId) return;
     const { isDragging, overColumn } = drag;
     setDrag(null);
@@ -393,7 +512,9 @@ export default function TaskBoardPage({
   }
 
   function handleTaskUpdated(updated: InternalTask) {
-    setTasks((prev) => prev?.map((t) => (t.id === updated.id ? updated : t)) ?? prev);
+    setTasks(
+      (prev) => prev?.map((t) => (t.id === updated.id ? updated : t)) ?? prev,
+    );
     setDetailTask(updated);
     loadNotifications();
   }
@@ -418,21 +539,48 @@ export default function TaskBoardPage({
 
   const visibleTasks = tasks.filter((t) => {
     if (t.team !== team) return false;
-    if (myTasksOnly && !t.assignees.some((a) => a.accountId === actingAccount.id)) return false;
-    if (searchQuery.trim() && !(t.organizationName ?? "").toLowerCase().includes(searchQuery.trim().toLowerCase())) return false;
+    if (
+      myTasksOnly &&
+      !t.assignees.some((a) => a.accountId === actingAccount.id)
+    )
+      return false;
+    if (
+      searchQuery.trim() &&
+      !(t.organizationName ?? "")
+        .toLowerCase()
+        .includes(searchQuery.trim().toLowerCase())
+    )
+      return false;
     if (regionFilter && t.region !== regionFilter) return false;
     return true;
   });
 
-  const activeFilterCount = [searchQuery.trim() !== "", regionFilter !== "", myTasksOnly, showArchived].filter(Boolean).length;
+  const activeFilterCount = [
+    searchQuery.trim() !== "",
+    regionFilter !== "",
+    myTasksOnly,
+    showArchived,
+  ].filter(Boolean).length;
 
   return (
     <div className="kanban-page">
       <div className="kanban-toolbar">
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <h2 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700 }}>{team} Task Board</h2>
-          <span style={{ fontSize: "0.75rem", color: "#6b7280", background: "#f3f4f6", borderRadius: 999, padding: "2px 10px" }}>
-            {tasks?.filter((t) => t.team === team && t.column !== "COMPLETED").length ?? 0} active
+          <h2 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700 }}>
+            {team} Task Board
+          </h2>
+          <span
+            style={{
+              fontSize: "0.75rem",
+              color: "#6b7280",
+              background: "#f3f4f6",
+              borderRadius: 999,
+              padding: "2px 10px",
+            }}
+          >
+            {tasks?.filter((t) => t.team === team && t.column !== "COMPLETED")
+              .length ?? 0}{" "}
+            active
           </span>
         </div>
         <div className="kanban-toolbar-actions">
@@ -444,7 +592,9 @@ export default function TaskBoardPage({
             <SlidersHorizontal size={16} strokeWidth={2} />
             {activeFilterCount > 0 && <span className="kanban-filter-dot" />}
           </button>
-          <div className={`kanban-filter-panel ${showMobileFilters ? "open" : ""}`}>
+          <div
+            className={`kanban-filter-panel ${showMobileFilters ? "open" : ""}`}
+          >
             <input
               type="text"
               className="kanban-search-input"
@@ -452,14 +602,25 @@ export default function TaskBoardPage({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <select value={regionFilter} onChange={(e) => setRegionFilter(e.target.value)} className="kanban-search-input" style={{ width: "auto" }}>
+            <select
+              value={regionFilter}
+              onChange={(e) => setRegionFilter(e.target.value)}
+              className="kanban-search-input"
+              style={{ width: "auto" }}
+            >
               <option value="">All regions</option>
               {REGIONS.map((r) => (
-                <option key={r} value={r}>{r}</option>
+                <option key={r} value={r}>
+                  {r}
+                </option>
               ))}
             </select>
             <label className="kanban-my-tasks">
-              <input type="checkbox" checked={myTasksOnly} onChange={(e) => setMyTasksOnly(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={myTasksOnly}
+                onChange={(e) => setMyTasksOnly(e.target.checked)}
+              />
               Mine
             </label>
             <button
@@ -471,19 +632,31 @@ export default function TaskBoardPage({
               <Archive size={14} strokeWidth={2} />
               {showArchived ? "Hide archived" : "Archived"}
             </button>
-            <button className="int-button-secondary" onClick={() => setShowAddFactory(true)} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <button
+              className="int-button-secondary"
+              onClick={() => setShowAddFactory(true)}
+              style={{ display: "flex", alignItems: "center", gap: 6 }}
+            >
               <Building2 size={14} strokeWidth={2} />
               Add Factory
             </button>
           </div>
           <div className="int-bell-wrap">
-            <button className="int-bell" onClick={() => setShowNotifications((s) => !s)}>
+            <button
+              className="int-bell"
+              onClick={() => setShowNotifications((s) => !s)}
+            >
               <Bell size={18} strokeWidth={2} />
-              {unreadCount > 0 && <span className="int-bell-badge">{unreadCount}</span>}
+              {unreadCount > 0 && (
+                <span className="int-bell-badge">{unreadCount}</span>
+              )}
             </button>
             {showNotifications && (
               <>
-                <div className="int-bell-backdrop" onClick={() => setShowNotifications(false)} />
+                <div
+                  className="int-bell-backdrop"
+                  onClick={() => setShowNotifications(false)}
+                />
                 <div className="int-bell-dropdown">
                   <div className="int-bell-dropdown-header">
                     <span>Notifications</span>
@@ -493,10 +666,19 @@ export default function TaskBoardPage({
                     <p className="empty">No notifications yet.</p>
                   ) : (
                     notifications.slice(0, 10).map((n) => (
-                      <div key={n.id} className={`int-bell-item ${n.read ? "" : "unread"} ${n.isMention ? "mention" : ""}`}>
-                        {n.isMention && <span className="int-bell-mention-tag">@ Mentioned you</span>}
+                      <div
+                        key={n.id}
+                        className={`int-bell-item ${n.read ? "" : "unread"} ${n.isMention ? "mention" : ""}`}
+                      >
+                        {n.isMention && (
+                          <span className="int-bell-mention-tag">
+                            @ Mentioned you
+                          </span>
+                        )}
                         <div>{n.message}</div>
-                        <div className="int-bell-time">{new Date(n.createdAt).toLocaleString()}</div>
+                        <div className="int-bell-time">
+                          {new Date(n.createdAt).toLocaleString()}
+                        </div>
                       </div>
                     ))
                   )}
@@ -504,7 +686,12 @@ export default function TaskBoardPage({
               </>
             )}
           </div>
-          <button className="int-button" onClick={() => setShowNewTask(true)} aria-label="New Task" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <button
+            className="int-button"
+            onClick={() => setShowNewTask(true)}
+            aria-label="New Task"
+            style={{ display: "flex", alignItems: "center", gap: 6 }}
+          >
             <Plus size={16} strokeWidth={2.5} />
             <span className="btn-label">New Task</span>
           </button>
@@ -531,7 +718,9 @@ export default function TaskBoardPage({
           const colTasks = visibleTasks
             .filter((t) => t.column === col.key)
             .slice()
-            .sort((a, b) => PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority]);
+            .sort(
+              (a, b) => PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority],
+            );
           return (
             <div
               key={col.key}
@@ -551,29 +740,45 @@ export default function TaskBoardPage({
                     key={task.id}
                     className={`kanban-card ${drag?.taskId === task.id && drag.isDragging ? "dragging" : ""} ${task.restricted ? "kanban-card-restricted" : ""}`}
                     data-priority={task.priority}
-                    onPointerDown={isMobile ? undefined : (e) => handlePointerDown(e, task)}
+                    onPointerDown={
+                      isMobile ? undefined : (e) => handlePointerDown(e, task)
+                    }
                     onPointerMove={isMobile ? undefined : handlePointerMove}
-                    onPointerUp={isMobile ? undefined : (e) => handlePointerUp(e, task)}
+                    onPointerUp={
+                      isMobile ? undefined : (e) => handlePointerUp(e, task)
+                    }
                     onPointerCancel={isMobile ? undefined : () => setDrag(null)}
                     onClick={isMobile ? () => setDetailTask(task) : undefined}
                   >
-                    <span className="kanban-priority-badge" style={{ backgroundColor: PRIORITY_COLORS[task.priority] }}>
+                    <span
+                      className="kanban-priority-badge"
+                      style={{
+                        backgroundColor: PRIORITY_COLORS[task.priority],
+                      }}
+                    >
                       {task.priority}
                     </span>
                     {task.restricted && (
-                      <span className="kanban-restricted-badge" title="Restricted visibility">
+                      <span
+                        className="kanban-restricted-badge"
+                        title="Restricted visibility"
+                      >
                         <Lock size={11} strokeWidth={2.5} />
                       </span>
                     )}
                     {task.organizationName && (
-                      <span className="kanban-factory-badge">{task.organizationName}</span>
+                      <span className="kanban-factory-badge">
+                        {task.organizationName}
+                      </span>
                     )}
                     {task.region && (
                       <span className="kanban-region-badge">{task.region}</span>
                     )}
                     <div className="kanban-card-title">{task.title}</div>
                     {task.dueDate && (
-                      <div className={`kanban-due ${isOverdue(task) ? "overdue" : ""}`}>
+                      <div
+                        className={`kanban-due ${isOverdue(task) ? "overdue" : ""}`}
+                      >
                         {isOverdue(task) ? "⚠ Overdue " : "Due "}
                         {new Date(task.dueDate).toLocaleDateString()}
                       </div>
@@ -593,7 +798,11 @@ export default function TaskBoardPage({
                               className={`kanban-assignee ${a.role === "LEAD" ? "lead" : "assist"}`}
                               title={`${a.name} — ${a.role === "LEAD" ? "Lead" : "Assist"}`}
                             >
-                              <Avatar name={a.name} avatarUrl={a.avatarUrl} size={a.role === "LEAD" ? 28 : 22} />
+                              <Avatar
+                                name={a.name}
+                                avatarUrl={a.avatarUrl}
+                                size={a.role === "LEAD" ? 28 : 22}
+                              />
                             </div>
                           ))}
                         </div>
@@ -603,7 +812,9 @@ export default function TaskBoardPage({
                     </div>
                   </div>
                 ))}
-                {colTasks.length === 0 && <p className="empty kanban-empty">No tasks.</p>}
+                {colTasks.length === 0 && (
+                  <p className="empty kanban-empty">No tasks.</p>
+                )}
               </div>
             </div>
           );
@@ -617,9 +828,20 @@ export default function TaskBoardPage({
           return (
             <div
               className="kanban-card kanban-card-ghost"
-              style={{ position: "fixed", left: drag.x, top: drag.y, width: drag.width, pointerEvents: "none" }}
+              style={{
+                position: "fixed",
+                left: drag.x,
+                top: drag.y,
+                width: drag.width,
+                pointerEvents: "none",
+              }}
             >
-              <span className="kanban-priority-badge" style={{ backgroundColor: PRIORITY_COLORS[draggedTask.priority] }}>
+              <span
+                className="kanban-priority-badge"
+                style={{
+                  backgroundColor: PRIORITY_COLORS[draggedTask.priority],
+                }}
+              >
                 {draggedTask.priority}
               </span>
               <div className="kanban-card-title">{draggedTask.title}</div>
@@ -711,7 +933,10 @@ function TaskDetailModal({
     setSaving(true);
     setError(null);
     try {
-      const updated = await updateTask(token, task.id, { ...payload, actingAccountId: actingAccount.id });
+      const updated = await updateTask(token, task.id, {
+        ...payload,
+        actingAccountId: actingAccount.id,
+      });
       onUpdated(updated);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Update failed");
@@ -725,7 +950,12 @@ function TaskDetailModal({
     setPostingComment(true);
     setError(null);
     try {
-      const updated = await addTaskComment(token, task.id, commentText.trim(), actingAccount.id);
+      const updated = await addTaskComment(
+        token,
+        task.id,
+        commentText.trim(),
+        actingAccount.id,
+      );
       onUpdated(updated);
       setCommentText("");
     } catch (err) {
@@ -735,26 +965,39 @@ function TaskDetailModal({
     }
   }
 
-  const timeline = [...task.events].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  const timeline = [...task.events].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+  );
 
   return (
     <div className="int-modal-overlay" onClick={onClose}>
-      <div className="int-modal int-modal-wide" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="int-modal int-modal-wide"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button className="int-modal-close" onClick={onClose}>
           ✕
         </button>
 
         <h2 className="int-modal-title">{task.title}</h2>
-        {task.description && <p className="int-modal-description">{renderMentions(task.description, accounts)}</p>}
-        {task.restricted && (
-          <p className="restricted-notice">
-            <Lock size={13} strokeWidth={2} /> Restricted — only you and specifically allowed people can see this task.
+        {task.description && (
+          <p className="int-modal-description">
+            {renderMentions(task.description, accounts)}
           </p>
         )}
-        {task.relatedTicketId && <p className="empty">Linked ticket: {task.relatedTicketId}</p>}
+        {task.restricted && (
+          <p className="restricted-notice">
+            <Lock size={13} strokeWidth={2} /> Restricted — only you and
+            specifically allowed people can see this task.
+          </p>
+        )}
+        {task.relatedTicketId && (
+          <p className="empty">Linked ticket: {task.relatedTicketId}</p>
+        )}
 
         <div className="int-modal-meta">
-          Created by {task.createdByName} · {new Date(task.createdAt).toLocaleString()}
+          Created by {task.createdByName} ·{" "}
+          {new Date(task.createdAt).toLocaleString()}
         </div>
 
         {error && <div className="login-error">{error}</div>}
@@ -762,7 +1005,11 @@ function TaskDetailModal({
         <div className="int-modal-fields">
           <label>
             Column
-            <select value={task.column} onChange={(e) => patch({ column: e.target.value as TaskColumn })} disabled={saving}>
+            <select
+              value={task.column}
+              onChange={(e) => patch({ column: e.target.value as TaskColumn })}
+              disabled={saving}
+            >
               {COLUMNS.map((c) => (
                 <option key={c.key} value={c.key}>
                   {c.label}
@@ -775,7 +1022,13 @@ function TaskDetailModal({
             <>
               <label>
                 Priority
-                <select value={task.priority} onChange={(e) => patch({ priority: e.target.value as TaskPriority })} disabled={saving}>
+                <select
+                  value={task.priority}
+                  onChange={(e) =>
+                    patch({ priority: e.target.value as TaskPriority })
+                  }
+                  disabled={saving}
+                >
                   {PRIORITIES.map((p) => (
                     <option key={p} value={p}>
                       {p}
@@ -786,7 +1039,11 @@ function TaskDetailModal({
 
               <label>
                 Board
-                <select value={task.team} onChange={(e) => patch({ team: e.target.value as TaskTeam })} disabled={saving}>
+                <select
+                  value={task.team}
+                  onChange={(e) => patch({ team: e.target.value as TaskTeam })}
+                  disabled={saving}
+                >
                   {TEAMS.map((t) => (
                     <option key={t} value={t}>
                       {t}
@@ -797,13 +1054,22 @@ function TaskDetailModal({
 
               <AssigneePicker
                 accounts={accounts}
-                leadId={task.assignees.find((a) => a.role === "LEAD")?.accountId ?? null}
-                assistIds={task.assignees.filter((a) => a.role === "ASSIST").map((a) => a.accountId)}
+                leadId={
+                  task.assignees.find((a) => a.role === "LEAD")?.accountId ??
+                  null
+                }
+                assistIds={task.assignees
+                  .filter((a) => a.role === "ASSIST")
+                  .map((a) => a.accountId)}
                 disabled={saving}
                 onChangeLead={(leadId) => patch({ leadId })}
                 onToggleAssist={(accountId) => {
-                  const current = task.assignees.filter((a) => a.role === "ASSIST").map((a) => a.accountId);
-                  const next = current.includes(accountId) ? current.filter((id) => id !== accountId) : [...current, accountId];
+                  const current = task.assignees
+                    .filter((a) => a.role === "ASSIST")
+                    .map((a) => a.accountId);
+                  const next = current.includes(accountId)
+                    ? current.filter((id) => id !== accountId)
+                    : [...current, accountId];
                   patch({ assistIds: next });
                 }}
               />
@@ -822,7 +1088,9 @@ function TaskDetailModal({
                 Factory
                 <select
                   value={task.organizationId ?? ""}
-                  onChange={(e) => patch({ organizationId: e.target.value || null })}
+                  onChange={(e) =>
+                    patch({ organizationId: e.target.value || null })
+                  }
                   disabled={saving}
                 >
                   <option value="">No factory</option>
@@ -836,7 +1104,12 @@ function TaskDetailModal({
 
               <RestrictedVisibilityField
                 restricted={task.restricted}
-                onToggleRestricted={() => patch({ restricted: !task.restricted, allowedAccountIds: task.allowedAccountIds })}
+                onToggleRestricted={() =>
+                  patch({
+                    restricted: !task.restricted,
+                    allowedAccountIds: task.allowedAccountIds,
+                  })
+                }
                 allowedAccountIds={task.allowedAccountIds}
                 onToggleAllowed={(accountId) => {
                   const next = task.allowedAccountIds.includes(accountId)
@@ -849,7 +1122,10 @@ function TaskDetailModal({
                 disabled={saving}
               />
 
-              <button className="int-button-danger" onClick={() => onDelete(task.id)}>
+              <button
+                className="int-button-danger"
+                onClick={() => onDelete(task.id)}
+              >
                 Delete task
               </button>
             </>
@@ -864,16 +1140,23 @@ function TaskDetailModal({
                 </div>
               )}
               <div>
-                <strong>Lead:</strong> {task.assignees.find((a) => a.role === "LEAD")?.name ?? "Unassigned"}
+                <strong>Lead:</strong>{" "}
+                {task.assignees.find((a) => a.role === "LEAD")?.name ??
+                  "Unassigned"}
               </div>
               {task.assignees.some((a) => a.role === "ASSIST") && (
                 <div>
-                  <strong>Assist:</strong> {task.assignees.filter((a) => a.role === "ASSIST").map((a) => a.name).join(", ")}
+                  <strong>Assist:</strong>{" "}
+                  {task.assignees
+                    .filter((a) => a.role === "ASSIST")
+                    .map((a) => a.name)
+                    .join(", ")}
                 </div>
               )}
               {task.dueDate && (
                 <div>
-                  <strong>Due:</strong> {new Date(task.dueDate).toLocaleDateString()}
+                  <strong>Due:</strong>{" "}
+                  {new Date(task.dueDate).toLocaleDateString()}
                 </div>
               )}
             </>
@@ -885,37 +1168,58 @@ function TaskDetailModal({
           {timeline.map((ev) => {
             const EventIcon = EVENT_ICON[ev.type];
             return (
-            <div key={ev.id} className="int-activity-item">
-              <span><EventIcon size={15} strokeWidth={2} /></span>
-              <div>
-                <div>{ev.description}</div>
-                <div className="int-activity-meta">
-                  {ev.authorName} · {new Date(ev.createdAt).toLocaleString()}
+              <div key={ev.id} className="int-activity-item">
+                <span>
+                  <EventIcon size={15} strokeWidth={2} />
+                </span>
+                <div>
+                  <div>{ev.description}</div>
+                  <div className="int-activity-meta">
+                    {ev.authorName} · {new Date(ev.createdAt).toLocaleString()}
+                  </div>
                 </div>
               </div>
-            </div>
             );
           })}
         </div>
 
         <h3 className="int-section-heading">Comments</h3>
         <div className="int-comments-feed">
-          {task.comments.length === 0 && <p className="empty">No comments yet — leave feedback below.</p>}
+          {task.comments.length === 0 && (
+            <p className="empty">No comments yet — leave feedback below.</p>
+          )}
           {task.comments.map((c) => (
             <div key={c.id} className="int-comment-item">
-              <Avatar name={c.authorName} avatarUrl={accounts.find((a) => a.id === c.authorAccountId)?.avatarUrl} size={32} />
+              <Avatar
+                name={c.authorName}
+                avatarUrl={
+                  accounts.find((a) => a.id === c.authorAccountId)?.avatarUrl
+                }
+                size={32}
+              />
               <div>
                 <div className="int-comment-author">{c.authorName}</div>
                 <div>{renderMentions(c.text, accounts)}</div>
-                <div className="int-activity-meta">{new Date(c.createdAt).toLocaleString()}</div>
+                <div className="int-activity-meta">
+                  {new Date(c.createdAt).toLocaleString()}
+                </div>
               </div>
             </div>
           ))}
         </div>
 
         <div className="int-comment-form">
-          <MentionAwareField value={commentText} onChange={setCommentText} accounts={accounts} placeholder="Add feedback or an update... (@ to mention someone)" />
-          <button className="int-button" onClick={postComment} disabled={postingComment || !commentText.trim()}>
+          <MentionAwareField
+            value={commentText}
+            onChange={setCommentText}
+            accounts={accounts}
+            placeholder="Add feedback or an update... (@ to mention someone)"
+          />
+          <button
+            className="int-button"
+            onClick={postComment}
+            disabled={postingComment || !commentText.trim()}
+          >
             {postingComment ? "Posting..." : "Post"}
           </button>
         </div>
@@ -1003,11 +1307,21 @@ function NewTaskModal({
           </label>
           <label>
             Description
-            <MentionAwareField value={description} onChange={setDescription} accounts={accounts} multiline rows={3} placeholder="@ to mention someone" />
+            <MentionAwareField
+              value={description}
+              onChange={setDescription}
+              accounts={accounts}
+              multiline
+              rows={3}
+              placeholder="@ to mention someone"
+            />
           </label>
           <label>
             Priority
-            <select value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)}>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value as TaskPriority)}
+            >
               {PRIORITIES.map((p) => (
                 <option key={p} value={p}>
                   {p}
@@ -1021,12 +1335,19 @@ function NewTaskModal({
             assistIds={assistIds}
             onChangeLead={setLeadId}
             onToggleAssist={(accountId) =>
-              setAssistIds((prev) => (prev.includes(accountId) ? prev.filter((id) => id !== accountId) : [...prev, accountId]))
+              setAssistIds((prev) =>
+                prev.includes(accountId)
+                  ? prev.filter((id) => id !== accountId)
+                  : [...prev, accountId],
+              )
             }
           />
           <label>
             Factory (optional)
-            <select value={organizationId ?? ""} onChange={(e) => setOrganizationId(e.target.value || null)}>
+            <select
+              value={organizationId ?? ""}
+              onChange={(e) => setOrganizationId(e.target.value || null)}
+            >
               <option value="">No factory</option>
               {organizations.map((o) => (
                 <option key={o.id} value={o.id}>
@@ -1037,11 +1358,18 @@ function NewTaskModal({
           </label>
           <label>
             Due date
-            <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+            />
           </label>
           <label>
             Column
-            <select value={column} onChange={(e) => setColumn(e.target.value as TaskColumn)}>
+            <select
+              value={column}
+              onChange={(e) => setColumn(e.target.value as TaskColumn)}
+            >
               {COLUMNS.map((c) => (
                 <option key={c.key} value={c.key}>
                   {c.label}
@@ -1056,7 +1384,11 @@ function NewTaskModal({
               onToggleRestricted={() => setRestricted((v) => !v)}
               allowedAccountIds={allowedAccountIds}
               onToggleAllowed={(accountId) =>
-                setAllowedAccountIds((prev) => (prev.includes(accountId) ? prev.filter((id) => id !== accountId) : [...prev, accountId]))
+                setAllowedAccountIds((prev) =>
+                  prev.includes(accountId)
+                    ? prev.filter((id) => id !== accountId)
+                    : [...prev, accountId],
+                )
               }
               accounts={accounts}
               excludeAccountId={actingAccountId}
@@ -1065,7 +1397,11 @@ function NewTaskModal({
 
           {error && <div className="login-error">{error}</div>}
 
-          <button className="int-button" onClick={handleSubmit} disabled={submitting || !title.trim()}>
+          <button
+            className="int-button"
+            onClick={handleSubmit}
+            disabled={submitting || !title.trim()}
+          >
             {submitting ? "Creating..." : "Create task"}
           </button>
         </div>
@@ -1121,55 +1457,114 @@ function AddFactoryModal({
 
   return (
     <div className="int-modal-overlay" onClick={onClose}>
-      <div className="int-modal int-modal-wide" onClick={(e) => e.stopPropagation()}>
-        <button className="int-modal-close" onClick={onClose}>✕</button>
+      <div
+        className="int-modal int-modal-wide"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button className="int-modal-close" onClick={onClose}>
+          ✕
+        </button>
         <h2 className="int-modal-title">Add Factory</h2>
         <div className="int-modal-fields">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <div
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          >
             <label style={{ gridColumn: "1 / -1" }}>
               Factory name <span style={{ color: "#dc2626" }}>*</span>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Evergreen Garments Ltd" autoFocus />
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Evergreen Garments Ltd"
+                autoFocus
+              />
             </label>
             <label>
               Location
-              <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Ashulia, Dhaka" />
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="e.g. Ashulia, Dhaka"
+              />
             </label>
             <label>
               Region
-              <select value={region} onChange={(e) => setRegion(e.target.value)}>
+              <select
+                value={region}
+                onChange={(e) => setRegion(e.target.value)}
+              >
                 <option value="">Select region</option>
                 {REGIONS.map((r) => (
-                  <option key={r} value={r}>{r}</option>
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
                 ))}
               </select>
             </label>
             <label>
               Contact person (IE / Manager)
-              <input type="text" value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} placeholder="e.g. Ruhul Amin" />
+              <input
+                type="text"
+                value={contactPerson}
+                onChange={(e) => setContactPerson(e.target.value)}
+                placeholder="e.g. Ruhul Amin"
+              />
             </label>
             <label>
               Contact phone
-              <input type="text" value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} placeholder="e.g. +8801711000000" />
+              <input
+                type="text"
+                value={contactPhone}
+                onChange={(e) => setContactPhone(e.target.value)}
+                placeholder="e.g. +8801711000000"
+              />
             </label>
             <label>
               Number of sewing machines
-              <input type="number" min={0} value={machineCount} onChange={(e) => setMachineCount(e.target.value)} placeholder="e.g. 120" />
+              <input
+                type="number"
+                min={0}
+                value={machineCount}
+                onChange={(e) => setMachineCount(e.target.value)}
+                placeholder="e.g. 120"
+              />
             </label>
             <label>
               Number of workers
-              <input type="number" min={0} value={workerCount} onChange={(e) => setWorkerCount(e.target.value)} placeholder="e.g. 450" />
+              <input
+                type="number"
+                min={0}
+                value={workerCount}
+                onChange={(e) => setWorkerCount(e.target.value)}
+                placeholder="e.g. 450"
+              />
             </label>
             <label style={{ gridColumn: "1 / -1" }}>
               Buyer brands (comma-separated)
-              <input type="text" value={buyerBrands} onChange={(e) => setBuyerBrands(e.target.value)} placeholder="e.g. H&M, Primark, Zara" />
+              <input
+                type="text"
+                value={buyerBrands}
+                onChange={(e) => setBuyerBrands(e.target.value)}
+                placeholder="e.g. H&M, Primark, Zara"
+              />
             </label>
             <label style={{ gridColumn: "1 / -1" }}>
               Internal notes
-              <textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. Long-term client, prefers WhatsApp contact" />
+              <textarea
+                rows={3}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="e.g. Long-term client, prefers WhatsApp contact"
+              />
             </label>
           </div>
           {error && <div className="login-error">{error}</div>}
-          <button className="int-button" onClick={handleSubmit} disabled={submitting || !name.trim()}>
+          <button
+            className="int-button"
+            onClick={handleSubmit}
+            disabled={submitting || !name.trim()}
+          >
             {submitting ? "Adding..." : "Add factory"}
           </button>
         </div>
@@ -1202,7 +1597,11 @@ function AssigneePicker({
     <div className="assignee-picker">
       <label>
         Lead
-        <select value={leadId ?? ""} onChange={(e) => onChangeLead(e.target.value || null)} disabled={disabled}>
+        <select
+          value={leadId ?? ""}
+          onChange={(e) => onChangeLead(e.target.value || null)}
+          disabled={disabled}
+        >
           <option value="">Unassigned</option>
           {accounts.map((a) => (
             <option key={a.id} value={a.id}>
@@ -1221,11 +1620,24 @@ function AssigneePicker({
             assistCandidates.map((a) => {
               const active = assistIds.includes(a.id);
               return (
-                <label key={a.id} className={`assist-chip ${active ? "active" : ""}`}>
-                  <input type="checkbox" checked={active} onChange={() => onToggleAssist(a.id)} disabled={disabled} hidden />
+                <label
+                  key={a.id}
+                  className={`assist-chip ${active ? "active" : ""}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={active}
+                    onChange={() => onToggleAssist(a.id)}
+                    disabled={disabled}
+                    hidden
+                  />
                   <Avatar name={a.name} avatarUrl={a.avatarUrl} size={20} />
                   <span>{a.name}</span>
-                  {a.skills && a.skills.length > 0 && <span className="assist-chip-skills">{a.skills.join(", ")}</span>}
+                  {a.skills && a.skills.length > 0 && (
+                    <span className="assist-chip-skills">
+                      {a.skills.join(", ")}
+                    </span>
+                  )}
                 </label>
               );
             })
