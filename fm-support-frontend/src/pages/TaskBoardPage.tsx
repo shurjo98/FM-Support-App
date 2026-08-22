@@ -651,7 +651,7 @@ export default function TaskBoardPage({
           actingAccountId={actingAccount.id}
           onClose={() => setShowNewTask(false)}
           onCreated={(task) => {
-            setTasks((prev) => (prev ? [...prev, task] : [task]));
+            setTasks((prev) => (prev ? [task, ...prev] : [task]));
             setShowNewTask(false);
           }}
         />
